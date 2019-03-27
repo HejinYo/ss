@@ -8,10 +8,17 @@
     <packaging>pom</packaging>
 
     <name>ss</name>
-    <description>ss project for Spring Boot</description>
+    <description>ss project</description>
 
     <modules>
+        <!-- 公共模块 -->
         <module>ss-common</module>
+
+        <!-- 微服务中心 -->
+        <module>ss-cloud</module>
+
+        <!-- 业务模块 -->
+        <module>ss-modules</module>
     </modules>
 
     <properties>
@@ -32,67 +39,7 @@
 
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <configuration>
-                        <!-- Linux可注册为服务 -->
-                        <executable>true</executable>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>build-info</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- 跳过单元测试 -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <skipTests>true</skipTests>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <target>${java.version}</target>
-                        <source>${java.version}</source>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>${javadoc.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <!-- 解决maven不能打包src下面的*.xml文件 -->
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <!-- 是否替换资源中的属性-->
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
     </build>
-
 
     <!-- 使用aliyun镜像 -->
     <repositories>
