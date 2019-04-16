@@ -7,7 +7,7 @@ spring:
   profiles:
     active: dev
   application:
-    # Ó¦ÓÃÃû³Æ
+    # åº”ç”¨åç§°
     name: ss-auth-server
   redis:
     host: 127.0.0.1
@@ -36,18 +36,18 @@ spring:
     username: jelly
     password: jelly
     virtual-host: /jelly
-    # Ö§³Ö·¢²¼È·ÈÏ
+    # æ”¯æŒå‘å¸ƒç¡®è®¤
     publisher-confirms: true
-    # Ö§³Ö·¢²¼·µ»Ø
+    # æ”¯æŒå‘å¸ƒè¿”å›
     publisher-returns: true
     listener:
       simple:
         acknowledge-mode: manual
-        # Ö¸¶¨×îĞ¡µÄÏû·ÑÕßÊıÁ¿
+        # æŒ‡å®šæœ€å°çš„æ¶ˆè´¹è€…æ•°é‡
         concurrency: 1
-        # Ö¸¶¨×î´óµÄÏû·ÑÕßÊıÁ¿
+        # æŒ‡å®šæœ€å¤§çš„æ¶ˆè´¹è€…æ•°é‡
         max-concurrency: 1
-        # ÊÇ·ñÖ§³ÖÖØÊÔ
+        # æ˜¯å¦æ”¯æŒé‡è¯•
         retry:
           enabled: true
 
@@ -55,17 +55,17 @@ eureka:
   client:
     service-url:
       defaultZone: http://hejinyo:password@localhost:8000/eureka
-    # »º´æÇåµ¥Ã¿¸ô30Ãë¸úĞÂÒ»´Î
+    # ç¼“å­˜æ¸…å•æ¯éš”30ç§’è·Ÿæ–°ä¸€æ¬¡
     registry-fetch-interval-seconds: 30
   instance:
-    # ·şÎñĞøÔ¼ÈÎÎñµ÷ÓÃ¼ä¸ôÊ±¼ä£¬Ä¬ÈÏ30Ãë
+    # æœåŠ¡ç»­çº¦ä»»åŠ¡è°ƒç”¨é—´éš”æ—¶é—´ï¼Œé»˜è®¤30ç§’
     lease-renewal-interval-in-seconds: 30
-    # ·şÎñÊ§Ğ§Ê±¼ä£¬Ä¬ÈÏ90Ãë
+    # æœåŠ¡å¤±æ•ˆæ—¶é—´ï¼Œé»˜è®¤90ç§’
     lease-expiration-duration-in-seconds: 90
-    # ÊµÀıÊ¹ÓÃip½øĞĞ·ÃÎÊ
+    # å®ä¾‹ä½¿ç”¨ipè¿›è¡Œè®¿é—®
     prefer-ip-address: true
-    # ÊµÀıÏÔÊ¾id
+    # å®ä¾‹æ˜¾ç¤ºid
     instance-id: ${spring.application.name}:${server.port}
-    #×´Ì¬Ò³ÃæºÍ½¡¿µÖ¸±ê
+    #çŠ¶æ€é¡µé¢å’Œå¥åº·æŒ‡æ ‡
     statusPageUrlPath: ${server.servlet.context-path}/actuator/info
     healthCheckUrlPath: ${server.servlet.context-path}/actuator/health
