@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>euraka</artifactId>
+    <artifactId>cloud-euraka</artifactId>
     <version>1.0</version>
 
-    <name>euraka</name>
-    <description>euraka 服务注册中心</description>
+    <name>cloud-euraka</name>
+    <description>cloud-euraka 服务注册中心</description>
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
