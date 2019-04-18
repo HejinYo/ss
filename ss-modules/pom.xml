@@ -15,6 +15,7 @@
     <modules>
         <!-- 授权中心 -->
         <module>ss-auth</module>
+        <module>ss-security-core</module>
     </modules>
 
     <properties>
@@ -42,6 +43,13 @@
     </dependencyManagement>
 
     <dependencies>
+
+        <!-- configuration-processor -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
