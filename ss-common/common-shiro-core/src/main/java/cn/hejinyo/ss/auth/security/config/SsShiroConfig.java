@@ -44,7 +44,7 @@ public class SsShiroConfig {
         ((DefaultSessionStorageEvaluator) ((DefaultSubjectDAO) securityManager.getSubjectDAO())
                 .getSessionStorageEvaluator()).setSessionStorageEnabled(false);
 
-        List<Realm> realms = Collections.singletonList(ssAuthRealm());
+        List<Realm> realms = Collections.singletonList(new SsAuthRealm());
         // 自定义realms
         securityManager.setRealms(realms);
         // 自定义 ModularRealm
@@ -52,13 +52,6 @@ public class SsShiroConfig {
         return securityManager;
     }
 
-    /**
-     * token验证Realm
-     */
-    @Bean
-    public SsAuthRealm ssAuthRealm() {
-        return new SsAuthRealm();
-    }
 
     @Bean("shiroFilter")
     protected ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
