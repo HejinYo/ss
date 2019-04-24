@@ -69,3 +69,13 @@ eureka:
     #状态页面和健康指标
     statusPageUrlPath: ${server.servlet.context-path}/actuator/info
     healthCheckUrlPath: ${server.servlet.context-path}/actuator/health
+
+# shiro 不拦截路径
+ss:
+  auth:
+    anon:
+      path:
+        - /favicon.ico
+        # spring cloud 健康检查
+        - /actuator/**
+        - /test/**
