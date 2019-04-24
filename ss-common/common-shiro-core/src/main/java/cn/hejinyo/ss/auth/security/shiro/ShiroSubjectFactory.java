@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.security.shiro;
 
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.SubjectContext;

@@ -1,5 +1,6 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.security.token;
 
+import cn.hejinyo.ss.auth.security.SsUserDetails;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.shiro.authc.AuthenticationToken;

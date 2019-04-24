@@ -1,5 +1,10 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.security.config;
 
+import cn.hejinyo.ss.auth.security.filter.SsUrlFilter;
+import cn.hejinyo.ss.auth.security.filter.SsAuthcFilter;
+import cn.hejinyo.ss.auth.security.shiro.ShiroModularRealm;
+import cn.hejinyo.ss.auth.security.shiro.ShiroSubjectFactory;
+import cn.hejinyo.ss.auth.security.realm.SsAuthRealm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
@@ -38,22 +43,13 @@ public class SsShiroConfig {
         // 禁用使用 Sessions 作为存储策略的实现，但它没有完全地禁用Sessions,所以需要配合 context. setSessionCreationEnabled(false)
         ((DefaultSessionStorageEvaluator) ((DefaultSubjectDAO) securityManager.getSubjectDAO())
                 .getSessionStorageEvaluator()).setSessionStorageEnabled(false);
-        // 自定义realms
-        securityManager.setRealms(getRealms());
-        // 自定义 ModularRealm
-        securityManager.setAuthenticator(getAuthenticator());
-        log.error("SecurityManager 安全管理器 有多个Realm,可使用'realms'属性代替");
-        return securityManager;
-    }
 
-    /**
-     * 自定义realms
-     */
-    private List<Realm> getRealms() {
+        List<Realm> realms = Collections.singletonList(ssAuthRealm());
         // 自定义realms
-        List<Realm> realms = new ArrayList<>();
-        realms.add(ssAuthRealm());
-        return realms;
+        securityManager.setRealms(realms);
+        // 自定义 ModularRealm
+        securityManager.setAuthenticator(new ShiroModularRealm(realms));
+        return securityManager;
     }
 
     /**
@@ -64,25 +60,6 @@ public class SsShiroConfig {
         return new SsAuthRealm();
     }
 
-    /**
-     * 自定义 ModularRealm
-     */
-    private ShiroModularRealm getAuthenticator() {
-        ShiroModularRealm authenticator = new ShiroModularRealm();
-        authenticator.setRealms(getRealms());
-        return authenticator;
-    }
-
-    /**
-     * 配置使用自定义认证器，可以实现多Realm认证，并且可以指定特定Realm处理特定类型的验证
-     */
-    @Bean
-    public ShiroModularRealm defaultModularRealm(List<Realm> realms) {
-        ShiroModularRealm authenticator = new ShiroModularRealm();
-        authenticator.setRealms(realms);
-        return authenticator;
-    }
-
     @Bean("shiroFilter")
     protected ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
@@ -91,9 +68,34 @@ public class SsShiroConfig {
         factoryBean.setFilters(getFilters());
         // 拦截器链
         factoryBean.setFilterChainDefinitionMap(getFilterChainDefinitionMap());
+
+        log.info("ss-shiro-shiroFilter 初始化完成");
         return factoryBean;
     }
 
+    /**
+     * 注入自定义拦截器,注意拦截器自注入问题
+     */
+    private Map<String, Filter> getFilters() {
+        Map<String, Filter> list = new HashMap<>();
+        list.put("auth", authFilter());
+        list.put("url", new SsUrlFilter());
+        return list;
+    }
+
+    /**
+     * 拦截器链
+     */
+    private Map<String, String> getFilterChainDefinitionMap() {
+        // 拦截器链
+        Map<String, String> filterMap = new LinkedHashMap<>();
+        filterAnonConfig().getPath().forEach(path -> {
+            log.info("不拦截路径 => {}", path);
+            filterMap.put(path, "anon");
+        });
+        filterMap.put("/**", "url,auth");
+        return filterMap;
+    }
 
     @Bean
     public SsAuthcFilter authFilter() {
@@ -112,34 +114,11 @@ public class SsShiroConfig {
         return registration;
     }
 
-    /**
-     * 注入自定义拦截器,注意拦截器自注入问题
-     */
-    private Map<String, Filter> getFilters() {
-        Map<String, Filter> list = new HashMap<>();
-        list.put("auth", authFilter());
-        list.put("url", new SsUrlFilter());
-        return list;
-    }
-
     @Bean
     public SsFilterAnonConfig filterAnonConfig() {
         return new SsFilterAnonConfig();
     }
 
-    /**
-     * 拦截器链
-     */
-    private Map<String, String> getFilterChainDefinitionMap() {
-        // 拦截器链
-        Map<String, String> filterMap = new LinkedHashMap<>();
-        filterAnonConfig().getPath().forEach(path -> {
-            log.info("不拦截路径 => {}", path);
-            filterMap.put(path, "anon");
-        });
-        filterMap.put("/**", "url,auth");
-        return filterMap;
-    }
 
     /**
      * 在方法中 注入  securityManager ，进行代理控制,相当于调用SecurityUtils.setSecurityManager(securityManager)

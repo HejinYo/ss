@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.security.config;
 
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;

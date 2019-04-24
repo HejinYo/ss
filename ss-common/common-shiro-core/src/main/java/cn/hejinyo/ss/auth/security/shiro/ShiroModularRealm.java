@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.security.shiro;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -16,6 +16,15 @@ import java.util.Collection;
  * @date : 2017/7/30 13:03
  */
 public class ShiroModularRealm extends ModularRealmAuthenticator {
+
+    public ShiroModularRealm() {
+
+    }
+
+    public ShiroModularRealm(Collection<Realm> realms) {
+        super.setRealms(realms);
+    }
+
     @Override
     protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
         // 判断getRealms()是否返回为空
