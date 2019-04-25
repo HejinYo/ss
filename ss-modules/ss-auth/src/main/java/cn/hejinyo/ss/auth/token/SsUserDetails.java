@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.token;
 
 import lombok.Data;
 

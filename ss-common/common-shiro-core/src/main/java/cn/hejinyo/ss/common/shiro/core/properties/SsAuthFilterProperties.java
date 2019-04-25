@@ -1,15 +1,15 @@
-package cn.hejinyo.ss.auth.security.filter;
+package cn.hejinyo.ss.common.shiro.core.properties;
 
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 获取不需要认证就可以访问的路径
+ * 配置不需要拦截的uri路径和指定路径的拦截器
  *
  * @author : HejinYo   hejinyo@gmail.com
  * @date :  2018/9/2 18:07
@@ -18,6 +18,14 @@ import java.util.Set;
 @Component
 @ConditionalOnExpression("!'${ss.auth.filter}'.isEmpty()")
 @ConfigurationProperties(prefix = "ss.auth.filter")
-public class SsCustomFilterConfig {
-    private Set<String> clazz = new HashSet<>();
+public class SsAuthFilterProperties {
+    /**
+     * 不拦截路径
+     */
+    private List<String> anonPath = new ArrayList<>();
+
+    /**
+     * 自定义拦截器和路径
+     */
+    private List<String> filterChainMap = new ArrayList<>();
 }

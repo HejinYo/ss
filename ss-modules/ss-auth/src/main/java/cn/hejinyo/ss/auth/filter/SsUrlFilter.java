@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.security.filter;
+package cn.hejinyo.ss.auth.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.servlet.AdviceFilter;

@@ -1,7 +1,7 @@
-package cn.hejinyo.ss.auth.test;
+package cn.hejinyo.ss.auth.realm;
 
-import cn.hejinyo.ss.auth.security.SsUserDetails;
-import cn.hejinyo.ss.auth.security.token.SsAuthToken;
+import cn.hejinyo.ss.auth.token.SsAuthToken;
+import cn.hejinyo.ss.auth.token.SsUserDetails;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -15,7 +15,7 @@ import org.apache.shiro.subject.PrincipalCollection;
  * @author : HejinYo   hejinyo@gmail.com
  * @date :  2018/9/2 15:17
  */
-public class TestRealm extends AuthorizingRealm {
+public class SsAuthRealm extends AuthorizingRealm {
 
     @Override
     public boolean supports(AuthenticationToken token) {

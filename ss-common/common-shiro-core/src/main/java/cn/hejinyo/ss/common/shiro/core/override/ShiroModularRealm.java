@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.security.shiro;
+package cn.hejinyo.ss.common.shiro.core.override;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
