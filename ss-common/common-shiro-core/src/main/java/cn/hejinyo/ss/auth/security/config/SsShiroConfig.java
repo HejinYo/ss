@@ -1,28 +1,26 @@
 package cn.hejinyo.ss.auth.security.config;
 
-import cn.hejinyo.ss.auth.security.filter.SsUrlFilter;
-import cn.hejinyo.ss.auth.security.filter.SsAuthcFilter;
-import cn.hejinyo.ss.auth.security.shiro.ShiroModularRealm;
+import cn.hejinyo.ss.auth.security.filter.SsCustomFilter;
+import cn.hejinyo.ss.auth.security.realm.SsReamsConfig;
 import cn.hejinyo.ss.auth.security.shiro.ShiroSubjectFactory;
-import cn.hejinyo.ss.auth.security.realm.SsAuthRealm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import javax.servlet.Filter;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
@@ -32,11 +30,17 @@ import java.util.*;
 @Slf4j
 public class SsShiroConfig {
 
+    @Bean
+    @ConditionalOnMissingBean(SsCustomFilter.class)
+    public SsCustomFilter ssCustomFilter() {
+        return new SsCustomFilter();
+    }
+
     /**
      * SecurityManager 安全管理器 有多个Realm,可使用'realms'属性代替
      */
     @Bean("securityManager")
-    protected SecurityManager securityManager() {
+    protected SecurityManager securityManager(SsReamsConfig ssReamsConfig) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         // 禁用session 的subjectFactory
         securityManager.setSubjectFactory(new ShiroSubjectFactory());
@@ -44,72 +48,40 @@ public class SsShiroConfig {
         ((DefaultSessionStorageEvaluator) ((DefaultSubjectDAO) securityManager.getSubjectDAO())
                 .getSessionStorageEvaluator()).setSessionStorageEnabled(false);
 
-        List<Realm> realms = Collections.singletonList(new SsAuthRealm());
         // 自定义realms
-        securityManager.setRealms(realms);
+        securityManager.setRealms(ssReamsConfig.realms());
+        log.info("自定义realms====> {}", ssReamsConfig.realms().stream().map(v -> v.getClass().getName()).collect(Collectors.toList()));
         // 自定义 ModularRealm
-        securityManager.setAuthenticator(new ShiroModularRealm(realms));
+        securityManager.setAuthenticator(ssReamsConfig.shiroModularRealm());
         return securityManager;
     }
 
 
     @Bean("shiroFilter")
-    protected ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
+    protected ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager, SsFilterAnonConfig filterAnonConfig, SsCustomFilter ssCustomFilter) {
         ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         factoryBean.setSecurityManager(securityManager);
+
         //自定义访问验证拦截器
-        factoryBean.setFilters(getFilters());
-        // 拦截器链
-        factoryBean.setFilterChainDefinitionMap(getFilterChainDefinitionMap());
+        factoryBean.setFilters(ssCustomFilter.getFilterList());
+        log.info("ssCustomFilter====> {}", ssCustomFilter.getFilterList());
 
-        log.info("ss-shiro-shiroFilter 初始化完成");
-        return factoryBean;
-    }
-
-    /**
-     * 注入自定义拦截器,注意拦截器自注入问题
-     */
-    private Map<String, Filter> getFilters() {
-        Map<String, Filter> list = new HashMap<>();
-        list.put("auth", authFilter());
-        list.put("url", new SsUrlFilter());
-        return list;
-    }
-
-    /**
-     * 拦截器链
-     */
-    private Map<String, String> getFilterChainDefinitionMap() {
         // 拦截器链
         Map<String, String> filterMap = new LinkedHashMap<>();
-        filterAnonConfig().getPath().forEach(path -> {
+        filterAnonConfig.getPath().forEach(path -> {
             log.info("不拦截路径 => {}", path);
             filterMap.put(path, "anon");
         });
-        filterMap.put("/**", "url,auth");
-        return filterMap;
-    }
+        filterAnonConfig.getFilterChainMap().forEach(m -> {
+            String[] map = m.split(",");
+            log.info("getFilterChainMap => {},{}", map[0], map[1]);
+            filterMap.put(map[0], map[1]);
+        });
+        filterMap.put("/**", "auth");
+        factoryBean.setFilterChainDefinitionMap(filterMap);
 
-    @Bean
-    public SsAuthcFilter authFilter() {
-        return new SsAuthcFilter();
-    }
-
-    /**
-     * 解决自定义拦截器混乱问题
-     */
-    @Bean
-    @SuppressWarnings("unchecked")
-    public FilterRegistrationBean registrationAuthcFilterBean() {
-        FilterRegistrationBean registration = new FilterRegistrationBean(authFilter());
-        //取消自动注册功能 Filter自动注册,不会添加到FilterChain中.
-        registration.setEnabled(false);
-        return registration;
-    }
-
-    @Bean
-    public SsFilterAnonConfig filterAnonConfig() {
-        return new SsFilterAnonConfig();
+        log.info("ss-shiro-shiroFilter 初始化完成");
+        return factoryBean;
     }
 
 
@@ -117,10 +89,10 @@ public class SsShiroConfig {
      * 在方法中 注入  securityManager ，进行代理控制,相当于调用SecurityUtils.setSecurityManager(securityManager)
      */
     @Bean
-    protected MethodInvokingFactoryBean getMethodInvokingFactoryBean() {
+    protected MethodInvokingFactoryBean getMethodInvokingFactoryBean(SsReamsConfig ssReamsConfig) {
         MethodInvokingFactoryBean factoryBean = new MethodInvokingFactoryBean();
         factoryBean.setStaticMethod("org.apache.shiro.SecurityUtils.setSecurityManager");
-        factoryBean.setArguments(securityManager());
+        factoryBean.setArguments(securityManager(ssReamsConfig));
         return factoryBean;
     }
 

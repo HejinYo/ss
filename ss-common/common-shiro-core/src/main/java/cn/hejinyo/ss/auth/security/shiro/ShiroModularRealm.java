@@ -17,14 +17,6 @@ import java.util.Collection;
  */
 public class ShiroModularRealm extends ModularRealmAuthenticator {
 
-    public ShiroModularRealm() {
-
-    }
-
-    public ShiroModularRealm(Collection<Realm> realms) {
-        super.setRealms(realms);
-    }
-
     @Override
     protected AuthenticationInfo doAuthenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
         // 判断getRealms()是否返回为空

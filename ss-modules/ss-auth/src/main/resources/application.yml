@@ -79,3 +79,10 @@ ss:
         # spring cloud 健康检查
         - /actuator/**
         - /test/**
+      filterChainMap:
+        - /test1/**,url
+        - /test2/**,auth
+
+    ream:
+      clazz:
+        - cn.hejinyo.ss.auth.test.TestRealm

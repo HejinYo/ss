@@ -1,12 +1,12 @@
-package cn.hejinyo.ss.auth.security.config;
+package cn.hejinyo.ss.auth.security.filter;
 
 import lombok.Data;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 获取不需要认证就可以访问的路径
@@ -16,9 +16,8 @@ import java.util.List;
  */
 @Data
 @Component
-@ConditionalOnExpression("!'${ss.auth.anon}'.isEmpty()")
-@ConfigurationProperties(prefix = "ss.auth.anon")
-public class SsFilterAnonConfig {
-    private List<String> path = new ArrayList<>();
-    private List<String> filterChainMap = new ArrayList<>();
+@ConditionalOnExpression("!'${ss.auth.filter}'.isEmpty()")
+@ConfigurationProperties(prefix = "ss.auth.filter")
+public class SsCustomFilterConfig {
+    private Set<String> clazz = new HashSet<>();
 }

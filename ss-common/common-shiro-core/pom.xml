@@ -10,6 +10,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
     </properties>
 
     <parent>
@@ -17,6 +18,18 @@
         <artifactId>ss-common</artifactId>
         <version>1.0</version>
     </parent>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
 
@@ -26,7 +39,6 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
-        <!-- spring boot web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -46,7 +58,7 @@
             <version>2.9.2</version>
         </dependency>
 
-        <!-- shiro -->
+        <!-- shiro-spring -->
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring</artifactId>
@@ -62,91 +74,13 @@
 
     </dependencies>
 
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!-- Linux可注册为服务 -->
-                    <executable>true</executable>
-                </configuration>
-            </plugin>
-
-            <!-- 跳过单元测试 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <meminitial>128m</meminitial>
-                    <maxmem>512m</maxmem>
-                </configuration>
-            </plugin>
-
-            <!-- 指定启动类，只编译源文件，不打包jar -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <useUniqueVersions>false</useUniqueVersions>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib</classpathPrefix>
-                            <mainClass>cn.hejinyo.ss.security.SsSecurityApplication</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-
-            <!-- copy依赖到lib文件夹 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib/</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
-
-        <!-- 解决maven不能打包src下面的*.xml文件 -->
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.xml</include>
-                </includes>
-                <!-- 是否替换资源中的属性-->
-                <filtering>false</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
     </build>
 
 </project>
