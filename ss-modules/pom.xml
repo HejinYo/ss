@@ -13,8 +13,9 @@
 
 
     <modules>
-        <!-- 授权中心 -->
-        <module>ss-auth</module>
+        <!-- 授权客户端 -->
+        <module>ss-auth-client</module>
+        <module>ss-jelly</module>
         <module>ss-security-core</module>
     </modules>
 
