@@ -19,6 +19,7 @@
     <modules>
         <!-- 开放接口 -->
         <module>ss-jelly-manager-interface</module>
+
         <!-- 管理业务模块 -->
         <module>ss-jelly-manager-business</module>
     </modules>

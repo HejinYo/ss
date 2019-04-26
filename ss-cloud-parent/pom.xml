@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.hejinyo.ss</groupId>
-    <artifactId>ss-biz-parent</artifactId>
+    <artifactId>ss-cloud-parent</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <name>ss-biz-parent</name>
+    <name>ss-cloud-parent</name>
     <description>ss 微服务业务父项目</description>
 
     <properties>
@@ -37,6 +37,12 @@
 
 
     <dependencies>
+
+        <!-- 服务注册 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
 
         <!-- lombok -->
         <dependency>

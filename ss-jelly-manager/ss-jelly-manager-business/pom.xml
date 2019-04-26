@@ -14,7 +14,7 @@
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-biz-parent</artifactId>
+        <artifactId>ss-cloud-parent</artifactId>
         <version>1.0</version>
     </parent>
 

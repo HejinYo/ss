@@ -3,30 +3,30 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cloud-gateway</artifactId>
+    <artifactId>ss-cloud-euraka</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>cloud-gateway</name>
-    <description>cloud-gateway 网关服务</description>
+    <name>ss-cloud-euraka</name>
+    <description>cloud-euraka 服务注册中心</description>
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-biz-parent</artifactId>
+        <artifactId>ss-cloud-parent</artifactId>
         <version>1.0</version>
     </parent>
 
     <dependencies>
 
-        <!-- 服务注册 -->
+        <!--eureka服务-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
         </dependency>
 
-        <!-- gateway 网关 -->
+        <!-- eureka Basic认证登录需要 -->
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
 
     </dependencies>
