@@ -4,19 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.hejinyo.ss</groupId>
-    <artifactId>ss-modules</artifactId>
+    <artifactId>ss-biz-parent</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <name>ss-modules</name>
-    <description>ss-modules 业务服务</description>
-
+    <name>ss-biz-parent</name>
+    <description>ss 业务父项目</description>
 
     <modules>
-        <!-- 授权客户端 -->
-        <module>ss-auth-client</module>
-        <module>ss-jelly</module>
-        <module>ss-security-core</module>
+
     </modules>
 
     <properties>

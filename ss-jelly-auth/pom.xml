@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ss-auth-client</artifactId>
+    <artifactId>ss-jelly-auth</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ss-auth-client</name>
+    <name>ss-jelly-auth</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
@@ -14,7 +14,7 @@
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-modules</artifactId>
+        <artifactId>ss-biz-parent</artifactId>
         <version>1.0</version>
     </parent>
 

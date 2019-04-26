@@ -11,35 +11,22 @@
     <description>ss project</description>
 
     <modules>
-        <!-- 公共模块 -->
-        <module>ss-common</module>
-
         <!-- 微服务中心 -->
         <module>ss-cloud</module>
 
-        <!-- 业务模块 -->
-        <module>ss-modules</module>
+        <!-- 公共模块 -->
+        <module>ss-common</module>
+
+        <!-- 业务父模块 -->
+        <module>ss-biz-parent</module>
+
+        <!-- 认证拦截模块 -->
+        <module>ss-jelly-auth</module>
+
+        <!-- 系统管理模块 -->
+        <module>ss-jelly-manager</module>
+
     </modules>
-
-    <properties>
-        <java.version>1.8</java.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
-
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.4.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-
-    <dependencies>
-    </dependencies>
-
-
-    <build>
-    </build>
 
     <!-- 使用aliyun镜像 -->
     <repositories>
