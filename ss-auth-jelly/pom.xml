@@ -30,7 +30,7 @@
 
         <dependency>
             <groupId>cn.hejinyo.ss</groupId>
-            <artifactId>ss-jelly-manager-interface</artifactId>
+            <artifactId>ss-jelly-manager-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

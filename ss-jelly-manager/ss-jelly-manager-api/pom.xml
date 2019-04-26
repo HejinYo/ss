@@ -3,17 +3,24 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cn.hejinyo.ss</groupId>
-    <artifactId>ss-jelly-manager-interface</artifactId>
+    <artifactId>ss-jelly-manager-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ss-jelly-manager-interface</name>
+    <name>ss-jelly-manager-api</name>
     <description>Demo project for Spring Boot</description>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+    <parent>
+        <groupId>cn.hejinyo.ss</groupId>
+        <artifactId>ss-cloud-parent</artifactId>
+        <version>1.0</version>
+    </parent>
 
     <dependencies>
+
+        <!-- spring mvc -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
     </dependencies>
 

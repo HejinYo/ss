@@ -1,5 +1,5 @@
 server:
-  port: 8200
+  port: 8100
   servlet:
     context-path: /
 
@@ -8,7 +8,7 @@ spring:
     active: dev
   application:
     # 应用名称
-    name: ss-jelly-server
+    name: ss-auth-server
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     show-sql: true
