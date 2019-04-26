@@ -3,31 +3,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ss-jelly-manager-business</artifactId>
+    <artifactId>ss-auth</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ss-jelly-manager-business</name>
-    <description>Demo project for Spring Boot</description>
+    <packaging>pom</packaging>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+
+    <name>ss-auth</name>
+    <description>jelly 认证模块</description>
 
     <parent>
-        <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-biz-parent</artifactId>
+        <groupId>cn.hejinyo</groupId>
+        <artifactId>ss</artifactId>
         <version>1.0</version>
     </parent>
 
-    <dependencies>
+    <modules>
+        <!-- 认证服务器 -->
+        <module>ss-auth-server</module>
 
         <!-- 认证拦截模块 -->
-        <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
-            <artifactId>ss-auth-jelly</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-    </dependencies>
+        <module>ss-auth-jelly</module>
+    </modules>
 
     <build>
         <plugins>

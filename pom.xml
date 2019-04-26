@@ -21,7 +21,7 @@
         <module>ss-biz-parent</module>
 
         <!-- 认证拦截模块 -->
-        <module>ss-jelly-auth</module>
+        <module>ss-auth</module>
 
         <!-- 系统管理模块 -->
         <module>ss-jelly-manager</module>
