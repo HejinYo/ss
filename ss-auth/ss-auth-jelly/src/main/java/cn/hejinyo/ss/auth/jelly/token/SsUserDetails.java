@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.token;
+package cn.hejinyo.ss.auth.jelly.token;
 
 import lombok.Data;
 

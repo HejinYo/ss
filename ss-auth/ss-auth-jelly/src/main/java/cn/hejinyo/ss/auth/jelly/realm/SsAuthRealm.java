@@ -1,7 +1,7 @@
-package cn.hejinyo.ss.auth.realm;
+package cn.hejinyo.ss.auth.jelly.realm;
 
-import cn.hejinyo.ss.auth.token.SsAuthToken;
-import cn.hejinyo.ss.auth.token.SsUserDetails;
+import cn.hejinyo.ss.auth.jelly.token.SsAuthToken;
+import cn.hejinyo.ss.auth.jelly.token.SsUserDetails;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;

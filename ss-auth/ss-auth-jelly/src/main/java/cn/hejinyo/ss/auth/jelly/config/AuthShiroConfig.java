@@ -1,8 +1,8 @@
-package cn.hejinyo.ss.auth.config;
+package cn.hejinyo.ss.auth.jelly.config;
 
-import cn.hejinyo.ss.auth.filter.SsAuthcFilter;
-import cn.hejinyo.ss.auth.filter.SsUrlFilter;
-import cn.hejinyo.ss.auth.realm.SsAuthRealm;
+import cn.hejinyo.ss.auth.jelly.filter.SsAuthcFilter;
+import cn.hejinyo.ss.auth.jelly.filter.SsUrlFilter;
+import cn.hejinyo.ss.auth.jelly.realm.SsAuthRealm;
 import cn.hejinyo.ss.common.shiro.core.config.SsFilterConfig;
 import cn.hejinyo.ss.common.shiro.core.config.SsRealmConfig;
 import cn.hejinyo.ss.common.shiro.core.properties.SsAuthFilterProperties;

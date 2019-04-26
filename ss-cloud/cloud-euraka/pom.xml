@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cloud-euraka</artifactId>
-    <version>1.0</version>
+    <version>0.0.1-SNAPSHOT</version>
 
     <name>cloud-euraka</name>
     <description>cloud-euraka 服务注册中心</description>

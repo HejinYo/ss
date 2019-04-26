@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @author : HejinYo   hejinyo@gmail.com
  * @date :  2019/4/25 22:49
  */
-@ComponentScan({"cn.hejinyo.ss.auth", "cn.hejinyo.ss.common.shiro.core"})
+@ComponentScan({"cn.hejinyo.ss.auth.jelly", "cn.hejinyo.ss.common.shiro.core"})
 @EnableSwagger2
 @SpringBootApplication
 public class SsAuthApplication {
