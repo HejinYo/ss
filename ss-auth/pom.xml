@@ -7,7 +7,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-
     <name>ss-auth</name>
     <description>jelly 认证模块</description>
 
@@ -24,14 +23,5 @@
         <!-- 认证拦截模块 -->
         <module>ss-auth-jelly</module>
     </modules>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

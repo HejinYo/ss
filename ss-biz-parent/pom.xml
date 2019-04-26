@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <name>ss-biz-parent</name>
-    <description>ss 业务父项目</description>
+    <description>ss 微服务业务父项目</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -34,7 +34,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 
 
     <dependencies>

@@ -4,9 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ss-jelly-manager</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>pom</packaging>
-
 
     <name>ss-jelly-manager</name>
     <description>jelly 后台管理模块</description>
@@ -23,14 +22,5 @@
         <!-- 管理业务模块 -->
         <module>ss-jelly-manager-business</module>
     </modules>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
