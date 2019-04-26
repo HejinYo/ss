@@ -11,10 +11,6 @@
     <name>ss-biz-parent</name>
     <description>ss 业务父项目</description>
 
-    <modules>
-
-    </modules>
-
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.SR1</spring-cloud.version>
@@ -41,7 +37,7 @@
 
     <dependencies>
 
-        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -56,6 +52,7 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- spring-boot-test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

@@ -5,28 +5,18 @@
 
     <artifactId>ss-jelly-manager</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+
     <name>ss-jelly-manager</name>
-    <description>Demo project for Spring Boot</description>
+    <description>jelly 后台管理模块</description>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
-
-    <parent>
-        <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-biz-parent</artifactId>
-        <version>1.0</version>
-    </parent>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
-            <artifactId>ss-jelly-auth</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-    </dependencies>
+    <modules>
+        <!-- 开放接口 -->
+        <module>ss-jelly-manager-interface</module>
+        <!-- 管理业务模块 -->
+        <module>ss-jelly-manager-business</module>
+    </modules>
 
     <build>
         <plugins>
