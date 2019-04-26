@@ -20,6 +20,7 @@
 
     <dependencies>
 
+        <!-- 认证拦截模块 -->
         <dependency>
             <groupId>cn.hejinyo.ss</groupId>
             <artifactId>ss-jelly-auth</artifactId>

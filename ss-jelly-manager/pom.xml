@@ -11,6 +11,12 @@
     <name>ss-jelly-manager</name>
     <description>jelly 后台管理模块</description>
 
+    <parent>
+        <groupId>cn.hejinyo</groupId>
+        <artifactId>ss</artifactId>
+        <version>1.0</version>
+    </parent>
+
     <modules>
         <!-- 开放接口 -->
         <module>ss-jelly-manager-interface</module>
