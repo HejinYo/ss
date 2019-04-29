@@ -30,8 +30,15 @@
 
         <dependency>
             <groupId>cn.hejinyo.ss</groupId>
-            <artifactId>ss-jelly-manager-api</artifactId>
+            <artifactId>ss-auth-server-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 声明式服务调用  -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>2.1.1.RELEASE</version>
         </dependency>
 
         <!-- swagger2 -->

@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.jelly.api;
+package cn.hejinyo.ss.jelly.service;
 
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import org.springframework.web.bind.annotation.GetMapping;

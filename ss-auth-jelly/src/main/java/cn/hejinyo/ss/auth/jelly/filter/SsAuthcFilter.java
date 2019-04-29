@@ -1,7 +1,10 @@
 package cn.hejinyo.ss.auth.jelly.filter;
 
+import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
+import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.AccessControlFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -13,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class SsAuthcFilter extends AccessControlFilter {
+    @Autowired
+    private JellyAuthService jellyAuthService;
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
@@ -54,6 +59,8 @@ public class SsAuthcFilter extends AccessControlFilter {
         String uri = httpRequest.getRequestURI();
         String contextPath = httpRequest.getContextPath();
         log.info("auth拦截:" + contextPath + uri);
+        AuthCheckResult result = jellyAuthService.checkToken(1, "hejinyo");
+        log.info("AuthCheckResult=====>{}", result);
         return true;
     }
 

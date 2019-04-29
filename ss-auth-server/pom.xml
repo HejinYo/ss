@@ -4,15 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ss-auth-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-
+    <version>1.0</version>
+    <packaging>pom</packaging>
 
     <name>ss-auth-server</name>
-    <description>Demo project for Spring Boot</description>
-
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+    <description>ss 授权认证服务</description>
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
@@ -20,50 +16,13 @@
         <version>1.0</version>
     </parent>
 
-    <dependencies>
-<!--
-        <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
-            <artifactId>common-shiro-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>-->
+    <modules>
+        <!-- 开放接口 -->
+        <module>ss-auth-server-api</module>
 
-        <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
-            <artifactId>ss-jelly-manager-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+        <!-- 业务模块 -->
+        <module>ss-auth-server-business</module>
+    </modules>
 
-        <!-- 声明式服务调用  --><!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>2.1.1.RELEASE</version>
-        </dependency>
-
-
-        <!-- swagger2 -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-
-        <!-- swagger2 -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
