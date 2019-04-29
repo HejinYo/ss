@@ -1,5 +1,6 @@
 package cn.hejinyo.ss.auth.jelly.config;
 
+import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
 import cn.hejinyo.ss.auth.jelly.filter.SsAuthcFilter;
 import cn.hejinyo.ss.auth.jelly.filter.SsUrlFilter;
 import cn.hejinyo.ss.auth.jelly.realm.SsAuthRealm;
@@ -25,14 +26,14 @@ public class AuthShiroConfig {
      * 基本认证拦截器
      */
     @Bean
-    public SsAuthcFilter authFilter() {
-        return new SsAuthcFilter();
+    public SsAuthcFilter authFilter(JellyAuthService jellyAuthService) {
+        return new SsAuthcFilter(jellyAuthService);
     }
 
     @Bean
-    public SsFilterConfig ssCustomFilter(SsAuthFilterProperties ssAuthFilterProperties) {
+    public SsFilterConfig ssCustomFilter(SsAuthFilterProperties ssAuthFilterProperties, JellyAuthService jellyAuthService) {
         SsFilterConfig filter = new SsFilterConfig();
-        filter.addFilter(AUTH_FILTER, authFilter());
+        filter.addFilter(AUTH_FILTER, authFilter(jellyAuthService));
         filter.addFilter(URL_FILTER, new SsUrlFilter());
         // 最后全部拦截
         ssAuthFilterProperties.getFilterChainMap().add("/**;" + AUTH_FILTER);
@@ -44,8 +45,8 @@ public class AuthShiroConfig {
      */
     @Bean
     @SuppressWarnings("unchecked")
-    public FilterRegistrationBean registrationAuthcFilterBean() {
-        FilterRegistrationBean registration = new FilterRegistrationBean(authFilter());
+    public FilterRegistrationBean registrationAuthcFilterBean(JellyAuthService jellyAuthService) {
+        FilterRegistrationBean registration = new FilterRegistrationBean(authFilter(jellyAuthService));
         //取消自动注册功能 Filter自动注册,不会添加到FilterChain中.
         registration.setEnabled(false);
         return registration;
