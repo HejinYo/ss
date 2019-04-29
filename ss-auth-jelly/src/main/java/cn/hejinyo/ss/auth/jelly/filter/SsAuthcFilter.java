@@ -5,6 +5,7 @@ import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class SsAuthcFilter extends AccessControlFilter {
+
     @Autowired
     private JellyAuthService jellyAuthService;
 

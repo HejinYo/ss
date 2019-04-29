@@ -83,7 +83,13 @@ ss:
         - /favicon.ico
         - /actuator/**
         - /test/**
+        - /auth/**
       filterChainMap:
         - /test1/**;url
         - /test2/**;auth
         - /test3/**;url,auth
+
+# Feign 开启 Hystrix
+feign:
+  hystrix:
+    enabled: true
