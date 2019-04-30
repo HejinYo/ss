@@ -9,8 +9,7 @@
     <packaging>pom</packaging>
 
     <name>ss-auth-server</name>
-    <description>ss 授权认证服务</description>
-
+    <description>ss-auth-server 授权认证服务</description>
 
     <parent>
         <groupId>cn.hejinyo</groupId>

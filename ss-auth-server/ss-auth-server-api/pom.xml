@@ -6,14 +6,13 @@
     <artifactId>ss-auth-server-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ss-auth-server-api</name>
-    <description>Demo project for Spring Boot</description>
+    <description>ss-auth-server-api for ss</description>
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
         <artifactId>ss-auth-server</artifactId>
         <version>1.0</version>
     </parent>
-
 
     <dependencies>
 
@@ -24,6 +23,26 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>spring-boot-maven-plugin</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

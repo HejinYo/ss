@@ -9,7 +9,6 @@
     <name>ss-cloud-gateway</name>
     <description>cloud-gateway 网关服务</description>
 
-
     <parent>
         <groupId>cn.hejinyo</groupId>
         <artifactId>ss</artifactId>

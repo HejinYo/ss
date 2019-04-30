@@ -6,7 +6,7 @@
     <artifactId>ss-auth-server-business</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ss-auth-server-business</name>
-    <description>Demo project for Spring Boot</description>
+    <description>ss-auth-server-business for ss</description>
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>

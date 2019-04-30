@@ -6,7 +6,7 @@
     <artifactId>ss-jelly-manager-business</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>ss-jelly-manager-business</name>
-    <description>Demo project for Spring Boot</description>
+    <description>ss-jelly-manager-business for ss</description>
 
     <properties>
         <java.version>1.8</java.version>
