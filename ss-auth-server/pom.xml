@@ -3,6 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>cn.hejinyo.ss</groupId>
     <artifactId>ss-auth-server</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
@@ -24,5 +25,16 @@
         <!-- 业务模块 -->
         <module>ss-auth-server-business</module>
     </modules>
+    <dependencies>
+
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.6</version>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>

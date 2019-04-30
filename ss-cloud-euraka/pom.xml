@@ -10,8 +10,8 @@
     <description>cloud-euraka 服务注册中心</description>
 
     <parent>
-        <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-parent</artifactId>
+        <groupId>cn.hejinyo</groupId>
+        <artifactId>ss</artifactId>
         <version>1.0</version>
     </parent>
 

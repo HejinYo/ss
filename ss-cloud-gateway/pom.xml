@@ -9,13 +9,20 @@
     <name>ss-cloud-gateway</name>
     <description>cloud-gateway 网关服务</description>
 
+
     <parent>
-        <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-parent</artifactId>
+        <groupId>cn.hejinyo</groupId>
+        <artifactId>ss</artifactId>
         <version>1.0</version>
     </parent>
 
     <dependencies>
+
+        <!-- 服务注册 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
 
         <!-- gateway 网关 -->
         <dependency>

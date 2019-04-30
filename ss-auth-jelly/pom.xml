@@ -15,8 +15,8 @@
     </properties>
 
     <parent>
-        <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-parent</artifactId>
+        <groupId>cn.hejinyo</groupId>
+        <artifactId>ss</artifactId>
         <version>1.0</version>
     </parent>
 
@@ -43,17 +43,14 @@
             <version>2.1.1.RELEASE</version>
         </dependency>
 
-        <!-- HikariCP 连接池 -->
+        <!-- lombok -->
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.6</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- mysql 驱动 -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
