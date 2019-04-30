@@ -18,9 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthShiroConfig {
 
-    public static final String AUTH_FILTER = "auth";
+    private static final String AUTH_FILTER = "auth";
 
-    public static final String URL_FILTER = "url";
+    private static final String URL_FILTER = "url";
 
     /**
      * 基本认证拦截器
