@@ -16,6 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class SsAuthcFilter extends AccessControlFilter {
 
+    /**
+     * bean的方式依赖注入需要用构造器注入
+     */
     private JellyAuthService jellyAuthService;
 
     public SsAuthcFilter(JellyAuthService jellyAuthService) {

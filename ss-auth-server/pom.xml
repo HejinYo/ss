@@ -10,9 +10,10 @@
     <name>ss-auth-server</name>
     <description>ss 授权认证服务</description>
 
+
     <parent>
-        <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-cloud-parent</artifactId>
+        <groupId>cn.hejinyo</groupId>
+        <artifactId>ss</artifactId>
         <version>1.0</version>
     </parent>
 

@@ -10,34 +10,24 @@
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-auth-server</artifactId>
+        <artifactId>ss-cloud-parent</artifactId>
         <version>1.0</version>
     </parent>
 
     <dependencies>
+
+        <!-- 认证服务对外提供接口 -->
         <dependency>
             <groupId>cn.hejinyo.ss</groupId>
             <artifactId>ss-auth-server-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <!-- jelly 管理模块 -->
         <dependency>
             <groupId>cn.hejinyo.ss</groupId>
             <artifactId>ss-jelly-manager-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
-        <!-- spring mvc -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <!-- 声明式服务调用  -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>2.1.1.RELEASE</version>
         </dependency>
 
     </dependencies>

@@ -20,6 +20,7 @@
 
     <dependencies>
 
+        <!-- 对外开放api -->
         <dependency>
             <groupId>cn.hejinyo.ss</groupId>
             <artifactId>ss-jelly-manager-api</artifactId>
