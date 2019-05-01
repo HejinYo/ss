@@ -24,6 +24,7 @@
         <!-- 管理业务模块 -->
         <module>ss-jelly-manager-business</module>
     </modules>
+
     <dependencies>
 
         <!-- lombok -->

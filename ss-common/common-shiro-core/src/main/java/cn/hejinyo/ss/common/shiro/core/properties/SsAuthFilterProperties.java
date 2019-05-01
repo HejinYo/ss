@@ -6,7 +6,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 配置不需要拦截的uri路径和指定路径的拦截器
@@ -27,5 +29,5 @@ public class SsAuthFilterProperties {
     /**
      * 自定义拦截器和路径
      */
-    private List<String> filterChainMap = new ArrayList<>();
+    private Map<String,String> filterChainMap = new HashMap<>();
 }

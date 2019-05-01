@@ -11,6 +11,9 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 /**
  * @author : HejinYo   hejinyo@gmail.com
  * @date :  2019/4/25 22:49
@@ -36,7 +39,7 @@ public class AuthShiroConfig {
         filter.addFilter(AUTH_FILTER, authFilter(jellyAuthService));
         filter.addFilter(URL_FILTER, new SsUrlFilter());
         // 最后全部拦截
-        ssAuthFilterProperties.getFilterChainMap().add("/**;" + AUTH_FILTER);
+        ssAuthFilterProperties.getFilterChainMap().put("/**;",AUTH_FILTER);
         return filter;
     }
 

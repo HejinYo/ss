@@ -21,6 +21,7 @@
         <!-- shiro授权核心 -->
         <module>common-shiro-core</module>
     </modules>
+
     <dependencies>
 
         <!-- lombok -->

@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -78,10 +79,7 @@ public class SsShiroConfig {
             filterMap.put(path, "anon");
         });
         // 自定义拦截器链
-        ssAuthFilterProperties.getFilterChainMap().forEach(m -> {
-            String[] map = m.split(";");
-            filterMap.put(map[0], map[1]);
-        });
+        ssAuthFilterProperties.getFilterChainMap().forEach(filterMap::put);
         filterMap.forEach((k, v) -> {
             log.info("filterChainMapr ====> {},{}", k, v);
         });
