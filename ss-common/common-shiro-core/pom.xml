@@ -5,16 +5,16 @@
 
     <groupId>cn.hejinyo.ss.common</groupId>
     <artifactId>common-shiro-core</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>common-shiro-core</name>
-    <description>ss shiro-core 授权认证公共模块</description>
+    <description>shiro-core 授权认证公共模块</description>
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
         <artifactId>ss-common</artifactId>
-        <version>1.0</version>
+        <version>1.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
