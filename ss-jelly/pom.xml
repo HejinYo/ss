@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.hejinyo.ss</groupId>
-    <artifactId>ss-auth-server</artifactId>
+    <artifactId>ss-jelly</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>ss-auth-server</name>
-    <description>ss-auth-server 授权认证模块</description>
+    <name>ss-jelly-manager</name>
+    <description>jelly 后台管理模块</description>
 
     <parent>
         <groupId>cn.hejinyo</groupId>
@@ -18,12 +18,17 @@
     </parent>
 
     <modules>
-        <!-- 开放接口 -->
-        <module>ss-auth-server-api</module>
 
-        <!-- 业务模块 -->
-        <module>ss-auth-server-business</module>
+        <!-- 开放接口 -->
+        <module>ss-jelly-api</module>
+
+        <!-- 认证授权 -->
+        <module>ss-jelly-auth</module>
+
+        <!-- 管理业务模块 -->
+        <module>ss-jelly-server</module>
     </modules>
+
     <dependencies>
 
         <!-- lombok -->

@@ -42,10 +42,7 @@
 
     <modules>
         <!-- 微服务认证模块 -->
-        <module>ss-auth-server</module>
-
-        <!-- jelly平台认证拦截模块 -->
-        <module>ss-auth-jelly</module>
+        <module>ss-auth</module>
 
         <!-- 注册中心 -->
         <module>ss-cloud-euraka</module>
@@ -57,7 +54,7 @@
         <module>ss-common</module>
 
         <!-- 系统管理模块 -->
-        <module>ss-jelly-manager</module>
+        <module>ss-jelly</module>
 
     </modules>
 

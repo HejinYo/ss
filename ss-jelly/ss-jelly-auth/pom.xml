@@ -4,25 +4,48 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.hejinyo.ss.jelly</groupId>
-    <artifactId>ss-jelly-manager-api</artifactId>
+    <artifactId>ss-jelly-auth</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>ss-jelly-manager-api</name>
-    <description>jelly 后台管理开放接口</description>
+    <name>ss-jelly-auth</name>
+    <description>jelly 认证授权公共模块</description>
 
     <parent>
         <groupId>cn.hejinyo.ss</groupId>
-        <artifactId>ss-jelly-manager</artifactId>
+        <artifactId>ss-jelly</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
 
-        <!-- spring mvc -->
+        <!-- shiro core进行拦截 -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>cn.hejinyo.ss.common</groupId>
+            <artifactId>common-shiro-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- ss 认证服务 -->
+        <dependency>
+            <groupId>cn.hejinyo.ss.auth.server</groupId>
+            <artifactId>ss-auth-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!-- 声明式服务调用  -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>2.1.1.RELEASE</version>
+        </dependency>
+
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.6</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
