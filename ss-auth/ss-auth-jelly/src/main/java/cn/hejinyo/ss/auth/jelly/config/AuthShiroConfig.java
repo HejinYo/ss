@@ -39,7 +39,7 @@ public class AuthShiroConfig {
         filter.addFilter(AUTH_FILTER, authFilter(jellyAuthService));
         filter.addFilter(URL_FILTER, new SsUrlFilter());
         // 最后全部拦截
-        ssAuthFilterProperties.getFilterChainMap().put("/**;",AUTH_FILTER);
+        ssAuthFilterProperties.getFilterChainMap().put("/**",AUTH_FILTER);
         return filter;
     }
 
