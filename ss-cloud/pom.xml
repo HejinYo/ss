@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.hejinyo.ss</groupId>
-    <artifactId>ss-jelly</artifactId>
+    <artifactId>ss-cloud</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>ss-jelly-manager</name>
-    <description>jelly 后台管理模块</description>
+    <name>ss-cloud</name>
+    <description>ss-cloud 微服务中心</description>
 
     <parent>
         <groupId>cn.hejinyo</groupId>
@@ -19,11 +19,11 @@
 
     <modules>
 
-        <!-- 开放接口 -->
-        <module>ss-jelly-api</module>
+        <!-- 注册中心 -->
+        <module>ss-cloud-euraka</module>
 
-        <!-- 管理业务模块 -->
-        <module>ss-jelly-server</module>
+        <!-- 网关 -->
+        <module>ss-cloud-gateway</module>
     </modules>
 
     <dependencies>

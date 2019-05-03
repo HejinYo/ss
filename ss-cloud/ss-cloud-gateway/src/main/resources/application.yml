@@ -12,19 +12,20 @@ spring:
 server:
   port: 8020
 
+
 eureka:
   client:
     serviceUrl:
       defaultZone: http://hejinyo:password@localhost:8000/eureka
-    # »º´æÇåµ¥Ã¿¸ô30Ãë¸úĞÂÒ»´Î
+    # ç¼“å­˜æ¸…å•æ¯éš”30ç§’è·Ÿæ–°ä¸€æ¬¡
     registry-fetch-interval-seconds: 10
   instance:
-    hostname: ss-gateway
-    # ÊµÀıÊ¹ÓÃip½øĞĞ·ÃÎÊ
+    hostname: ss-gateway-server
+    # å®ä¾‹ä½¿ç”¨ipè¿›è¡Œè®¿é—®
     prefer-ip-address: true
-    # ÊµÀıÏÔÊ¾id
+    # å®ä¾‹æ˜¾ç¤ºid
     instance-id: ${spring.application.name}:${server.port}
-    # ·şÎñĞøÔ¼ÈÎÎñµ÷ÓÃ¼ä¸ôÊ±¼ä£¬Ä¬ÈÏ30Ãë
+    # æœåŠ¡ç»­çº¦ä»»åŠ¡è°ƒç”¨é—´éš”æ—¶é—´ï¼Œé»˜è®¤30ç§’
     lease-renewal-interval-in-seconds: 5
-    # ·şÎñÊ§Ğ§Ê±¼ä£¬Ä¬ÈÏ90Ãë
+    # æœåŠ¡å¤±æ•ˆæ—¶é—´ï¼Œé»˜è®¤90ç§’
     lease-expiration-duration-in-seconds: 20

@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.euraka.config;
+package cn.hejinyo.ss.cloud.euraka.config;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;

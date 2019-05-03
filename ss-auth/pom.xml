@@ -23,6 +23,9 @@
 
         <!-- 业务模块 -->
         <module>ss-auth-server</module>
+
+        <!-- jelly认证授权 -->
+        <module>ss-auth-jelly</module>
     </modules>
     <dependencies>
 

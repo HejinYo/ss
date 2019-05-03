@@ -9,7 +9,7 @@ server:
 spring:
   application:
     # 应用名称
-    name: calm-eureka-server
+    name: ss-eureka-server
   security:
     user:
       name: hejinyo

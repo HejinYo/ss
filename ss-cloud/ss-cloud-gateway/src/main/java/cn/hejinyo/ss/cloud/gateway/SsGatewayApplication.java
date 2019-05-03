@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.gateway;
+package cn.hejinyo.ss.cloud.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,10 +9,10 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 @EnableEurekaClient
-public class GatewayApplication {
+public class SsGatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GatewayApplication.class, args);
+        SpringApplication.run(SsGatewayApplication.class, args);
     }
 
     @Bean
