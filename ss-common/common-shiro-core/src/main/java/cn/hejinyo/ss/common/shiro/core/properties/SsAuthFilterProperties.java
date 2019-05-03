@@ -5,10 +5,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 配置不需要拦截的uri路径和指定路径的拦截器
@@ -29,5 +26,5 @@ public class SsAuthFilterProperties {
     /**
      * 自定义拦截器和路径
      */
-    private Map<String,String> filterChainMap = new HashMap<>();
+    private Map<String,String> filterChainMap = new LinkedHashMap<>();
 }

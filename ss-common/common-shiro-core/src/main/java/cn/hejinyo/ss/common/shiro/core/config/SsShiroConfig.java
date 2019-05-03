@@ -80,9 +80,7 @@ public class SsShiroConfig {
         });
         // 自定义拦截器链
         ssAuthFilterProperties.getFilterChainMap().forEach(filterMap::put);
-        filterMap.forEach((k, v) -> {
-            log.info("filterChainMapr ====> {},{}", k, v);
-        });
+        filterMap.forEach((k, v) -> log.info("filterChainMapr ====> {},{}", k, v));
         factoryBean.setFilterChainDefinitionMap(filterMap);
 
         log.info("ss-shiro-shiroFilter 初始化完成");
