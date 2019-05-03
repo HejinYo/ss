@@ -28,13 +28,13 @@
         <!-- 对外开放api -->
         <dependency>
             <groupId>cn.hejinyo.ss.jelly</groupId>
-            <artifactId>ss-jelly-manager-api</artifactId>
+            <artifactId>ss-jelly-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!-- 认证拦截模块 -->
         <dependency>
-            <groupId>cn.hejinyo.ss.auth.jelly</groupId>
+            <groupId>cn.hejinyo.ss.jelly</groupId>
             <artifactId>ss-auth-jelly</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
