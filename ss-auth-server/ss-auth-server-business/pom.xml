@@ -3,8 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>cn.hejinyo.ss.auth.server</groupId>
     <artifactId>ss-auth-server-business</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
     <name>ss-auth-server-business</name>
     <description>ss-auth-server-business for ss</description>
 
@@ -18,14 +21,14 @@
 
         <!-- 认证服务对外提供接口 -->
         <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
+            <groupId>cn.hejinyo.ss.auth.server</groupId>
             <artifactId>ss-auth-server-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- jelly 管理模块 -->
         <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
+            <groupId>cn.hejinyo.ss.jelly</groupId>
             <artifactId>ss-jelly-manager-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>

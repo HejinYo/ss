@@ -3,6 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>cn.hejinyo.ss.auth.client</groupId>
     <artifactId>ss-auth-jelly</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
@@ -20,14 +21,14 @@
 
         <!-- shiro core进行拦截 -->
         <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
+            <groupId>cn.hejinyo.ss.common</groupId>
             <artifactId>common-shiro-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- ss 认证服务 -->
         <dependency>
-            <groupId>cn.hejinyo.ss</groupId>
+            <groupId>cn.hejinyo.ss.auth.server</groupId>
             <artifactId>ss-auth-server-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
