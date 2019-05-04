@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.common.consts;
+package cn.hejinyo.ss.jelly.consts;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
@@ -18,42 +18,6 @@ public class Constant {
      */
     public static final Integer TREE_ROOT = 1;
 
-
-    /**
-     * 请求头中 JWT 的key
-     */
-    public static final String AUTHOR_PARAM = "x-access-token";
-
-    /**
-     * JWT 签名
-     */
-    public static final String JWT_SIGN_KEY = "jwt_hejinyo";
-
-    /**
-     * JWT token 用户名
-     */
-    public static final String JWT_TOKEN_USERNAME = "jtu";
-
-    /**
-     * JWT token 用户编号
-     */
-    public static final String JWT_TOKEN_USERID = "uid";
-
-    /**
-     * JWT 单用户登录
-     */
-    public static final String JWT_SINGLE_USER = "seu";
-
-    /**
-     * JWT_颁发给主体
-     */
-    public static final String JWT_SUB = "sub";
-
-    /**
-     * JWT_编号
-     */
-    public static final String JWT_ID = "jti";
-
     /**
      * server_jwt_sub
      */
@@ -62,7 +26,7 @@ public class Constant {
     /**
      * 服务内部接口前缀
      */
-    public static final String SERVER_API = "/clam-server/api/";
+    public static final String SERVER_API = "/ss-server/api/";
     public static final String SERVER_API_ANON = SERVER_API + "**";
 
     /**

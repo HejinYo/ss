@@ -1,10 +1,7 @@
 package cn.hejinyo.ss.common.utils;
 
-import cn.hejinyo.ss.common.consts.Constant;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
 import jodd.util.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -12,12 +9,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.UUID;
 
 /**
  * 字符串，字符，日期 工具类
@@ -110,70 +101,26 @@ public class Tools {
         return hs.toString();
     }
 
-
     /**
-     * 创建jwt token
-     * expires n小时后失效
-     * <p>
-     * iss: jwt签发者
-     * sub: jwt所面向的用户
-     * aud: 接收jwt的一方
-     * exp: jwt的过期时间，这个过期时间必须要大于签发时间
-     * nbf: 定义在什么时间之前，该jwt都是不可用的.
-     * iat: jwt的签发时间
-     * jti: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
+     * 生成用户密码
      */
-    public static String createToken(String subject, boolean singleUser, int userId, String username, String key, int expires) {
-        return JWT.create()
-                // 签发时间
-                .withIssuedAt(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()))
-                // 过期时间
-                .withExpiresAt(Date.from(LocalDateTime.now().plus(expires, ChronoUnit.HOURS).atZone(ZoneId.systemDefault()).toInstant()))
-                // 颁发给主体
-                .withSubject(subject)
-                // jwt 的id
-                .withJWTId(UUID.randomUUID().toString())
-                // 是否单用户登录
-                .withClaim(Constant.JWT_SINGLE_USER, singleUser)
-                // 用户id
-                .withClaim(Constant.JWT_TOKEN_USERID, userId)
-                // 用户名
-                .withClaim(Constant.JWT_TOKEN_USERNAME, username)
-                // 加密方式
-                .sign(Algorithm.HMAC256(key));
-    }
-
-    /**
-     * 验证token 有效性
-     */
-    public static void verifyToken(String token, String password) throws UnsupportedEncodingException {
-        JWT.require(Algorithm.HMAC256(password)).build().verify(token);
+    public static String buildPassword(String userPwd, String salt) {
+        return DigestUtils.sha1Hex(userPwd + salt);
     }
 
 
     /**
-     * 获得token 信息
+     * 验证用户密码
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T tokenInfo(String token, String key, Class<T> clazz) {
-        Claim claim = JWT.decode(token).getClaim(key);
-        switch (clazz.getSimpleName()) {
-            case "Boolean":
-                return (T) claim.asBoolean();
-            case "Integer":
-                return (T) claim.asInt();
-            default:
-                return (T) claim.asString();
+    public static boolean checkPassword(String userPwd, String salt, String encryption) {
+        if (StringUtils.isNotEmpty(encryption)) {
+            return encryption.equals(Tools.buildPassword(userPwd, salt));
         }
+        return false;
     }
 
-
-    /**************************** 测试 *********************************/
-    public static void main(String agrs[]) {
-        System.out.println(createToken("jelly", false, 1, "hejinyo", "jwt_hejinyo", 24));
-        /*String[] str = encryptDBPassword("");
-        for (String s : str) {
-            System.out.println(s);
-        }*/
+    public static void main(String[] args) {
+        System.out.println();
+        System.out.println(buildPassword("123456", "a1c7691854ff3721eee656af7e7b6529"));
     }
 }

@@ -18,17 +18,18 @@
     </parent>
 
     <dependencies>
-        <!-- common-exception -->
+
+        <!-- common-framework -->
         <dependency>
             <groupId>cn.hejinyo.ss.common</groupId>
-            <artifactId>common-exception</artifactId>
+            <artifactId>common-framework</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <!-- common-utils -->
+        <!-- common-redis -->
         <dependency>
             <groupId>cn.hejinyo.ss.common</groupId>
-            <artifactId>common-utils</artifactId>
+            <artifactId>common-redis</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

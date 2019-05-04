@@ -1,5 +1,6 @@
-package cn.hejinyo.ss.common.utils;
+package cn.hejinyo.ss.common.framework.utils;
 
+import cn.hejinyo.ss.common.utils.StringUtils;
 import lombok.Getter;
 import org.apache.commons.collections4.MapUtils;
 

@@ -24,6 +24,8 @@
         <module>common-model</module>
         <module>common-utils</module>
         <module>common-exception</module>
+        <module>common-framework</module>
+        <module>common-redis</module>
     </modules>
 
     <dependencies>

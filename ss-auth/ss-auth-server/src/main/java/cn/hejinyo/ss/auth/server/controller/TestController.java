@@ -21,4 +21,9 @@ public class TestController {
     public Object info(@PathVariable Integer userId) {
         return jellySysUserService.getUserInfo(userId);
     }
+
+    @GetMapping("/user/role/{userId}")
+    public Object role(@PathVariable Integer userId) {
+        return jellySysUserService.getUserRoleSet(userId);
+    }
 }

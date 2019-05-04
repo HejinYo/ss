@@ -1,4 +1,6 @@
-package cn.hejinyo.ss.common.consts;
+package cn.hejinyo.ss.common.framework.consts;
+
+import cn.hejinyo.ss.common.consts.BaseStatusCode;
 
 /**
  * 业务状态码
@@ -6,12 +8,12 @@ package cn.hejinyo.ss.common.consts;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2017/8/5 18:25
  */
-public enum StatusCode {
+public enum StatusCode implements BaseStatusCode {
     /**
      * 业务状态码
      */
-    FAILURE(-1, "失败"),
-    SUCCESS(0, "成功"),
+    FAILURE(0, "失败"),
+    SUCCESS(1, "成功"),
     PARAMETER_ERROR(1001, "提交参数不符合规范"),
     USERTOKEN_PARAMETER_ERROR(1002, "请登录后继续操作"),
     LOGIN_FAILURE(1110, "登录失败"),
@@ -47,10 +49,12 @@ public enum StatusCode {
         this.msg = msg;
     }
 
+    @Override
     public int getCode() {
         return code;
     }
 
+    @Override
     public String getMsg() {
         return msg;
     }

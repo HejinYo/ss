@@ -15,13 +15,10 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2017/6/22 21:24
  */
-@Slf4j
 public class PojoConvertUtil {
     private static Lock initLock = new ReentrantLock();
 
@@ -115,7 +112,7 @@ public class PojoConvertUtil {
             return target;
 
         } catch (Exception e) {
-            //ølog.error("对象拷贝失败,{}", e);
+            //log.error("对象拷贝失败,{}", e);
             throw new RuntimeException("对象拷贝失败" + source + "_" + targetClass);
         }
     }

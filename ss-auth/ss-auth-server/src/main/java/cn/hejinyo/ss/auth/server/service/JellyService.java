@@ -2,7 +2,6 @@ package cn.hejinyo.ss.auth.server.service;
 
 
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
-import cn.hejinyo.ss.jelly.dto.PhoneLoginDTO;
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import cn.hejinyo.ss.jelly.dto.UserNameLoginDTO;
 
@@ -43,14 +42,4 @@ public interface JellyService {
      * 注销
      */
     void logout(String token);
-
-    /**
-     * 发送电话登录验证码
-     */
-    boolean sendPhoneCode(String phone);
-
-    /**
-     * 手机用户登录
-     */
-    SysUserDTO phoneLogin(PhoneLoginDTO phoneLogin);
 }

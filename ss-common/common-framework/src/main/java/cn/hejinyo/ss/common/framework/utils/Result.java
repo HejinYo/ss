@@ -1,6 +1,6 @@
-package cn.hejinyo.ss.common.utils;
+package cn.hejinyo.ss.common.framework.utils;
 
-import cn.hejinyo.ss.common.consts.StatusCode;
+import cn.hejinyo.ss.common.framework.consts.StatusCode;
 
 import java.util.HashMap;
 

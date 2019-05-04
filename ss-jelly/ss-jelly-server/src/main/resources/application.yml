@@ -15,8 +15,8 @@ spring:
     hibernate:
       ddl-auto: none
   redis:
-    host: 127.0.0.1
-    port: 6379
+    host: m.hejinyo.cn
+    port: 6388
     password: redhat
     database: 1
   datasource:
@@ -84,6 +84,8 @@ ss:
         - /actuator/**
         - /test/**
         - /auth/**
+        - /auth/**
+        - /ss-server/api/**
       filterChainMap:
         '[/test1/**]': url
         '[/test2/**]': auth

@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.common.utils;
+package cn.hejinyo.ss.common.framework.utils;
 
 import com.github.pagehelper.Page;
 

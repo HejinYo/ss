@@ -3,6 +3,7 @@ package cn.hejinyo.ss.auth.server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
 
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients
 @SpringBootApplication
+@ComponentScan({"cn.hejinyo.ss.common.redis", "cn.hejinyo.ss.auth.server"})
 public class SsAuthServerApplication {
 
     public static void main(String[] args) {

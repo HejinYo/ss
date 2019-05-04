@@ -10,8 +10,8 @@ spring:
     # 应用名称
     name: ss-auth-server
   redis:
-    host: 127.0.0.1
-    port: 6379
+    host: m.hejinyo.cn
+    port: 6388
     password: redhat
     database: 1
 
