@@ -20,6 +20,10 @@
     <modules>
         <!-- shiro授权核心 -->
         <module>common-shiro-core</module>
+        <module>common-consts</module>
+        <module>common-model</module>
+        <module>common-utils</module>
+        <module>common-exception</module>
     </modules>
 
     <dependencies>
