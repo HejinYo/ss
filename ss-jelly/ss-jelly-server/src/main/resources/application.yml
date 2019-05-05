@@ -82,14 +82,8 @@ ss:
       anonPath:
         - /favicon.ico
         - /actuator/**
-        - /test/**
-        - /auth/**
-        - /auth/**
-        - /ss-server/api/**
       filterChainMap:
-        '[/test1/**]': url
-        '[/test2/**]': auth
-        '[/test3/**]': url,auth
+        '[/test/**]': url
 
 # Feign 开启 Hystrix
 feign:
