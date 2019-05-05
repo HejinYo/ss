@@ -1,6 +1,7 @@
 package cn.hejinyo.ss.auth.server.controller;
 
 import cn.hejinyo.ss.auth.server.service.JellyService;
+import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.framework.utils.JwtTools;
 import cn.hejinyo.ss.common.framework.utils.Result;
 import cn.hejinyo.ss.common.model.validator.RestfulValid;
@@ -19,12 +20,11 @@ import javax.servlet.http.HttpServletRequest;
  * @date :  2018/9/1 22:47
  */
 @RestController
-@RequestMapping("/jelly")
+@RequestMapping("/" + CommonConstant.JELLY_AUTH)
 public class JellyLoginController {
 
     @Autowired
     private JellyService jellyService;
-
 
     /**
      * 执行登录,返回userToken

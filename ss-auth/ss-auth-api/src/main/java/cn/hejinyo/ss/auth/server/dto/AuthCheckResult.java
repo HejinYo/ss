@@ -11,8 +11,12 @@ import java.util.Set;
  */
 @Data
 public class AuthCheckResult implements Serializable {
+
     private static final long serialVersionUID = 1L;
+
     private boolean isPass;
+
     private Set<String> roleSet;
+
     private Set<String> permSet;
 }

@@ -4,7 +4,7 @@ package cn.hejinyo.ss.jelly.consts;
  * @author : HejinYo   hejinyo@gmail.com
  * @date :  2018/1/29 23:12
  */
-public class Constant {
+public class JellyConstant {
     /**
      * 数据权限过滤
      */
@@ -128,37 +128,6 @@ public class Constant {
         }
     }
 
-    /**
-     * 通用状态
-     */
-    public enum Status {
-        /**
-         * 正常
-         */
-        NORMAL(0),
-        /**
-         * 禁用
-         */
-        DISABLE(1),
-        /**
-         * 锁定
-         */
-        LOCK(2);
-
-        private Integer value;
-
-        Status(Integer value) {
-            this.value = value;
-        }
-
-        public Integer getValue() {
-            return value;
-        }
-
-        public boolean equals(Integer value) {
-            return value != null && value.equals(this.value);
-        }
-    }
 
     /**
      * 数据类型

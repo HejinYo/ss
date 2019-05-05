@@ -3,12 +3,12 @@ package cn.hejinyo.ss.auth.server.service.impl;
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
 import cn.hejinyo.ss.auth.server.feign.JellySysUserService;
 import cn.hejinyo.ss.auth.server.service.JellyService;
+import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.framework.consts.StatusCode;
 import cn.hejinyo.ss.common.framework.exception.InfoException;
 import cn.hejinyo.ss.common.framework.utils.JwtTools;
 import cn.hejinyo.ss.common.redis.utils.RedisUtils;
 import cn.hejinyo.ss.common.utils.Tools;
-import cn.hejinyo.ss.jelly.consts.Constant;
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import cn.hejinyo.ss.jelly.dto.UserNameLoginDTO;
 import cn.hejinyo.ss.jelly.tools.JellyRedisKeys;
@@ -44,10 +44,9 @@ public class JellyServiceImpl implements JellyService {
         // 如果无相关用户或已删除则返回null
         if (null == userDTO) {
             throw new InfoException(StatusCode.LOGIN_USER_NOEXIST);
-        } else if (Constant.Status.DISABLE.equals(userDTO.getState())) {
+        } else if (CommonConstant.Status.DISABLE.equals(userDTO.getState())) {
             throw new InfoException(StatusCode.LOGIN_USER_LOCK);
         }
-        log.debug("userDTO=====>{}",userDTO);
         //验证密码
         if (!Tools.checkPassword(nameLoginVO.getUserPwd(), userDTO.getUserSalt(), userDTO.getUserPwd())) {
             throw new InfoException(StatusCode.LOGIN_PASSWORD_ERROR);
@@ -63,7 +62,8 @@ public class JellyServiceImpl implements JellyService {
     public String doLogin(SysUserDTO userDTO) {
         Integer userId = userDTO.getUserId();
         //创建jwt token
-        String token = JwtTools.createToken("jelly", true, userId, userDTO.getUserName(), JwtTools.JWT_SIGN_KEY, Constant.JWT_EXPIRES_DEFAULT);
+        String token = JwtTools.createToken(CommonConstant.JELLY_AUTH, true,
+                userId, userDTO.getUserName(), JwtTools.JWT_SIGN_KEY, CommonConstant.JWT_EXPIRES_DEFAULT);
         String jti = JwtTools.tokenInfo(token, JwtTools.JWT_ID, String.class);
         redisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, jti);
         return token;
@@ -116,7 +116,7 @@ public class JellyServiceImpl implements JellyService {
     public AuthCheckResult checkToken(Integer userId, String jti) {
         String checkJti = redisUtils.hget(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, String.class);
         AuthCheckResult result = new AuthCheckResult();
-        // 需要优化，减少请求redis次数
+        // 需要优化，减少请求redis次数 TODO
         if (jti.equals(checkJti)) {
             result.setPass(true);
             result.setRoleSet(getUserRoleSet(userId));

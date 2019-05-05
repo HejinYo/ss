@@ -4,6 +4,7 @@ import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
 import cn.hejinyo.ss.auth.jelly.filter.SsAuthcFilter;
 import cn.hejinyo.ss.auth.jelly.filter.SsUrlFilter;
 import cn.hejinyo.ss.auth.jelly.realm.SsAuthRealm;
+import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.shiro.core.config.SsFilterConfig;
 import cn.hejinyo.ss.common.shiro.core.config.SsRealmConfig;
 import cn.hejinyo.ss.common.shiro.core.properties.SsAuthFilterProperties;
@@ -38,8 +39,10 @@ public class AuthShiroConfig {
         SsFilterConfig filter = new SsFilterConfig();
         filter.addFilter(AUTH_FILTER, authFilter(jellyAuthService));
         filter.addFilter(URL_FILTER, new SsUrlFilter());
+        // 微服务不拦截
+        ssAuthFilterProperties.getAnonPath().add(CommonConstant.MICRO_SERVER_API + "/**");
         // 最后全部拦截
-        ssAuthFilterProperties.getFilterChainMap().put("/**",AUTH_FILTER);
+        ssAuthFilterProperties.getFilterChainMap().put("/**", AUTH_FILTER);
         return filter;
     }
 

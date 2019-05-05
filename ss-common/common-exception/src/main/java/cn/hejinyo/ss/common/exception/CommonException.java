@@ -42,7 +42,7 @@ public class CommonException extends RuntimeException {
         this.code = code;
     }
 
-    int getCode() {
+    public int getCode() {
         return code;
     }
 }

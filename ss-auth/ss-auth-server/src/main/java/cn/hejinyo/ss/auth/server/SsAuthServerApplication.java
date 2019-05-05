@@ -15,7 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @EnableFeignClients
 @SpringBootApplication
-@ComponentScan({"cn.hejinyo.ss.common.redis", "cn.hejinyo.ss.auth.server"})
+@ComponentScan({"cn.hejinyo.ss.common.redis","cn.hejinyo.ss.common.framework", "cn.hejinyo.ss.auth.server"})
 public class SsAuthServerApplication {
 
     public static void main(String[] args) {

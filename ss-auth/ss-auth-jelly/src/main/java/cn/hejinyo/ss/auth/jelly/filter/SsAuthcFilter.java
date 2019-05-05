@@ -1,7 +1,8 @@
 package cn.hejinyo.ss.auth.jelly.filter;
 
 import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
-import cn.hejinyo.ss.auth.jelly.token.ResponseUtils;
+import cn.hejinyo.ss.common.consts.CommonConstant;
+import cn.hejinyo.ss.common.framework.utils.ResponseUtils;
 import cn.hejinyo.ss.auth.jelly.token.SsAuthToken;
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
 import cn.hejinyo.ss.common.framework.consts.StatusCode;
@@ -51,7 +52,7 @@ public class SsAuthcFilter extends AccessControlFilter {
                 JwtTools.verifyToken(userToken, JwtTools.JWT_SIGN_KEY);
                 String sub = JwtTools.tokenInfo(userToken, JwtTools.JWT_SUB, String.class);
                 // 只允许jelly登录用户访问
-                if ("jelly".equals(sub)) {
+                if (CommonConstant.JELLY_AUTH.equals(sub)) {
                     Integer userId = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERID, Integer.class);
                     String jti = JwtTools.tokenInfo(userToken, JwtTools.JWT_ID, String.class);
                     AuthCheckResult result = jellyAuthService.checkToken(userId, jti);

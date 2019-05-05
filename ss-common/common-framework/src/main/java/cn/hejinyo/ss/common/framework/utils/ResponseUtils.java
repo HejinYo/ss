@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.jelly.token;
+package cn.hejinyo.ss.common.framework.utils;
 
 import cn.hejinyo.ss.common.framework.utils.Result;
 import cn.hejinyo.ss.common.utils.JsonUtil;

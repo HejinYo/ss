@@ -1,6 +1,6 @@
 package cn.hejinyo.ss.jelly.service;
 
-import cn.hejinyo.ss.jelly.consts.Constant;
+import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +13,7 @@ import java.util.Set;
  * @date : 2019/04/27 00:57
  */
 
-@RequestMapping(Constant.SERVER_API)
+@RequestMapping(CommonConstant.MICRO_SERVER_API)
 public interface SysUserApiService {
 
     /**

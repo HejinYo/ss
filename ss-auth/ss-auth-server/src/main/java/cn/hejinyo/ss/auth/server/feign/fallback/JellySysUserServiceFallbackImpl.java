@@ -1,7 +1,6 @@
 package cn.hejinyo.ss.auth.server.feign.fallback;
 
 import cn.hejinyo.ss.auth.server.feign.JellySysUserService;
-import cn.hejinyo.ss.jelly.consts.Constant;
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
