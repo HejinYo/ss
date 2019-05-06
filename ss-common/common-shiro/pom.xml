@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cn.hejinyo.ss.common</groupId>
-    <artifactId>common-shiro-core</artifactId>
+    <artifactId>common-shiro</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>common-shiro-core</name>
+    <name>common-shiro</name>
     <description>shiro-core 授权认证公共模块</description>
 
     <parent>
