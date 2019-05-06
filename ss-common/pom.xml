@@ -26,6 +26,7 @@
         <module>common-exception</module>
         <module>common-framework</module>
         <module>common-redis</module>
+        <module>common-generator</module>
     </modules>
 
     <dependencies>

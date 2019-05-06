@@ -1,11 +1,9 @@
 package cn.hejinyo.ss.common.framework.exception;
 
 import cn.hejinyo.ss.common.consts.CommonConstant;
-import cn.hejinyo.ss.common.framework.consts.StatusCode;
 import cn.hejinyo.ss.common.framework.utils.ResponseUtils;
 import cn.hejinyo.ss.common.framework.utils.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -39,15 +37,6 @@ public class ExceptionHandle {
         } else {
             ResponseUtils.response(response, HttpStatus.OK.value(), Result.error(e.getCode(), e.getMessage()));
         }
-    }
-
-    /**
-     * 401 UNAUTHORIZED，无权限
-     */
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler({UnauthorizedException.class})
-    public Result shiroException(UnauthorizedException ex, HttpServletResponse response) {
-        return Result.error(StatusCode.USER_UNAUTHORIZED);
     }
 
     /**
