@@ -2,6 +2,7 @@ package config;
 
 import com.alibaba.fastjson.JSON;
 import com.mysql.jdbc.StringUtils;
+import ftl.FreeMarkerGen;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
@@ -23,6 +24,11 @@ import static config.SqlIdEnum.*;
 public class GenPlugin extends PluginAdapter {
 
     private static final String FOUR_BLANK = "    ";
+
+    private static final String ID = "id";
+    private static final String TYPE = "type";
+    private static final String PARAMETER_TYPE = "parameterType";
+    private static final String RESULT_MAP = "resultMap";
 
     @Override
     public boolean validate(List<String> warnings) {
@@ -113,6 +119,7 @@ public class GenPlugin extends PluginAdapter {
     @Override
     public boolean sqlMapDocumentGenerated(Document document, IntrospectedTable introspectedTable) {
         XmlElement oldElement = document.getRootElement();
+        FreeMarkerGen.build(document, introspectedTable);
         System.out.println("\n\n\n\n\n\n");
         System.out.println("接口全类名 ===>\t" + oldElement.getAttributes().get(0).getValue());
         System.out.println("实体类全类名 ===>\t" + introspectedTable.getBaseRecordType());
@@ -147,17 +154,17 @@ public class GenPlugin extends PluginAdapter {
                 if (xmlElement.getAttributes() != null) {
                     for (Attribute attribute : xmlElement.getAttributes()) {
                         // 获取ID名称
-                        if (attribute.getName().equals(AttributesNameEnum.ID.getValue())) {
+                        if (attribute.getName().equals(ID)) {
                             cotentMap.put(attribute.getValue(), xmlElement);
                         }
 
                         // 参数类型
-                        if (attribute.getName().equals(AttributesNameEnum.PARAMETER_TYPE.getValue())) {
+                        if (attribute.getName().equals(PARAMETER_TYPE)) {
                             parameterType = attribute.getValue();
                         }
 
                         // 結果集映射
-                        if (attribute.getName().equals(AttributesNameEnum.RESULT_MAP.getValue())) {
+                        if (attribute.getName().equals(RESULT_MAP)) {
                             resultMap = attribute.getValue();
                         }
 
@@ -196,7 +203,7 @@ public class GenPlugin extends PluginAdapter {
 
         // 通用查询sql
         XmlElement baseWhereSql = new XmlElement("sql");
-        baseWhereSql.addAttribute(new Attribute(AttributesNameEnum.ID.getValue(), BASE_WHERE_SQL.getNewValue()));
+        baseWhereSql.addAttribute(new Attribute(ID, BASE_WHERE_SQL.getNewValue()));
         baseWhereSql.addElement(new TextElement(bulidWhereQueryList(introspectedTable, false)));
         rootElement.addElement(new TextElement(xmlAnnotation(BASE_WHERE_SQL.getState(), 1)));
         rootElement.addElement(baseWhereSql);
@@ -260,6 +267,7 @@ public class GenPlugin extends PluginAdapter {
             count++;
             String columnName = MyBatis3FormattingUtilities.getEscapedColumnName(introspectedColumn);
             String javaProperty = introspectedColumn.getJavaProperty();
+            // 如果不是自增，可以代表自增主键
             if (!introspectedColumn.isAutoIncrement()) {
                 whereList.append("<if test=\"").append(javaProperty).append(" != null and !&quot;&quot;.equals(").append(javaProperty).append(")\">");
                 if (format) {

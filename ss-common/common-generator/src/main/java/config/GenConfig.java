@@ -17,8 +17,13 @@ import java.util.List;
  * @date :  2019/5/10 22:41
  */
 public class GenConfig {
-    private static final String FILE_PATH = "ss-common/common-generator/src/main/java";
-    private static final String PACKAGE_PATH = "cn.hejinyo.ss";
+    public static final String TEMPLATE_PATH = "ss-common/common-generator/src/main/java/ftl";
+    public static final String FILE_PATH = "ss-common/common-generator/src/main/java";
+    public static final String DTO_PACKAGE_PATH = "cn.hejinyo.ss.entity";
+    public static final String PACKAGE_PATH = "cn.hejinyo.ss";
+    private static final String TABLE_NAME = "sys_user";
+    private static final String DOMAIN_OBJECT_NAME = "_entity";
+    private static final String MAPPER_NAME = "_mapper";
 
     public static void main(String[] args) throws InvalidConfigurationException, InterruptedException, SQLException, IOException {
         List<String> warnings = new ArrayList<>();
@@ -100,9 +105,9 @@ public class GenConfig {
 
         // 设置需要生成代码的表名称
         TableConfiguration tableConfiguration = new TableConfiguration(context);
-        tableConfiguration.setTableName("sys_user");
-        tableConfiguration.setDomainObjectName(UnderlineToHump(tableConfiguration.getTableName() + "_entity"));
-        tableConfiguration.setMapperName(UnderlineToHump(tableConfiguration.getTableName() + "_mapper"));
+        tableConfiguration.setTableName(TABLE_NAME);
+        tableConfiguration.setDomainObjectName(UnderlineToHump(tableConfiguration.getTableName() + DOMAIN_OBJECT_NAME));
+        tableConfiguration.setMapperName(UnderlineToHump(tableConfiguration.getTableName() + MAPPER_NAME));
         tableConfiguration.setInsertStatementEnabled(true);
         tableConfiguration.setSelectByPrimaryKeyStatementEnabled(true);
         tableConfiguration.setDeleteByPrimaryKeyStatementEnabled(true);
@@ -130,7 +135,7 @@ public class GenConfig {
     /**
      * 下划线转首字母大写驼峰
      */
-    private static String UnderlineToHump(String para) {
+    public static String UnderlineToHump(String para) {
         StringBuilder result = new StringBuilder();
         String[] a = para.split("_");
         for (String s : a) {
