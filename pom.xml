@@ -71,6 +71,9 @@
         <!-- 系统管理模块 -->
         <module>ss-jelly</module>
 
+        <!-- elasticsearch -->
+        <module>ss-elasticsearch</module>
+
     </modules>
 
     <!-- 使用aliyun镜像 -->
