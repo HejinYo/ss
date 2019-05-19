@@ -41,7 +41,7 @@ public class FormDataService {
                 String[] keys = key.split("\\.");
                 dataParam.setQueryKey(buildJsonExtract(keys, 1, keys[0]));
             } else if (key.contains(".")) {
-                dataParam.setQueryKey(key.replace("data.", "data->'$.") + "'");
+                dataParam.setQueryKey(key.replaceFirst("\\.", "->'\\$.") + "'");
             } else {
                 dataParam.setQueryKey(key);
             }
