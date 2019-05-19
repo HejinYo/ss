@@ -1,13 +1,12 @@
 package cn.hejinyo.ss.mysql.service;
 
-import cn.hejinyo.ss.mysql.entity.FormDataEntity;
 import cn.hejinyo.ss.mysql.dto.FormDataParam;
 import cn.hejinyo.ss.mysql.dto.FormDataQuery;
+import cn.hejinyo.ss.mysql.entity.FormDataEntity;
 import cn.hejinyo.ss.mysql.mapper.FormDataMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +17,9 @@ import java.util.Optional;
  */
 @Service
 public class FormDataService {
+
+    private final static String REGEX = "^[0-9]+.*|.*\\.[0-9]+.*";
+    private final static String REGEX_PORINT = "^[0-9]+.*";
 
     @Autowired
     private FormDataMapper formDataMapper;
@@ -34,14 +36,12 @@ public class FormDataService {
             FormDataParam dataParam = new FormDataParam();
             dataParam.setValue(value);
             dataParam.setType(0);
-            if (key.contains(".")) {
+            if (key.matches(REGEX)) {
                 // 查询DATA数据
                 String[] keys = key.split("\\.");
-                String queryStr = "";
-                for (int i = 0; i < keys.length - 1; i++) {
-                    queryStr = buildJsonExtract(keys, 1, "data");
-                }
-                dataParam.setQueryKey(queryStr);
+                dataParam.setQueryKey(buildJsonExtract(keys, 1, keys[0]));
+            } else if (key.contains(".")) {
+                dataParam.setQueryKey(key.replace("data.", "data->'$.") + "'");
             } else {
                 dataParam.setQueryKey(key);
             }
