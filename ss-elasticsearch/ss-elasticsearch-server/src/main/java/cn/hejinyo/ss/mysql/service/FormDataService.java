@@ -34,7 +34,7 @@ public class FormDataService {
             FormDataParam dataParam = new FormDataParam();
             dataParam.setValue(value);
             dataParam.setType(0);
-            if (key.startsWith("data.")) {
+            if (key.contains(".")) {
                 // 查询DATA数据
                 String[] keys = key.split("\\.");
                 String queryStr = "";
