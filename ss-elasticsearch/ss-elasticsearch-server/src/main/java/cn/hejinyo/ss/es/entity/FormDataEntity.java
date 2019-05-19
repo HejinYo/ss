@@ -16,7 +16,7 @@ import java.util.Date;
  * @date : 2019/05/13 14:30
  */
 @Data
-@Document(indexName = "form_data", type = "data")
+@Document(indexName = "hejinyo", type = "form")
 public class FormDataEntity implements Serializable {
 
     /**

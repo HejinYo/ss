@@ -4,6 +4,7 @@ import cn.hejinyo.ss.common.utils.JsonUtil;
 import cn.hejinyo.ss.es.entity.FormDataEntity;
 import cn.hejinyo.ss.es.mapper.FormDataMapper;
 import io.swagger.annotations.Api;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
