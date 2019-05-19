@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.es;
+package cn.hejinyo.ss;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

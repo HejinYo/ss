@@ -16,8 +16,12 @@ import java.util.Date;
  * @date : 2019/05/13 14:30
  */
 @Data
-@Document(indexName = "hejinyo", type = "form")
+@Document(indexName = "ibuild-form", type = "form-data")
 public class FormDataEntity implements Serializable {
+    /**
+	 * 企业编号 OrganizationCode
+	 **/
+    private String organizationcode;
 
     /**
      * 数据编号 SysNo

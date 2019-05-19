@@ -11,5 +11,5 @@ import org.springframework.stereotype.Component;
  * @date : 2019/05/13 14:30
  */
 @Component
-public interface FormDataMapper extends ElasticsearchRepository<FormDataEntity, Integer> {
+public interface FormDataRepository extends ElasticsearchRepository<FormDataEntity, Integer> {
 }

@@ -17,9 +17,9 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # jdbc_config   datasource
-    url: jdbc:mysql://m.hejinyo.cn:3306/ss_auth?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://localhost:3306/yz_ibuild_form?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
     username: root
-    password: Redhat@2018
+    password: redhat
     # Hikari will use the above plus the following to setup connection pooling
     type: com.zaxxer.hikari.HikariDataSource
     hikari.minimum-idle: 5
@@ -78,3 +78,10 @@ eureka:
 feign:
   hystrix:
     enabled: true
+
+
+mybatis:
+  #type-aliases-package: cn.hejinyo
+  mapper-locations: classpath*:cn/hejinyo/ss/mysql/mapper/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true

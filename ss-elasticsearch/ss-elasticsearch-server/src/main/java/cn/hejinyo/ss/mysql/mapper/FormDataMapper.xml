@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hejinyo.ss.mysql.mapper.FormDataMapper">
+
+    <!-- 实体映射 -->
+    <resultMap id="BaseResultMap" type="cn.hejinyo.ss.mysql.entity.FormDataEntity">
+        <id column="SysNo" jdbcType="INTEGER" property="sysno"/>
+        <result column="OrganizationCode" jdbcType="CHAR" property="organizationcode"/>
+        <result column="FormSysNo" jdbcType="INTEGER" property="formsysno"/>
+        <result column="Data" jdbcType="CHAR" property="data"/>
+        <result column="FlowStatus" jdbcType="BIT" property="flowstatus"/>
+        <result column="CommonStatus" jdbcType="BIT" property="commonstatus"/>
+        <result column="InUserSysNo" jdbcType="INTEGER" property="inusersysno"/>
+        <result column="InUserName" jdbcType="VARCHAR" property="inusername"/>
+        <result column="InDate" jdbcType="TIMESTAMP" property="indate"/>
+        <result column="EditUserSysNo" jdbcType="INTEGER" property="editusersysno"/>
+        <result column="EditUserName" jdbcType="VARCHAR" property="editusername"/>
+        <result column="EditDate" jdbcType="TIMESTAMP" property="editdate"/>
+    </resultMap>
+
+    <!-- 表基本列 -->
+    <sql id="Base_Column_List">
+        SysNo, OrganizationCode, FormSysNo, Data, FlowStatus, CommonStatus, InUserSysNo,
+    InUserName, InDate, EditUserSysNo, EditUserName, EditDate
+    </sql>
+
+    <!-- 通用查询sql -->
+    <sql id="Base_Where_SQL">
+        <if test="organizationcode != null and !&quot;&quot;.equals(organizationcode)">and OrganizationCode = #{organizationcode}</if>
+        <if test="formsysno != null and !&quot;&quot;.equals(formsysno)">and FormSysNo = #{formsysno}</if>
+        <if test="data != null and !&quot;&quot;.equals(data)">and Data = #{data}</if>
+        <if test="flowstatus != null and !&quot;&quot;.equals(flowstatus)">and FlowStatus = #{flowstatus}</if>
+        <if test="commonstatus != null and !&quot;&quot;.equals(commonstatus)">and CommonStatus = #{commonstatus}</if>
+        <if test="inusersysno != null and !&quot;&quot;.equals(inusersysno)">and InUserSysNo = #{inusersysno}</if>
+        <if test="inusername != null and !&quot;&quot;.equals(inusername)">and InUserName = #{inusername}</if>
+        <if test="indate != null and !&quot;&quot;.equals(indate)">and InDate = #{indate}</if>
+        <if test="editusersysno != null and !&quot;&quot;.equals(editusersysno)">and EditUserSysNo = #{editusersysno}</if>
+        <if test="editusername != null and !&quot;&quot;.equals(editusername)">and EditUserName = #{editusername}</if>
+        <if test="editdate != null and !&quot;&quot;.equals(editdate)">and EditDate = #{editdate}</if>
+    </sql>
+
+    <!-- 保存一条记录 -->
+    <insert id="save" keyProperty="sysno" parameterType="cn.hejinyo.ss.mysql.entity.FormDataEntity" useGeneratedKeys="true">
+        insert into form_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != organizationcode">OrganizationCode,</if>
+            <if test="null != formsysno">FormSysNo,</if>
+            <if test="null != data">Data,</if>
+            <if test="null != flowstatus">FlowStatus,</if>
+            <if test="null != commonstatus">CommonStatus,</if>
+            <if test="null != inusersysno">InUserSysNo,</if>
+            <if test="null != inusername">InUserName,</if>
+            <if test="null != indate">InDate,</if>
+            <if test="null != editusersysno">EditUserSysNo,</if>
+            <if test="null != editusername">EditUserName,</if>
+            <if test="null != editdate">EditDate,</if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="null != organizationcode">#{organizationcode},</if>
+            <if test="null != formsysno">#{formsysno},</if>
+            <if test="null != data">#{data},</if>
+            <if test="null != flowstatus">#{flowstatus},</if>
+            <if test="null != commonstatus">#{commonstatus},</if>
+            <if test="null != inusersysno">#{inusersysno},</if>
+            <if test="null != inusername">#{inusername},</if>
+            <if test="null != indate">#{indate},</if>
+            <if test="null != editusersysno">#{editusersysno},</if>
+            <if test="null != editusername">#{editusername},</if>
+            <if test="null != editdate">#{editdate},</if>
+        </trim>
+    </insert>
+
+    <!-- 保存一条完整记录 -->
+    <insert id="saveFull" keyProperty="sysno" parameterType="cn.hejinyo.ss.mysql.entity.FormDataEntity" useGeneratedKeys="true">
+        insert into form_data (OrganizationCode, FormSysNo, Data, FlowStatus, CommonStatus, InUserSysNo, InUserName, InDate, EditUserSysNo, EditUserName,
+                               EditDate)
+        values (#{organizationcode}, #{formsysno}, #{data}, #{flowstatus}, #{commonstatus}, #{inusersysno}, #{inusername}, #{indate},
+                #{editusersysno}, #{editusername}, #{editdate})
+    </insert>
+
+    <!-- 更新一条记录 -->
+    <update id="update" parameterType="cn.hejinyo.ss.mysql.entity.FormDataEntity">
+        update form_data
+        <set>
+            <if test="null != organizationcode">OrganizationCode = #{organizationcode},</if>
+            <if test="null != formsysno">FormSysNo = #{formsysno},</if>
+            <if test="null != data">Data = #{data},</if>
+            <if test="null != flowstatus">FlowStatus = #{flowstatus},</if>
+            <if test="null != commonstatus">CommonStatus = #{commonstatus},</if>
+            <if test="null != inusersysno">InUserSysNo = #{inusersysno},</if>
+            <if test="null != inusername">InUserName = #{inusername},</if>
+            <if test="null != indate">InDate = #{indate},</if>
+            <if test="null != editusersysno">EditUserSysNo = #{editusersysno},</if>
+            <if test="null != editusername">EditUserName = #{editusername},</if>
+            <if test="null != editdate">EditDate = #{editdate},</if>
+        </set>
+        where SysNo = #{sysno}
+    </update>
+
+    <!-- 更新一条完整记录 -->
+    <update id="updateFull" parameterType="cn.hejinyo.ss.mysql.entity.FormDataEntity">
+        update form_data
+        set OrganizationCode = #{organizationcode},
+            FormSysNo        = #{formsysno},
+            Data             = #{data},
+            FlowStatus       = #{flowstatus},
+            CommonStatus     = #{commonstatus},
+            InUserSysNo      = #{inusersysno},
+            InUserName       = #{inusername},
+            InDate           = #{indate},
+            EditUserSysNo    = #{editusersysno},
+            EditUserName     = #{editusername},
+            EditDate         = #{editdate}
+        where SysNo = #{sysno}
+    </update>
+
+    <!-- 删除给定主键的记录 -->
+    <delete id="deleteByPk">
+        delete
+        from form_data
+        where SysNo = #{sysno}
+    </delete>
+
+    <!-- 主键查找一条记录 -->
+    <select id="findByPk" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from form_data
+        where SysNo = #{sysno}
+    </select>
+
+    <!-- 查询列表 -->
+    <select id="findList" parameterType="cn.hejinyo.ss.mysql.entity.FormDataEntity" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from form_data
+        where
+        <include refid="Base_Where_SQL"/>
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="findPage" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from form_data
+        <where>
+            <if test="organizationcode != null and !&quot;&quot;.equals(organizationcode)">and OrganizationCode = #{organizationcode}</if>
+            <if test="formsysno != null and !&quot;&quot;.equals(formsysno)">and FormSysNo = #{formsysno}</if>
+            <if test="flowstatus != null and !&quot;&quot;.equals(flowstatus)">and FlowStatus = #{flowstatus}</if>
+            <if test="commonstatus != null and !&quot;&quot;.equals(commonstatus)">and CommonStatus = #{commonstatus}</if>
+            <if test="inusersysno != null and !&quot;&quot;.equals(inusersysno)">and InUserSysNo = #{inusersysno}</if>
+            <if test="inusername != null and !&quot;&quot;.equals(inusername)">and InUserName like concat('%',#{inusername},'%')</if>
+            <if test="indate != null and !&quot;&quot;.equals(indate)">and DATE_FORMAT(InDate,'%Y-%m-%d') = STR_TO_DATE(#{indate},'%Y-%m-%d')</if>
+            <if test="editusersysno != null and !&quot;&quot;.equals(editusersysno)">and EditUserSysNo = #{editusersysno}</if>
+            <if test="editusername != null and !&quot;&quot;.equals(editusername)">and EditUserName like concat('%',#{editusername},'%')</if>
+            <if test="editdate != null and !&quot;&quot;.equals(editdate)">and DATE_FORMAT(EditDate,'%Y-%m-%d') = STR_TO_DATE(#{editdate},'%Y-%m-%d')</if>
+
+            <if test="dataParam != null and dataParam.size() > 0">
+                <foreach collection="dataParam" item="item" index="key" separator=" and ">
+                    <choose>
+                        <when test="item.type = 1">
+                            ${item.queryKey} like concat('%',#{item.value},'%')
+                        </when>
+                        <otherwise>
+                            ${item.queryKey} = #{item.value}
+                        </otherwise>
+                    </choose>
+                </foreach>
+            </if>
+        </where>
+        <if test="sort != null">
+            order by #{sort}
+            <if test="sidx != null">
+                #{sidx}
+            </if>
+        </if>
+    </select>
+
+    <!-- findAll -->
+    <select id="findAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from form_data
+    </select>
+</mapper>

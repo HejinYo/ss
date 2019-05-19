@@ -1,24 +1,13 @@
 package cn.hejinyo.ss.es.controller;
 
-import cn.hejinyo.ss.common.utils.JsonUtil;
 import cn.hejinyo.ss.es.entity.FormDataEntity;
-import cn.hejinyo.ss.es.mapper.FormDataMapper;
+import cn.hejinyo.ss.es.mapper.FormDataRepository;
 import io.swagger.annotations.Api;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
-import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author : anthony.s.he   hejinyo@gmail.com
@@ -29,7 +18,7 @@ import java.util.List;
 @Api(tags = "FormDataController", description = "ES查询测试")
 public class FormDataController {
     @Autowired
-    private FormDataMapper goodsRepository;
+    private FormDataRepository goodsRepository;
 
     @PostMapping("/{type}/{id}")
     public String save(@PathVariable("type") String type, @PathVariable("id") Integer id, @RequestBody Object data) {
