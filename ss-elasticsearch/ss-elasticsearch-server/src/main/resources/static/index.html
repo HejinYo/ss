@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .cut {
+            white-space: nowrap; /*文本不进行换行*/
+            overflow: hidden; /*隐藏溢出文本*/
+            text-overflow: ellipsis; /*多出文本使用 ....代替*/
+            width: auto; /*自适应布局*/
+        }
+
+        .flex {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            margin: 0 !important;
+            padding-left: 10px;
+            padding-right: 10px;
+            height: 47px;
+            width: auto
+        }
+
+        .myborder {
+            border-bottom: 1px solid #EBEEF5;
+        }
+
+        .myheader {
+            background-color: #f4fff5 !important;
+        }
+
+        .el-table thead.is-group th {
+            background: #F5F7FA;
+        }
+
+        .mycell {
+            padding: 0 !important;
+        }
+
+        .mycell .cell {
+            margin: 0 !important;
+            padding: 0 !important;
+
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <template>
+        <el-table border stripe :data="tableData" style="width: 100%" :cell-class-name="cellClassName" :header-cell-class-name="headerCellClassName">
+
+            <!-- 系统字段 -->
+            <el-table-column prop="date" label="日期" width="150"></el-table-column>
+
+            <!-- 表单自定义字段 -->
+            <template v-for="field in formData">
+
+                <!-- 普通字段 -->
+                <el-table-column :prop="field.key" :label="field.name" width="150" v-if="field.type != 'subForm'">
+                    <template slot-scope="scope">{{scope.row[field.key]}}</template>
+                </el-table-column>
+
+                <!-- 子表单字段 -->
+                <el-table-column :label="field.name" align="center" v-else>
+                    <el-table-column v-for="sub in field.list" :prop="sub.key" :label="sub.name">
+                        <template slot-scope="scope">
+                            <p v-for="(item, index) in scope.row[field.key]" :class="[{ myborder: index+1 < Object.keys(scope.row[field.key]).length } , 'flex']">
+                                <span class="cut"> {{item[sub.key]}} </span>
+                            </p>
+                        </template>
+                    </el-table-column>
+                </el-table-column>
+
+            </template>
+        </el-table>
+    </template>
+</div>
+
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    var Main = {
+        data() {
+            return {
+                formData: [
+                    {
+                        "key": "input_1555999747000",
+                        "name": "用户名",
+                        "type": "serialnumber",
+                        "model": "input_1555999747000"
+                    },
+                    {
+                        "key": "_widget_1556009107761",
+                        "name": "密码",
+                        "type": "input",
+                        "model": "_widget_1556009107761"
+                    },
+                    {
+                        "key": "_widget_1556009107762",
+                        "name": "子表单",
+                        "type": "subForm",
+                        "model": "_widget_1556009107762",
+                        "list": [
+                            {
+                                "key": "input_1555999747001",
+                                "name": "子表单字段1",
+                                "type": "serialnumber",
+                                "model": "input_1555999747001"
+                            },
+                            {
+                                "key": "_widget_1555999747002",
+                                "name": "子表单字段2",
+                                "type": "input",
+                                "model": "_widget_1555999747002"
+                            }
+                        ]
+                    }
+                ],
+                tableData: [{
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    province: '上海',
+                    city: '普陀区',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    zip: 200333,
+                    input_1555999747000: "测试1",
+                    _widget_1556009107761: "测试2",
+                    _widget_1556009107762: [
+                        {
+                            input_1555999747001: "hejinyo",
+                            _widget_1555999747002: "上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路"
+                        },
+                        {
+                            input_1555999747001: "anthony",
+                            _widget_1555999747002: "11上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路1111"
+                        },
+                        {
+                            input_1555999747001: "anthony",
+                            _widget_1555999747002: "11上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路1111"
+                        },
+                        {
+                            input_1555999747001: "anthony",
+                            _widget_1555999747002: "11上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路1111"
+                        }
+                    ]
+                }, {
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    province: '上海',
+                    city: '普陀区',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    zip: 200333,
+                    input_1555999747000: "测试1",
+                    _widget_1556009107761: "测试2",
+                    _widget_1556009107762: [
+                        {
+                            input_1555999747001: "hejinyo",
+                            _widget_1555999747002: "上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路"
+                        },
+                        {
+                            input_1555999747001: "anthony",
+                            _widget_1555999747002: "11上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路上海市普陀区金沙江路1111"
+                        }
+                    ]
+                }, {
+                    date: '2016-05-04',
+                    name: '王小虎',
+                    province: '上海',
+                    city: '普陀区',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    zip: 200333
+                }, {
+                    date: '2016-05-01',
+                    name: '王小虎',
+                    province: '上海',
+                    city: '普陀区',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    zip: 200333
+                }, {
+                    date: '2016-05-08',
+                    name: '王小虎',
+                    province: '上海',
+                    city: '普陀区',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    zip: 200333
+                }, {
+                    date: '2016-05-06',
+                    name: '王小虎',
+                    province: '上海',
+                    city: '普陀区',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    zip: 200333
+                }, {
+                    date: '2016-05-07',
+                    name: '王小虎',
+                    province: '上海',
+                    city: '普陀区',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                    zip: 200333
+                }]
+            }
+        },
+        methods: {
+            cellClassName({row, column, rowIndex, columnIndex}) {
+                if (column.level > 1) {
+                    return "mycell";
+                }
+            },
+            headerCellClassName({row, column, rowIndex, columnIndex}) {
+                return "myheader";
+            }
+        }
+    };
+    var Ctor = Vue.extend(Main);
+
+    new Ctor().$mount('#app')
+</script>
+</body>
+</html>
