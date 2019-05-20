@@ -68,7 +68,7 @@
                     <el-table-column v-for="sub in field.list" :prop="sub.key" :label="sub.name">
                         <template slot-scope="scope">
                             <p v-for="(item, index) in scope.row[field.key]" :class="[{ myborder: index+1 < Object.keys(scope.row[field.key]).length } , 'flex']">
-                                <span class="cut"> {{item[sub.key]}} </span>
+                                <span class="cut" :title="item[sub.key]"> {{item[sub.key]}} </span>
                             </p>
                         </template>
                     </el-table-column>
