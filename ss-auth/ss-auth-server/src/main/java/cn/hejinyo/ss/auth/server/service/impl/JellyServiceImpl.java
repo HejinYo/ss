@@ -8,6 +8,7 @@ import cn.hejinyo.ss.common.framework.consts.StatusCode;
 import cn.hejinyo.ss.common.framework.exception.InfoException;
 import cn.hejinyo.ss.common.framework.utils.JwtTools;
 import cn.hejinyo.ss.common.redis.utils.RedisUtils;
+import cn.hejinyo.ss.common.utils.JsonUtil;
 import cn.hejinyo.ss.common.utils.Tools;
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import cn.hejinyo.ss.jelly.dto.UserNameLoginDTO;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -41,7 +44,7 @@ public class JellyServiceImpl implements JellyService {
     public SysUserDTO checkUser(UserNameLoginDTO nameLoginVO) {
         // 根据用户名查找用户，进行密码匹配
         SysUserDTO userDTO = jellySysUserService.findByUserName(nameLoginVO.getUserName());
-        // 如果无相关用户或已删除则返回null
+        // 如果无相关用户或已删除则返回null TODO 需要处理 服务请求异常提示
         if (null == userDTO) {
             throw new InfoException(StatusCode.LOGIN_USER_NOEXIST);
         } else if (CommonConstant.Status.DISABLE.equals(userDTO.getState())) {
@@ -70,16 +73,39 @@ public class JellyServiceImpl implements JellyService {
     }
 
     /**
-     * 查找用户编号对应的角色编码字符串
+     * 验证token 通过返回角色权限信息
      */
     @Override
-    public Set<String> getUserRoleSet(int userId) {
-        // redis中获得角色信息
-        Set<String> roleSet = redisUtils.hget(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_ROLE, new TypeToken<Set<String>>() {
-        }.getType());
+    public AuthCheckResult checkToken(Integer userId, String jti) {
+        List<String> fields = Arrays.asList(JellyRedisKeys.USER_TOKEN, JellyRedisKeys.USER_ROLE, JellyRedisKeys.USER_PERM);
+        // 读取用户TOKEN 角色 权限信息
+        List<String> storeUserInfo = redisUtils.hmget(JellyRedisKeys.storeUser(userId), fields);
+        AuthCheckResult result = new AuthCheckResult();
+        if (storeUserInfo != null && storeUserInfo.size() == fields.size()) {
+            String checkJti = storeUserInfo.get(0);
+            String roleStr = storeUserInfo.get(1);
+            String permStr = storeUserInfo.get(2);
+            // 验证成功
+            if (jti.equals(checkJti)) {
+                result.setPass(true);
+                result.setRoleSet(getUserRoleSet(userId, roleStr));
+                result.setPermSet(getUserPermSet(userId, permStr));
+            }
+        }
+        return result;
+    }
 
-        // 不存在则数据库获得角色信息
-        if (roleSet == null) {
+    /**
+     * 查找用户编号对应的角色编码字符串
+     */
+    private Set<String> getUserRoleSet(int userId, String roleStr) {
+        Set<String> roleSet;
+        // redis中获得角色信息
+        if (roleStr != null) {
+            roleSet = JsonUtil.GSON.fromJson(roleStr, new TypeToken<Set<String>>() {
+            }.getType());
+        } else {
+            // 不存在则数据库获得角色信息
             roleSet = jellySysUserService.getUserRoleSet(userId);
         }
         if (roleSet != null) {
@@ -92,37 +118,23 @@ public class JellyServiceImpl implements JellyService {
     /**
      * 查找用户编号对应的权限编码字符串
      */
-    @Override
-    public Set<String> getUserPermSet(int userId) {
-        // redis中获得权限信息
-        Set<String> permissionsSet = redisUtils.hget(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_PERM, new TypeToken<Set<String>>() {
-        }.getType());
+    private Set<String> getUserPermSet(int userId, String permStr) {
+        Set<String> permissionsSet;
 
-        // 不存在则数据库获得权限信息
-        if (permissionsSet == null) {
+        // redis中获得权限信息
+        if (permStr != null) {
+            permissionsSet = JsonUtil.GSON.fromJson(permStr, new TypeToken<Set<String>>() {
+            }.getType());
+        } else {
+            // 不存在则数据库获得权限信息
             permissionsSet = jellySysUserService.getUserPermSet(userId);
         }
+
         if (permissionsSet != null) {
             permissionsSet.removeIf(Objects::isNull);
             redisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_PERM, permissionsSet);
         }
         return permissionsSet;
-    }
-
-    /**
-     * 验证token 通过返回角色权限信息
-     */
-    @Override
-    public AuthCheckResult checkToken(Integer userId, String jti) {
-        String checkJti = redisUtils.hget(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, String.class);
-        AuthCheckResult result = new AuthCheckResult();
-        // 需要优化，减少请求redis次数 TODO
-        if (jti.equals(checkJti)) {
-            result.setPass(true);
-            result.setRoleSet(getUserRoleSet(userId));
-            result.setPermSet(getUserPermSet(userId));
-        }
-        return result;
     }
 
     /**

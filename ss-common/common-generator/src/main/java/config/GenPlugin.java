@@ -1,8 +1,9 @@
 package config;
 
+import cn.hejinyo.ss.common.framework.base.BaseDao;
 import com.alibaba.fastjson.JSON;
 import com.mysql.jdbc.StringUtils;
-import ftl.FreeMarkerGen;
+import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
@@ -58,10 +59,10 @@ public class GenPlugin extends PluginAdapter {
         //引入cn.hejinyo.base.BaseDao
         interfaze.addImportedType(new FullyQualifiedJavaType(BaseDao.class.getName()));
         // 添加base接口 extends BaseDao<User>
-        interfaze.addSuperInterface(new FullyQualifiedJavaType("BaseDao<" + introspectedTable.getBaseRecordType() + "," + typeName + ">"));
+        interfaze.addSuperInterface(new FullyQualifiedJavaType(BaseDao.class.getSimpleName() + "<" + introspectedTable.getBaseRecordType() + "," + typeName + ">"));
         // 添加@Mapper注解
-        interfaze.addImportedType(new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper"));
-        interfaze.addAnnotation("@Mapper");
+        interfaze.addImportedType(new FullyQualifiedJavaType(Mapper.class.getName()));
+        interfaze.addAnnotation("@" + Mapper.class.getSimpleName());
         //Dao接口不生成任何方法
         interfaze.getMethods().clear();
         return true;
@@ -119,7 +120,7 @@ public class GenPlugin extends PluginAdapter {
     @Override
     public boolean sqlMapDocumentGenerated(Document document, IntrospectedTable introspectedTable) {
         XmlElement oldElement = document.getRootElement();
-        FreeMarkerGen.build(document, introspectedTable);
+        // FreeMarkerGen.build(document, introspectedTable);
         System.out.println("\n\n\n\n\n\n");
         System.out.println("接口全类名 ===>\t" + oldElement.getAttributes().get(0).getValue());
         System.out.println("实体类全类名 ===>\t" + introspectedTable.getBaseRecordType());

@@ -1,12 +1,12 @@
 package cn.hejinyo.ss.auth.jelly.filter;
 
 import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
-import cn.hejinyo.ss.common.consts.CommonConstant;
-import cn.hejinyo.ss.common.framework.utils.ResponseUtils;
 import cn.hejinyo.ss.auth.jelly.token.SsAuthToken;
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
+import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.framework.consts.StatusCode;
 import cn.hejinyo.ss.common.framework.utils.JwtTools;
+import cn.hejinyo.ss.common.framework.utils.ResponseUtils;
 import cn.hejinyo.ss.common.framework.utils.Result;
 import cn.hejinyo.ss.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.apache.shiro.web.filter.AccessControlFilter;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -33,19 +34,15 @@ public class SsAuthcFilter extends AccessControlFilter {
     }
 
     @Override
-    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         return false;
     }
 
     @Override
-    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+    protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String uri = httpRequest.getRequestURI();
-        String contextPath = httpRequest.getContextPath();
-        log.info("auth拦截:" + contextPath + uri);
-
-        String userToken = httpRequest.getHeader(JwtTools.AUTHOR_PARAM);
-        log.info("userToken=====>{}", userToken);
+        String userToken = this.getToken(httpRequest);
+        log.info("auth拦截 userToken=====>{}", userToken);
         try {
             if (StringUtils.isNotEmpty(userToken)) {
                 // 验证token有效性
@@ -69,6 +66,29 @@ public class SsAuthcFilter extends AccessControlFilter {
         }
         ResponseUtils.response(response, Result.error(StatusCode.TOKEN_FAULT));
         return false;
+    }
+
+    private String getToken(HttpServletRequest request) {
+        String userToken = null;
+        // 先从cookie中获取
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(JwtTools.AUTHOR_PARAM)) {
+                    userToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        // cookie中没有，从header中获取
+        if (StringUtils.isEmpty(userToken)) {
+            userToken = request.getHeader(JwtTools.AUTHOR_PARAM);
+        }
+        // header没有，从param中获取
+        if (StringUtils.isEmpty(userToken)) {
+            userToken = request.getParameter(JwtTools.AUTHOR_PARAM);
+        }
+        return userToken;
     }
 
 }

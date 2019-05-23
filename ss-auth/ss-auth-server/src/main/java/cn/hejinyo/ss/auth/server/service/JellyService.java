@@ -24,16 +24,6 @@ public interface JellyService {
     String doLogin(SysUserDTO userDTO);
 
     /**
-     * 查找用户编号对应的角色编码字符串
-     */
-    Set<String> getUserRoleSet(int userId);
-
-    /**
-     * 查找用户编号对应的权限编码字符串
-     */
-    Set<String> getUserPermSet(int userId);
-
-    /**
      * 验证token 通过返回角色权限信息
      */
     AuthCheckResult checkToken(Integer userId, String jti);

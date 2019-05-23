@@ -1,5 +1,7 @@
 package cn.hejinyo.ss.mysql.controller;
 
+import cn.hejinyo.ss.common.utils.JsonUtil;
+import cn.hejinyo.ss.common.utils.PageQuery;
 import cn.hejinyo.ss.es.entity.FormDataEntity;
 import cn.hejinyo.ss.mysql.mock.FormDataMysqlMock;
 import cn.hejinyo.ss.mysql.service.FormDataService;
@@ -39,5 +41,10 @@ public class DataController {
     @PostMapping("/mysqlMock/{count}")
     public Object mysqlMock(@PathVariable("count") Integer count) {
         return mysqlMock.mock(count);
+    }
+
+    @PostMapping("/test")
+    public Object testPageQuery(@RequestBody PageQuery<FormDataEntity> pageQuery) {
+        return JsonUtil.toJson(pageQuery);
     }
 }

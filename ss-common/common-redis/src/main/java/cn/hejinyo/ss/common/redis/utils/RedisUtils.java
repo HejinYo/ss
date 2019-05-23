@@ -565,6 +565,10 @@ public class RedisUtils {
         return hashOperations.multiGet(key, hashKeys);
     }
 
+    public List<String> hmget(String key, String... hashKeys) {
+        return hashOperations.multiGet(key, Arrays.asList(hashKeys));
+    }
+
     /**
      * HMSET key field value [field value ...] 设置hash字段值
      */
