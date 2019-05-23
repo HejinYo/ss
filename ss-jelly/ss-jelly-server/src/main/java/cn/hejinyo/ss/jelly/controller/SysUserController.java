@@ -4,12 +4,11 @@ import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
 import cn.hejinyo.ss.jelly.dao.SysUserDao;
 import cn.hejinyo.ss.jelly.entity.SysUserEntity;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RequestMapping("/")
 @RestController
+@Api(tags = "用户管理服务")
 public class SysUserController {
     @Autowired
     private SysUserDao sysUserDao;
@@ -26,14 +26,16 @@ public class SysUserController {
     private JellyAuthService jellyAuthService;
 
     @GetMapping("/user/{id}")
+    @ApiOperation(value = "获取用户信息", notes = "getById")
     public SysUserEntity getById(@PathVariable("id") Integer id) {
         return sysUserDao.getOne(id);
     }
 
 
     @GetMapping("/auth/{id}")
-    public AuthCheckResult auth(@PathVariable("id") Integer id) {
-        return jellyAuthService.checkToken(id, "hejinyo");
+    @ApiOperation(value = "验证token", notes = "auth")
+    public AuthCheckResult auth(@PathVariable("id") Integer id, @RequestParam("jti") String jti) {
+        return jellyAuthService.checkToken(id, jti);
     }
 
 
