@@ -42,7 +42,7 @@ public class SsAuthcFilter extends AccessControlFilter {
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String userToken = this.getToken(httpRequest);
-        log.info("auth拦截 userToken=====>{}", userToken);
+        log.info("auth拦截 userToken=====>{}", StringUtils.isNotEmpty(userToken));
         try {
             if (StringUtils.isNotEmpty(userToken)) {
                 // 验证token有效性
@@ -52,7 +52,7 @@ public class SsAuthcFilter extends AccessControlFilter {
                 if (CommonConstant.JELLY_AUTH.equals(sub)) {
                     Integer userId = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERID, Integer.class);
                     String jti = JwtTools.tokenInfo(userToken, JwtTools.JWT_ID, String.class);
-                    AuthCheckResult result = jellyAuthService.checkToken(userId, jti);
+                    AuthCheckResult result = jellyAuthService.checkToken(userId, jti).get();
                     log.info("AuthCheckResult=====>{}", result);
                     if (result != null && result.isPass()) {
                         String userName = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERNAME, String.class);
@@ -62,7 +62,7 @@ public class SsAuthcFilter extends AccessControlFilter {
                 }
             }
         } catch (Exception e) {
-            log.debug("userToken 验证失败 ：{},{}", userToken, e.getMessage());
+            log.debug("userToken 验证失败 ：{}", userToken, e);
         }
         ResponseUtils.response(response, Result.error(StatusCode.TOKEN_FAULT));
         return false;

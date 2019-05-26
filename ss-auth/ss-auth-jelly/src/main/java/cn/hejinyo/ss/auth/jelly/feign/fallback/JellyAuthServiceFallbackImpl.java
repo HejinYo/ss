@@ -2,6 +2,7 @@ package cn.hejinyo.ss.auth.jelly.feign.fallback;
 
 import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
+import cn.hejinyo.ss.common.utils.MicroserviceResult;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,8 +22,8 @@ public class JellyAuthServiceFallbackImpl implements JellyAuthService {
      * 校验用户token，成功则返回角色，权限
      */
     @Override
-    public AuthCheckResult checkToken(Integer userId, String jti) {
+    public MicroserviceResult<AuthCheckResult> checkToken(Integer userId, String jti) {
         log.error("JellyAuthService.{} 参数:userId:{},jti:{},异常:{}", "checkToken", userId, jti, cause);
-        return null;
+        return MicroserviceResult.fallback("JellyAuthService.{} 参数:userId:{},jti:{},异常:{}", "findByUserName", userId, jti);
     }
 }

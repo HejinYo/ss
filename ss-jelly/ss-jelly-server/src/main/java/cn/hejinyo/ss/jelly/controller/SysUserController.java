@@ -2,6 +2,7 @@ package cn.hejinyo.ss.jelly.controller;
 
 import cn.hejinyo.ss.auth.jelly.feign.JellyAuthService;
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
+import cn.hejinyo.ss.common.framework.exception.InfoException;
 import cn.hejinyo.ss.jelly.dao.SysUserDao;
 import cn.hejinyo.ss.jelly.entity.SysUserEntity;
 import io.swagger.annotations.Api;
@@ -35,7 +36,7 @@ public class SysUserController {
     @GetMapping("/auth/{id}")
     @ApiOperation(value = "验证token", notes = "auth")
     public AuthCheckResult auth(@PathVariable("id") Integer id, @RequestParam("jti") String jti) {
-        return jellyAuthService.checkToken(id, jti);
+        return jellyAuthService.checkToken(id, jti).get();
     }
 
 

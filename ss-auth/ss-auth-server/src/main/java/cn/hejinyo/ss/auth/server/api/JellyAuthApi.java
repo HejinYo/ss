@@ -3,6 +3,7 @@ package cn.hejinyo.ss.auth.server.api;
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
 import cn.hejinyo.ss.auth.server.service.JellyAuthApiService;
 import cn.hejinyo.ss.auth.server.service.JellyService;
+import cn.hejinyo.ss.common.utils.MicroserviceResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -32,7 +33,7 @@ public class JellyAuthApi implements JellyAuthApiService {
             @ApiImplicitParam(paramType = "path", name = "userId", value = "用户编号", required = true, dataType = "int"),
             @ApiImplicitParam(paramType = "path", name = "jti", value = "token编号", required = true, dataType = "String"),
     })
-    public AuthCheckResult checkToken(Integer userId, String jti) {
-        return jellyService.checkToken(userId, jti);
+    public MicroserviceResult<AuthCheckResult> checkToken(Integer userId, String jti) {
+        return MicroserviceResult.ok(jellyService.checkToken(userId, jti));
     }
 }

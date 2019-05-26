@@ -28,9 +28,9 @@ import java.util.List;
  * @date :  2019/4/25 22:49
  */
 @EnableFeignClients(basePackages = "cn.hejinyo.ss.auth.jelly")
-@ComponentScan({"cn.hejinyo.ss.auth.jelly",
+@ComponentScan({"cn.hejinyo.ss.common.framework",
+        "cn.hejinyo.ss.auth.jelly",
         "cn.hejinyo.ss.common.shiro.core",
-        "cn.hejinyo.ss.common.framework",
         "cn.hejinyo.ss.jelly"})
 @EnableSwagger2
 @SpringBootApplication
