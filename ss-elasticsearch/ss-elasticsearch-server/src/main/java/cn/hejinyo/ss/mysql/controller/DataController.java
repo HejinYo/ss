@@ -45,6 +45,6 @@ public class DataController {
 
     @PostMapping("/test")
     public Object testPageQuery(@RequestBody PageQuery<FormDataEntity> pageQuery) {
-        return JsonUtil.toJson(pageQuery);
+        return JsonUtil.toJSONString(pageQuery);
     }
 }

@@ -1,17 +1,16 @@
 package cn.hejinyo.ss.common.framework.exception;
 
 import cn.hejinyo.ss.common.consts.CommonConstant;
+import cn.hejinyo.ss.common.exception.CommonException;
+import cn.hejinyo.ss.common.exception.MicroserviceException;
 import cn.hejinyo.ss.common.framework.utils.ResponseUtils;
 import cn.hejinyo.ss.common.framework.utils.Result;
+import cn.hejinyo.ss.common.utils.MicroserviceResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +25,15 @@ import java.util.Optional;
 @Slf4j
 public class ExceptionHandle {
 
+
+    /**
+     * CommonException，返回消息
+     */
+    @ExceptionHandler(CommonException.class)
+    public void infoExceptionException(CommonException e, HttpServletRequest request, HttpServletResponse response) {
+        this.handle(request, response, HttpStatus.OK, Result.error(e.getCode(), e.getMessage()));
+    }
+
     /**
      * infoException，返回消息
      */
@@ -35,43 +43,46 @@ public class ExceptionHandle {
     }
 
     /**
+     * MicroserviceException，微服务异常返回消息
+     */
+    @ExceptionHandler(MicroserviceException.class)
+    public void infoExceptionException(MicroserviceException e, HttpServletRequest request, HttpServletResponse response) {
+        log.error("微服务访问异常", e);
+        Result r = Result.error(e.getCode(), "微服务访问异常：" + e.getMessage());
+        this.handle(request, response, HttpStatus.INTERNAL_SERVER_ERROR, r);
+    }
+
+    /**
      * 实体验证
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public void validException(MethodArgumentNotValidException mnve, HttpServletRequest request, HttpServletResponse response) {
-        this.handle(request, response, HttpStatus.UNAUTHORIZED,
-                Result.error(
-                        Optional.ofNullable(mnve.getBindingResult().getFieldError())
-                                .map(DefaultMessageSourceResolvable::getDefaultMessage
-                                ).orElse("实体未通过校验")));
+        Result r = Result.error(Optional.ofNullable(mnve.getBindingResult().getFieldError())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse("实体未通过校验"));
+        this.handle(request, response, HttpStatus.OK, r);
     }
 
     /**
      * 500 Internal Server Error
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = {Exception.class})
     public void exception(Exception ex, HttpServletRequest request, HttpServletResponse response) {
-        Result result;
-        if (ex instanceof HttpMessageNotReadableException) {
-            result = Result.error(HttpStatus.BAD_REQUEST.getReasonPhrase());
-        } else if (ex instanceof HttpRequestMethodNotSupportedException) {
-            result = Result.error(HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase());
-        } else if (ex instanceof HttpMediaTypeNotSupportedException) {
-            result = Result.error(HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase());
-        } else {
-            log.error("系统发生未知错误异常", ex);
-            result = Result.error("未知错误:" + ex.getMessage());
-        }
-        this.handle(request, response, HttpStatus.UNAUTHORIZED, result);
+        log.error("系统发生未知错误异常", ex);
+        this.handle(request, response, HttpStatus.INTERNAL_SERVER_ERROR, Result.error("服务器错误:" + ex.getMessage()));
     }
 
+
+    /**
+     * 如果访问的是内部微服务接口，则封装成微服务响应对象
+     */
     private void handle(HttpServletRequest request, HttpServletResponse response, HttpStatus httpStatus, Result result) {
         String uri = request.getRequestURI();
         String contextPath = request.getContextPath();
         if ((contextPath + uri).startsWith(CommonConstant.MICRO_SERVER_API)) {
-            // 如果是微服务调用，状态码为500
-            ResponseUtils.response(response, HttpStatus.INTERNAL_SERVER_ERROR.value(), result);
+            // 如果是微服务调用，状态码为200,返回 ServerResult对象
+            MicroserviceResult re = MicroserviceResult.result(httpStatus.value(), result.getCode(), result.getMsg(), result.getResult());
+            ResponseUtils.response(response, HttpStatus.OK.value(), re);
         } else {
             ResponseUtils.response(response, httpStatus.value(), result);
         }

@@ -45,13 +45,13 @@ public class CommonConstant {
      */
     public enum Status {
         /**
-         * 正常
-         */
-        NORMAL(0),
-        /**
          * 禁用
          */
-        DISABLE(1),
+        DISABLE(0),
+        /**
+         * 正常
+         */
+        NORMAL(1),
         /**
          * 锁定
          */

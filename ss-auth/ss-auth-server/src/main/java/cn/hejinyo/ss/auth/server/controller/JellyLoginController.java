@@ -44,7 +44,7 @@ public class JellyLoginController {
         Cookie cookie = new Cookie(JwtTools.AUTHOR_PARAM, token);
         cookie.setPath("/");
         response.addCookie(cookie);
-        return Result.result(token);
+        return Result.ok(token);
     }
 
     /**
@@ -80,7 +80,7 @@ public class JellyLoginController {
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         }
-        return Result.ok(userToken);
+        return Result.result(userToken);
     }
 
 }

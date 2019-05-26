@@ -1,6 +1,5 @@
 package cn.hejinyo.ss.common.framework.utils;
 
-import cn.hejinyo.ss.common.framework.utils.Result;
 import cn.hejinyo.ss.common.utils.JsonUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,7 +17,7 @@ public class ResponseUtils {
     /**
      * response 返回json格式Return数据
      */
-    public static void response(HttpServletResponse httpResponse, int statusCode, Result returns) {
+    public static void response(HttpServletResponse httpResponse, int statusCode, Object returns) {
         httpResponse.setStatus(statusCode);
         //设置编码格式
         httpResponse.setCharacterEncoding("UTF-8");
@@ -35,7 +34,7 @@ public class ResponseUtils {
         }
     }
 
-    public static void response(ServletResponse response, int statusCode, Result returns) {
+    public static void response(ServletResponse response, int statusCode, Object returns) {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         response(httpResponse, statusCode, returns);
     }

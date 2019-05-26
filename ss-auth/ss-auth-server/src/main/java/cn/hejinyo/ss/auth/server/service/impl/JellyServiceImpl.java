@@ -13,7 +13,7 @@ import cn.hejinyo.ss.common.utils.Tools;
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import cn.hejinyo.ss.jelly.dto.UserNameLoginDTO;
 import cn.hejinyo.ss.jelly.tools.JellyRedisKeys;
-import com.google.gson.reflect.TypeToken;
+import com.alibaba.fastjson.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,27 +34,25 @@ public class JellyServiceImpl implements JellyService {
     @Autowired
     private JellySysUserService jellySysUserService;
 
-    @Autowired
-    private RedisUtils redisUtils;
-
     /**
      * 验证登录用户
      */
     @Override
     public SysUserDTO checkUser(UserNameLoginDTO nameLoginVO) {
         // 根据用户名查找用户，进行密码匹配
-        SysUserDTO userDTO = jellySysUserService.findByUserName(nameLoginVO.getUserName());
-        // 如果无相关用户或已删除则返回null TODO 需要处理 服务请求异常提示
-        if (null == userDTO) {
-            throw new InfoException(StatusCode.LOGIN_USER_NOEXIST);
-        } else if (CommonConstant.Status.DISABLE.equals(userDTO.getState())) {
-            throw new InfoException(StatusCode.LOGIN_USER_LOCK);
-        }
-        //验证密码
-        if (!Tools.checkPassword(nameLoginVO.getUserPwd(), userDTO.getUserSalt(), userDTO.getUserPwd())) {
-            throw new InfoException(StatusCode.LOGIN_PASSWORD_ERROR);
-        }
-        return userDTO;
+        return jellySysUserService.findByUserName(nameLoginVO.getUserName()).then(userDTO -> {
+            // 如果无相关用户或已删除则返回null
+            if (null == userDTO) {
+                throw new InfoException(StatusCode.LOGIN_USER_NOEXIST);
+            } else if (CommonConstant.Status.DISABLE.equals(userDTO.getState())) {
+                throw new InfoException(StatusCode.LOGIN_USER_LOCK);
+            }
+            //验证密码
+            if (!Tools.checkPassword(nameLoginVO.getUserPwd(), userDTO.getUserSalt(), userDTO.getUserPwd())) {
+                throw new InfoException(StatusCode.LOGIN_PASSWORD_ERROR);
+            }
+            return userDTO;
+        });
     }
 
 
@@ -68,7 +66,7 @@ public class JellyServiceImpl implements JellyService {
         String token = JwtTools.createToken(CommonConstant.JELLY_AUTH, true,
                 userId, userDTO.getUserName(), JwtTools.JWT_SIGN_KEY, CommonConstant.JWT_EXPIRES_DEFAULT);
         String jti = JwtTools.tokenInfo(token, JwtTools.JWT_ID, String.class);
-        redisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, jti);
+        RedisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, jti);
         return token;
     }
 
@@ -79,9 +77,9 @@ public class JellyServiceImpl implements JellyService {
     public AuthCheckResult checkToken(Integer userId, String jti) {
         List<String> fields = Arrays.asList(JellyRedisKeys.USER_TOKEN, JellyRedisKeys.USER_ROLE, JellyRedisKeys.USER_PERM);
         // 读取用户TOKEN 角色 权限信息
-        List<String> storeUserInfo = redisUtils.hmget(JellyRedisKeys.storeUser(userId), fields);
+        List<String> storeUserInfo = RedisUtils.hmget(JellyRedisKeys.storeUser(userId), fields);
         AuthCheckResult result = new AuthCheckResult();
-        if (storeUserInfo != null && storeUserInfo.size() == fields.size()) {
+        if (storeUserInfo.size() == fields.size()) {
             String checkJti = storeUserInfo.get(0);
             String roleStr = storeUserInfo.get(1);
             String permStr = storeUserInfo.get(2);
@@ -102,15 +100,15 @@ public class JellyServiceImpl implements JellyService {
         Set<String> roleSet;
         // redis中获得角色信息
         if (roleStr != null) {
-            roleSet = JsonUtil.GSON.fromJson(roleStr, new TypeToken<Set<String>>() {
+            roleSet = JsonUtil.parseObject(roleStr, new TypeReference<Set<String>>() {
             }.getType());
         } else {
             // 不存在则数据库获得角色信息
-            roleSet = jellySysUserService.getUserRoleSet(userId);
+            roleSet = jellySysUserService.getUserRoleSet(userId).get();
         }
         if (roleSet != null) {
             roleSet.removeIf(Objects::isNull);
-            redisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_ROLE, roleSet);
+            RedisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_ROLE, roleSet);
         }
         return roleSet;
     }
@@ -123,16 +121,16 @@ public class JellyServiceImpl implements JellyService {
 
         // redis中获得权限信息
         if (permStr != null) {
-            permissionsSet = JsonUtil.GSON.fromJson(permStr, new TypeToken<Set<String>>() {
+            permissionsSet = JsonUtil.parseObject(permStr, new TypeReference<Set<String>>() {
             }.getType());
         } else {
             // 不存在则数据库获得权限信息
-            permissionsSet = jellySysUserService.getUserPermSet(userId);
+            permissionsSet = jellySysUserService.getUserPermSet(userId).get();
         }
 
         if (permissionsSet != null) {
             permissionsSet.removeIf(Objects::isNull);
-            redisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_PERM, permissionsSet);
+            RedisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_PERM, permissionsSet);
         }
         return permissionsSet;
     }
@@ -149,10 +147,10 @@ public class JellyServiceImpl implements JellyService {
             Integer userId = JwtTools.tokenInfo(token, JwtTools.JWT_TOKEN_USERID, Integer.class);
             String jti = JwtTools.tokenInfo(token, JwtTools.JWT_ID, String.class);
             //查询缓存中的用户信息
-            String checkJti = redisUtils.hget(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, String.class);
+            String checkJti = RedisUtils.hget(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, String.class);
             if (jti.equals(checkJti)) {
                 //清除用户原来所有缓存
-                redisUtils.delete(JellyRedisKeys.storeUser(userId));
+                RedisUtils.delete(JellyRedisKeys.storeUser(userId));
             }
         } catch (Exception ignored) {
         }

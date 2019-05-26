@@ -16,4 +16,5 @@ public interface BaseStatusCode {
      * 状态信息
      */
     String getMsg();
+
 }

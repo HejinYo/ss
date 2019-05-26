@@ -1,6 +1,7 @@
 package cn.hejinyo.ss.auth.server.feign.fallback;
 
 import cn.hejinyo.ss.auth.server.feign.JellySysUserService;
+import cn.hejinyo.ss.common.utils.MicroserviceResult;
 import cn.hejinyo.ss.jelly.dto.SysUserDTO;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,35 +24,36 @@ public class JellySysUserServiceFallbackImpl implements JellySysUserService {
      * 获取用户信息
      */
     @Override
-    public SysUserDTO getUserInfo(Integer userId) {
+    public MicroserviceResult<SysUserDTO> getUserInfo(Integer userId) {
         log.error("调用JellySysUserService.{} 参数:{},异常:{}", "getUserInfo", userId, cause);
-        return null;
+        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "getUserInfo", userId);
     }
 
     /**
      * 获取用户信息
      */
     @Override
-    public SysUserDTO findByUserName(String userName) {
+    public MicroserviceResult<SysUserDTO> findByUserName(String userName) {
         log.error("调用JellySysUserService.{} 参数:{},异常:{}", "findByUserName", userName, cause);
-        return null;
+        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "findByUserName", userName);
     }
+
 
     /**
      * 获得角色信息
      */
     @Override
-    public Set<String> getUserRoleSet(int userId) {
+    public MicroserviceResult<Set<String>> getUserRoleSet(int userId) {
         log.error("调用JellySysUserService.{} 参数:{},异常:{}", "getUserRoleSet", userId, cause);
-        return null;
+        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "getUserRoleSet", userId);
     }
 
     /**
      * 获得权限信息
      */
     @Override
-    public Set<String> getUserPermSet(int userId) {
+    public MicroserviceResult<Set<String>> getUserPermSet(int userId) {
         log.error("调用JellySysUserService.{} 参数:{},异常:{}", "getUserPermSet", userId, cause);
-        return null;
+        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "getUserPermSet", userId);
     }
 }

@@ -2,7 +2,7 @@ package cn.hejinyo.ss.auth.server;
 
 import io.swagger.annotations.ApiOperation;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,9 +29,9 @@ import java.util.List;
  */
 
 @EnableFeignClients
-@SpringBootApplication
 @ComponentScan({"cn.hejinyo.ss.common.redis", "cn.hejinyo.ss.common.framework", "cn.hejinyo.ss.auth.server"})
 @EnableSwagger2
+@SpringCloudApplication
 public class SsAuthServerApplication {
 
     public static void main(String[] args) {

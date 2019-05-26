@@ -82,6 +82,7 @@ ss:
       anonPath:
         - /favicon.ico
         - /actuator/**
+        - /swagger-ui.html
       filterChainMap:
         '[/test/**]': url
 
