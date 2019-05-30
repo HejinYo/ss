@@ -6,7 +6,7 @@ import cn.hejinyo.ss.common.framework.utils.JwtTools;
 import cn.hejinyo.ss.common.framework.utils.Result;
 import cn.hejinyo.ss.common.model.validator.RestfulValid;
 import cn.hejinyo.ss.common.utils.StringUtils;
-import cn.hejinyo.ss.jelly.dto.UserNameLoginDTO;
+import cn.hejinyo.ss.jelly.model.dto.UserNameLoginDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

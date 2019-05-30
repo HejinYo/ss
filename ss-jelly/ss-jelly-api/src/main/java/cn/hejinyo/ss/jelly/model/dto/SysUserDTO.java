@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.jelly.dto;
+package cn.hejinyo.ss.jelly.model.dto;
 
 import lombok.Data;
 
@@ -65,29 +65,9 @@ public class SysUserDTO implements Serializable {
     private Date loginTime;
 
     /**
-     * 用户状态 0：正常；1：禁用； state
+     * 用户状态 0：禁用；1：正常； state
      **/
     private Integer state;
-
-    /**
-     * 注册时间 create_time
-     **/
-    private Date createTime;
-
-    /**
-     * 创建人员 create_id
-     **/
-    private Integer createId;
-
-    /**
-     * 修改时间 update_time
-     **/
-    private Date updateTime;
-
-    /**
-     * 更新人编号 update_id
-     **/
-    private Integer updateId;
 
 }
 

@@ -66,7 +66,7 @@ public class MicroserviceResult<T> {
         r.setCode(ERROR);
         String msg = message;
         for (Object o : param) {
-            msg = msg.replace("{}", o.toString());
+            msg = msg.replaceFirst("\\{}", o.toString());
         }
         r.setMsg(msg);
         return r;

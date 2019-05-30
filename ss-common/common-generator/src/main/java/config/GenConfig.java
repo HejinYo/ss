@@ -21,9 +21,9 @@ public class GenConfig {
     public static final String FILE_PATH = "ss-common/common-generator/src/main/java";
     public static final String DTO_PACKAGE_PATH = "cn.hejinyo.ss.entity";
     public static final String PACKAGE_PATH = "cn.hejinyo.ss";
-    private static final String TABLE_NAME = "form_data";
-    private static final String DOMAIN_OBJECT_NAME = "_entity";
-    private static final String MAPPER_NAME = "_mapper";
+    private static final String TABLE_NAME = "sys_user";
+    private static final String DOMAIN_OBJECT_NAME = "_Entity";
+    private static final String MAPPER_NAME = "_Dao";
 
     public static void main(String[] args) throws InvalidConfigurationException, InterruptedException, SQLException, IOException {
         List<String> warnings = new ArrayList<>();
@@ -63,7 +63,7 @@ public class GenConfig {
         // JDBC 的配置
         JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
         jdbcConnectionConfiguration.setDriverClass("com.mysql.jdbc.Driver");
-        jdbcConnectionConfiguration.setConnectionURL("jdbc:mysql://m.hejinyo.cn:3306/yz_ibuild_form?characterEncoding=utf8&useSSL=false");
+        jdbcConnectionConfiguration.setConnectionURL("jdbc:mysql://m.hejinyo.cn:3306/ss_jelly?characterEncoding=utf8&useSSL=false");
         jdbcConnectionConfiguration.setUserId("root");
         jdbcConnectionConfiguration.setPassword("Redhat@2018");
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);

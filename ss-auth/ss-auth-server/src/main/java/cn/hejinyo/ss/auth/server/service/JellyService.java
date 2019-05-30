@@ -2,10 +2,8 @@ package cn.hejinyo.ss.auth.server.service;
 
 
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
-import cn.hejinyo.ss.jelly.dto.SysUserDTO;
-import cn.hejinyo.ss.jelly.dto.UserNameLoginDTO;
-
-import java.util.Set;
+import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
+import cn.hejinyo.ss.jelly.model.dto.UserNameLoginDTO;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com

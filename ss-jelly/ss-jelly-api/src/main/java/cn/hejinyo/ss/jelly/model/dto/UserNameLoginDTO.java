@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.jelly.dto;
+package cn.hejinyo.ss.jelly.model.dto;
 
 import cn.hejinyo.ss.common.model.validator.RestfulValid;
 import lombok.Data;

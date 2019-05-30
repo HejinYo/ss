@@ -2,7 +2,7 @@ package cn.hejinyo.ss.auth.server.feign.fallback;
 
 import cn.hejinyo.ss.auth.server.feign.JellySysUserService;
 import cn.hejinyo.ss.common.utils.MicroserviceResult;
-import cn.hejinyo.ss.jelly.dto.SysUserDTO;
+import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,20 +24,10 @@ public class JellySysUserServiceFallbackImpl implements JellySysUserService {
      * 获取用户信息
      */
     @Override
-    public MicroserviceResult<SysUserDTO> getUserInfo(Integer userId) {
-        log.error("调用JellySysUserService.{} 参数:{},异常:{}", "getUserInfo", userId, cause);
-        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "getUserInfo", userId);
-    }
-
-    /**
-     * 获取用户信息
-     */
-    @Override
     public MicroserviceResult<SysUserDTO> findByUserName(String userName) {
         log.error("调用JellySysUserService.{} 参数:{},异常:{}", "findByUserName", userName, cause);
         return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "findByUserName", userName);
     }
-
 
     /**
      * 获得角色信息

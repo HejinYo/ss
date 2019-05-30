@@ -1,22 +1,17 @@
-package cn.hejinyo.ss.jelly.entity;
+package cn.hejinyo.ss.jelly.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * sys_user 实体类
+ *
  * @author : HejinYo   hejinyo@gmail.com
- * @date :  2019/4/19 22:51
+ * @date : 2019/05/30 21:53
  */
 @Data
-@Entity
-@Table(name = "sys_user")
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 public class SysUserEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +19,6 @@ public class SysUserEntity implements Serializable {
     /**
      * 用户编号 user_id
      **/
-    @Id
     private Integer userId;
 
     /**
@@ -73,7 +67,7 @@ public class SysUserEntity implements Serializable {
     private Date loginTime;
 
     /**
-     * 用户状态 0：正常；1：禁用； state
+     * 用户状态 0：禁用；1：正常； state
      **/
     private Integer state;
 
@@ -96,6 +90,4 @@ public class SysUserEntity implements Serializable {
      * 更新人编号 update_id
      **/
     private Integer updateId;
-
 }
-

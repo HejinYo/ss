@@ -2,7 +2,7 @@ package cn.hejinyo.ss.jelly.service;
 
 import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.utils.MicroserviceResult;
-import cn.hejinyo.ss.jelly.dto.SysUserDTO;
+import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,12 +16,6 @@ import java.util.Set;
 
 @RequestMapping(CommonConstant.MICRO_SERVER_API)
 public interface SysUserApiService {
-
-    /**
-     * 获取用户信息
-     */
-    @GetMapping("/info/{userId}")
-    MicroserviceResult<SysUserDTO> getUserInfo(@PathVariable Integer userId);
 
     /**
      * 获取用户信息

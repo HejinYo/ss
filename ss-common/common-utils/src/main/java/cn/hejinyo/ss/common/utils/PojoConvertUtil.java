@@ -90,7 +90,7 @@ public class PojoConvertUtil {
      * 获取BeanCopier
      */
     private static BeanCopier getBeanCopier(Class source, Class target) {
-        BeanCopier beanCopier = beanCopierMap.get(source.getClass().getName() + "_" + target.getName());
+        BeanCopier beanCopier = beanCopierMap.get(source.getName() + "_" + target.getName());
         if (beanCopier != null) {
             return beanCopier;
         }
@@ -110,9 +110,7 @@ public class PojoConvertUtil {
             T target = targetClass.newInstance();
             beanCopier.copy(source, target, null);
             return target;
-
         } catch (Exception e) {
-            //log.error("对象拷贝失败,{}", e);
             throw new RuntimeException("对象拷贝失败" + source + "_" + targetClass);
         }
     }

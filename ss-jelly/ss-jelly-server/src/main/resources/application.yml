@@ -3,6 +3,32 @@ server:
   servlet:
     context-path: /
 
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://hejinyo:password@localhost:8000/eureka
+    # 缓存清单每隔30秒跟新一次
+    registry-fetch-interval-seconds: 30
+  instance:
+    # 服务续约任务调用间隔时间，默认30秒
+    lease-renewal-interval-in-seconds: 30
+    # 服务失效时间，默认90秒
+    lease-expiration-duration-in-seconds: 90
+    # 实例使用ip进行访问
+    prefer-ip-address: true
+    # 实例显示id
+    instance-id: ${spring.application.name}:${server.port}
+    #状态页面和健康指标
+    statusPageUrlPath: ${server.servlet.context-path}/actuator/info
+    healthCheckUrlPath: ${server.servlet.context-path}/actuator/health
+
+
+# Feign 开启 Hystrix
+feign:
+  hystrix:
+    enabled: true
+
 spring:
   profiles:
     active: dev
@@ -22,7 +48,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # jdbc_config   datasource
-    url: jdbc:mysql://m.hejinyo.cn:3306/ss_auth?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    url: jdbc:mysql://m.hejinyo.cn:3306/ss_jelly?useUnicode=true&characterEncoding=utf-8&useSSL=false
     username: root
     password: Redhat@2018
     # Hikari will use the above plus the following to setup connection pooling
@@ -56,24 +82,12 @@ spring:
         retry:
           enabled: true
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://hejinyo:password@localhost:8000/eureka
-    # 缓存清单每隔30秒跟新一次
-    registry-fetch-interval-seconds: 30
-  instance:
-    # 服务续约任务调用间隔时间，默认30秒
-    lease-renewal-interval-in-seconds: 30
-    # 服务失效时间，默认90秒
-    lease-expiration-duration-in-seconds: 90
-    # 实例使用ip进行访问
-    prefer-ip-address: true
-    # 实例显示id
-    instance-id: ${spring.application.name}:${server.port}
-    #状态页面和健康指标
-    statusPageUrlPath: ${server.servlet.context-path}/actuator/info
-    healthCheckUrlPath: ${server.servlet.context-path}/actuator/health
+
+mybatis:
+  type-aliases-package: cn.hejinyo.ss.jelly.model
+  mapper-locations: classpath*:cn/hejinyo/ss/jelly/dao/*Dao.xml
+  configuration:
+    map-underscore-to-camel-case: true
 
 # shiro 不拦截路径
 ss:
@@ -85,8 +99,3 @@ ss:
         - /swagger-ui.html
       filterChainMap:
         '[/test/**]': url
-
-# Feign 开启 Hystrix
-feign:
-  hystrix:
-    enabled: true

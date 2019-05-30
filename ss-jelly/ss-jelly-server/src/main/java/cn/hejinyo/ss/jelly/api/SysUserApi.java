@@ -2,9 +2,9 @@ package cn.hejinyo.ss.jelly.api;
 
 import cn.hejinyo.ss.common.utils.MicroserviceResult;
 import cn.hejinyo.ss.common.utils.PojoConvertUtil;
-import cn.hejinyo.ss.jelly.dao.SysUserDao;
-import cn.hejinyo.ss.jelly.dto.SysUserDTO;
+import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 import cn.hejinyo.ss.jelly.service.SysUserApiService;
+import cn.hejinyo.ss.jelly.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -29,28 +29,15 @@ import java.util.Set;
 public class SysUserApi implements SysUserApiService {
 
     @Autowired
-    private SysUserDao sysUserDao;
+    private SysUserService sysUserService;
 
     /**
-     * 获取用户信息
+     * 根据用户名查询用户信息
      */
     @Override
-    @ApiOperation(value = "获取用户信息", notes = "findByUserId")
-    public MicroserviceResult<SysUserDTO> getUserInfo(@PathVariable Integer userId) {
-        return MicroserviceResult.ok(Optional.of(sysUserDao.getOne(userId)).
-                map(v -> PojoConvertUtil.convert(v, SysUserDTO.class)).
-                orElse(null));
-    }
-
-    /**
-     * 获取用户信息
-     */
-    @Override
-    @ApiOperation(value = "获取用户信息", notes = "findByUserName")
+    @ApiOperation(value = "根据用户名查询用户信息", notes = "findByUserName")
     public MicroserviceResult<SysUserDTO> findByUserName(@PathVariable String userName) {
-        return MicroserviceResult.ok(Optional.of(sysUserDao.getOne(1)).
-                map(v -> PojoConvertUtil.convert(v, SysUserDTO.class)).
-                orElse(null));
+        return MicroserviceResult.ok(sysUserService.getByUserName(userName));
     }
 
     /**

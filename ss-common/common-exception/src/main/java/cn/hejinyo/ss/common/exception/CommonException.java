@@ -24,9 +24,11 @@ public class CommonException extends RuntimeException {
         super(message);
     }
 
-    public CommonException(int code, String message) {
+    public CommonException(Integer code, String message) {
         super(message);
-        this.code = code;
+        if (code != null) {
+            this.code = code;
+        }
     }
 
     public CommonException(Throwable cause) {
