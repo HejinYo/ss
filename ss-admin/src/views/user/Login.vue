@@ -76,7 +76,8 @@
           :to="{ name: 'recover', params: { user: 'aaa'} }"
           class="forge-password"
           style="float: right;"
-        >忘记密码</router-link>
+        >忘记密码
+        </router-link>
       </a-form-item>
 
       <a-form-item style="margin-top:24px">
@@ -87,7 +88,8 @@
           class="login-button"
           :loading="state.loginBtn"
           :disabled="state.loginBtn"
-        >确定</a-button>
+        >确定
+        </a-button>
       </a-form-item>
 
       <div class="user-login-other">
@@ -119,7 +121,8 @@ import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
-import { getSmsCaptcha, get2step } from '@/api/login'
+import { get2step, getSmsCaptcha } from '@/api/login'
+import Cookies from 'js-cookie'
 
 export default {
   components: {
@@ -144,21 +147,21 @@ export default {
     }
   },
   created () {
-    get2step({ })
+    get2step({})
       .then(res => {
         this.requiredTwoStepCaptcha = res.result.stepCode
       })
       .catch(() => {
         this.requiredTwoStepCaptcha = false
       })
-    // this.requiredTwoStepCaptcha = true
+      // this.requiredTwoStepCaptcha = true
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
     // handler
     handleUsernameOrEmail (rule, value, callback) {
-      const { state } = this
-      const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
+      const { state } = this;
+      const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
       if (regex.test(value)) {
         state.loginType = 0
       } else {
@@ -171,26 +174,32 @@ export default {
       // this.form.resetFields()
     },
     handleSubmit (e) {
-      e.preventDefault()
+      e.preventDefault();
       const {
         form: { validateFields },
         state,
         customActiveKey,
         Login
-      } = this
+      } = this;
 
-      state.loginBtn = true
+      state.loginBtn = true;
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha'];
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          console.log('login form', values)
-          const loginParams = { ...values }
-          delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
-          Login(loginParams)
+          console.log('login form', values);
+          const loginParams = { ...values };
+          delete loginParams.username;
+          loginParams[!state.loginType ? 'email' : 'username'] = values.username;
+          loginParams.password = md5(values.password);
+
+          const param = {
+            userName: 'admin',
+            userPwd: '123456'
+          };
+
+          Login(param)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
             .finally(() => {
@@ -201,37 +210,38 @@ export default {
             state.loginBtn = false
           }, 600)
         }
-      })
+      }
+      )
     },
     getCaptcha (e) {
-      e.preventDefault()
-      const { form: { validateFields }, state } = this
+      e.preventDefault();
+      const { form: { validateFields }, state } = this;
 
       validateFields(['mobile'], { force: true }, (err, values) => {
         if (!err) {
-          state.smsSendBtn = true
+          state.smsSendBtn = true;
 
           const interval = window.setInterval(() => {
             if (state.time-- <= 0) {
-              state.time = 60
-              state.smsSendBtn = false
+              state.time = 60;
+              state.smsSendBtn = false;
               window.clearInterval(interval)
             }
-          }, 1000)
+          }, 1000);
 
-          const hide = this.$message.loading('验证码发送中..', 0)
+          const hide = this.$message.loading('验证码发送中..', 0);
           getSmsCaptcha({ mobile: values.mobile }).then(res => {
-            setTimeout(hide, 2500)
+            setTimeout(hide, 2500);
             this.$notification['success']({
               message: '提示',
               description: '验证码获取成功，您的验证码为：' + res.result.captcha,
               duration: 8
             })
           }).catch(err => {
-            setTimeout(hide, 1)
-            clearInterval(interval)
-            state.time = 60
-            state.smsSendBtn = false
+            setTimeout(hide, 1);
+            clearInterval(interval);
+            state.time = 60;
+            state.smsSendBtn = false;
             this.requestFailed(err)
           })
         }
@@ -242,13 +252,12 @@ export default {
     },
     stepCaptchaCancel () {
       this.Logout().then(() => {
-        this.loginBtn = false
+        this.loginBtn = false;
         this.stepCaptchaVisible = false
       })
     },
     loginSuccess (res) {
-      console.log(res)
-      this.$router.push({ name: 'dashboard' })
+      this.$router.push({ name: 'dashboard' });
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
         this.$notification.success({
@@ -258,9 +267,10 @@ export default {
       }, 1000)
     },
     requestFailed (err) {
+      console.log(err);
       this.$notification['error']({
         message: '错误',
-        description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
+        description: ((err.response || {}).data || {}).msg || '请求出现错误，请稍后再试',
         duration: 4
       })
     }
@@ -269,49 +279,49 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.user-layout-login {
-  label {
-    font-size: 14px;
-  }
+  .user-layout-login {
+    label {
+      font-size: 14px;
+    }
 
-  .getCaptcha {
-    display: block;
-    width: 100%;
-    height: 40px;
-  }
+    .getCaptcha {
+      display: block;
+      width: 100%;
+      height: 40px;
+    }
 
-  .forge-password {
-    font-size: 14px;
-  }
+    .forge-password {
+      font-size: 14px;
+    }
 
-  button.login-button {
-    padding: 0 15px;
-    font-size: 16px;
-    height: 40px;
-    width: 100%;
-  }
+    button.login-button {
+      padding: 0 15px;
+      font-size: 16px;
+      height: 40px;
+      width: 100%;
+    }
 
-  .user-login-other {
-    text-align: left;
-    margin-top: 24px;
-    line-height: 22px;
+    .user-login-other {
+      text-align: left;
+      margin-top: 24px;
+      line-height: 22px;
 
-    .item-icon {
-      font-size: 24px;
-      color: rgba(0, 0, 0, 0.2);
-      margin-left: 16px;
-      vertical-align: middle;
-      cursor: pointer;
-      transition: color 0.3s;
+      .item-icon {
+        font-size: 24px;
+        color: rgba(0, 0, 0, 0.2);
+        margin-left: 16px;
+        vertical-align: middle;
+        cursor: pointer;
+        transition: color 0.3s;
 
-      &:hover {
-        color: #1890ff;
+        &:hover {
+          color: #1890ff;
+        }
+      }
+
+      .register {
+        float: right;
       }
     }
-
-    .register {
-      float: right;
-    }
   }
-}
 </style>

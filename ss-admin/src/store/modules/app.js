@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import {
-  SIDEBAR_TYPE,
-  DEFAULT_THEME,
-  DEFAULT_LAYOUT_MODE,
   DEFAULT_COLOR,
   DEFAULT_COLOR_WEAK,
-  DEFAULT_FIXED_HEADER,
-  DEFAULT_FIXED_SIDEMENU,
-  DEFAULT_FIXED_HEADER_HIDDEN,
   DEFAULT_CONTENT_WIDTH_TYPE,
-  DEFAULT_MULTI_TAB
+  DEFAULT_FIXED_HEADER,
+  DEFAULT_FIXED_HEADER_HIDDEN,
+  DEFAULT_FIXED_SIDEMENU,
+  DEFAULT_LAYOUT_MODE,
+  DEFAULT_MULTI_TAB,
+  DEFAULT_THEME,
+  SIDEBAR_TYPE
 } from '@/store/mutation-types'
 
 const app = {
@@ -24,15 +24,17 @@ const app = {
     autoHideHeader: false,
     color: null,
     weak: false,
-    multiTab: true
+    multiTab: true,
+    // 完成路由生成过程
+    routeGeneration: false
   },
   mutations: {
     SET_SIDEBAR_TYPE: (state, type) => {
-      state.sidebar = type
+      state.sidebar = type;
       Vue.ls.set(SIDEBAR_TYPE, type)
     },
     CLOSE_SIDEBAR: (state) => {
-      Vue.ls.set(SIDEBAR_TYPE, true)
+      Vue.ls.set(SIDEBAR_TYPE, true);
       state.sidebar = false
     },
     TOGGLE_DEVICE: (state, device) => {
@@ -40,40 +42,43 @@ const app = {
     },
     TOGGLE_THEME: (state, theme) => {
       // setStore('_DEFAULT_THEME', theme)
-      Vue.ls.set(DEFAULT_THEME, theme)
+      Vue.ls.set(DEFAULT_THEME, theme);
       state.theme = theme
     },
     TOGGLE_LAYOUT_MODE: (state, layout) => {
-      Vue.ls.set(DEFAULT_LAYOUT_MODE, layout)
+      Vue.ls.set(DEFAULT_LAYOUT_MODE, layout);
       state.layout = layout
     },
     TOGGLE_FIXED_HEADER: (state, fixed) => {
-      Vue.ls.set(DEFAULT_FIXED_HEADER, fixed)
+      Vue.ls.set(DEFAULT_FIXED_HEADER, fixed);
       state.fixedHeader = fixed
     },
     TOGGLE_FIXED_SIDERBAR: (state, fixed) => {
-      Vue.ls.set(DEFAULT_FIXED_SIDEMENU, fixed)
+      Vue.ls.set(DEFAULT_FIXED_SIDEMENU, fixed);
       state.fixSiderbar = fixed
     },
     TOGGLE_FIXED_HEADER_HIDDEN: (state, show) => {
-      Vue.ls.set(DEFAULT_FIXED_HEADER_HIDDEN, show)
+      Vue.ls.set(DEFAULT_FIXED_HEADER_HIDDEN, show);
       state.autoHideHeader = show
     },
     TOGGLE_CONTENT_WIDTH: (state, type) => {
-      Vue.ls.set(DEFAULT_CONTENT_WIDTH_TYPE, type)
+      Vue.ls.set(DEFAULT_CONTENT_WIDTH_TYPE, type);
       state.contentWidth = type
     },
     TOGGLE_COLOR: (state, color) => {
-      Vue.ls.set(DEFAULT_COLOR, color)
+      Vue.ls.set(DEFAULT_COLOR, color);
       state.color = color
     },
     TOGGLE_WEAK: (state, flag) => {
-      Vue.ls.set(DEFAULT_COLOR_WEAK, flag)
+      Vue.ls.set(DEFAULT_COLOR_WEAK, flag);
       state.weak = flag
     },
     TOGGLE_MULTI_TAB: (state, bool) => {
-      Vue.ls.set(DEFAULT_MULTI_TAB, bool)
+      Vue.ls.set(DEFAULT_MULTI_TAB, bool);
       state.multiTab = bool
+    },
+    SET_ROUTE_GENERATION: (state, flag) => {
+      state.routeGeneration = flag
     }
   },
   actions: {
@@ -117,6 +122,6 @@ const app = {
       commit('TOGGLE_MULTI_TAB', bool)
     }
   }
-}
+};
 
 export default app

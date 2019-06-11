@@ -13,9 +13,9 @@
 
       <a-popover placement="rightTop" trigger="click" :visible="state.passwordLevelChecked">
         <template slot="content">
-          <div :style="{ width: '240px' }" >
+          <div :style="{ width: '240px' }">
             <div :class="['user-register', passwordLevelClass]">强度：<span>{{ passwordLevelName }}</span></div>
-            <a-progress :percent="state.percent" :showInfo="false" :strokeColor=" passwordLevelColor " />
+            <a-progress :percent="state.percent" :showInfo="false" :strokeColor=" passwordLevelColor "/>
             <div style="margin-top: 10px;">
               <span>请至少输入 6 个字符。请不要使用容易被猜到的密码。</span>
             </div>
@@ -44,7 +44,10 @@
       </a-form-item>
 
       <a-form-item>
-        <a-input size="large" placeholder="11 位手机号" v-decorator="['mobile', {rules: [{ required: true, message: '请输入正确的手机号', pattern: /^1[3456789]\d{9}$/ }, { validator: this.handlePhoneCheck } ], validateTrigger: ['change', 'blur'] }]">
+        <a-input
+          size="large"
+          placeholder="11 位手机号"
+          v-decorator="['mobile', {rules: [{ required: true, message: '请输入正确的手机号', pattern: /^1[3456789]\d{9}$/ }, { validator: this.handlePhoneCheck } ], validateTrigger: ['change', 'blur'] }]">
           <a-select slot="addonBefore" size="large" defaultValue="+86">
             <a-select-option value="+86">+86</a-select-option>
             <a-select-option value="+87">+87</a-select-option>
@@ -103,23 +106,22 @@ const levelNames = {
   1: '低',
   2: '中',
   3: '强'
-}
+};
 const levelClass = {
   0: 'error',
   1: 'error',
   2: 'warning',
   3: 'success'
-}
+};
 const levelColor = {
   0: '#ff0000',
   1: '#ff0000',
   2: '#ff7e05',
   3: '#52c41a'
-}
+};
 export default {
   name: 'Register',
-  components: {
-  },
+  components: {},
   mixins: [mixinDevice],
   data () {
     return {
@@ -150,7 +152,7 @@ export default {
   methods: {
 
     handlePasswordLevel (rule, value, callback) {
-      let level = 0
+      let level = 0;
 
       // 判断这个字符串中有没有数字
       if (/[0-9]/.test(value)) {
@@ -164,8 +166,8 @@ export default {
       if (/[^0-9a-zA-Z_]/.test(value)) {
         level++
       }
-      this.state.passwordLevel = level
-      this.state.percent = level * 30
+      this.state.passwordLevel = level;
+      this.state.percent = level * 30;
       if (level >= 2) {
         if (level >= 3) {
           this.state.percent = 100
@@ -180,8 +182,8 @@ export default {
     },
 
     handlePasswordCheck (rule, value, callback) {
-      const password = this.form.getFieldValue('password')
-      console.log('value', value)
+      const password = this.form.getFieldValue('password');
+      console.log('value', value);
       if (value === undefined) {
         callback(new Error('请输入密码'))
       }
@@ -192,23 +194,23 @@ export default {
     },
 
     handlePhoneCheck (rule, value, callback) {
-      console.log('handlePhoneCheck, rule:', rule)
-      console.log('handlePhoneCheck, value', value)
-      console.log('handlePhoneCheck, callback', callback)
+      console.log('handlePhoneCheck, rule:', rule);
+      console.log('handlePhoneCheck, value', value);
+      console.log('handlePhoneCheck, callback', callback);
 
       callback()
     },
 
     handlePasswordInputClick () {
       if (!this.isMobile()) {
-        this.state.passwordLevelChecked = true
+        this.state.passwordLevelChecked = true;
         return
       }
       this.state.passwordLevelChecked = false
     },
 
     handleSubmit () {
-      const { form: { validateFields }, $router } = this
+      const { form: { validateFields }, $router } = this;
       validateFields({ force: true }, (err, values) => {
         if (!err) {
           $router.push({ name: 'registerResult', params: { ...values } })
@@ -217,36 +219,36 @@ export default {
     },
 
     getCaptcha (e) {
-      e.preventDefault()
-      const { form: { validateFields }, state, $message, $notification } = this
+      e.preventDefault();
+      const { form: { validateFields }, state, $message, $notification } = this;
 
       validateFields(['mobile'], { force: true },
         (err, values) => {
           if (!err) {
-            state.smsSendBtn = true
+            state.smsSendBtn = true;
 
             const interval = window.setInterval(() => {
               if (state.time-- <= 0) {
-                state.time = 60
-                state.smsSendBtn = false
+                state.time = 60;
+                state.smsSendBtn = false;
                 window.clearInterval(interval)
               }
-            }, 1000)
+            }, 1000);
 
-            const hide = $message.loading('验证码发送中..', 0)
+            const hide = $message.loading('验证码发送中..', 0);
 
             getSmsCaptcha({ mobile: values.mobile }).then(res => {
-              setTimeout(hide, 2500)
+              setTimeout(hide, 2500);
               $notification['success']({
                 message: '提示',
                 description: '验证码获取成功，您的验证码为：' + res.result.captcha,
                 duration: 8
               })
             }).catch(err => {
-              setTimeout(hide, 1)
-              clearInterval(interval)
-              state.time = 60
-              state.smsSendBtn = false
+              setTimeout(hide, 1);
+              clearInterval(interval);
+              state.time = 60;
+              state.smsSendBtn = false;
               this.requestFailed(err)
             })
           }
@@ -258,7 +260,7 @@ export default {
         message: '错误',
         description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
         duration: 4
-      })
+      });
       this.registerBtn = false
     }
   },
