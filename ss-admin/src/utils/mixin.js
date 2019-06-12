@@ -1,5 +1,5 @@
 // import Vue from 'vue'
-import { DEVICE_TYPE, deviceEnquire } from '@/utils/device'
+import {deviceEnquire, DEVICE_TYPE} from '@/utils/device'
 import { mapState } from 'vuex'
 
 // const mixinsComputed = Vue.config.optionMergeStrategies.computed
