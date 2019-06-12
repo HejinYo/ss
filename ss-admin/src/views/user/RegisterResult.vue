@@ -29,8 +29,8 @@ export default {
   },
   computed: {
     email () {
-      const v = this.form && this.form.email || 'xxx'
-      const title = `你的账户：${v} 注册成功`
+      const v = this.form && this.form.email || 'xxx';
+      const title = `你的账户：${v} 注册成功`;
       return title
     }
   },

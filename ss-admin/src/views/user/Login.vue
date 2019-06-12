@@ -122,7 +122,6 @@ import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { get2step, getSmsCaptcha } from '@/api/login'
-import Cookies from 'js-cookie'
 
 export default {
   components: {

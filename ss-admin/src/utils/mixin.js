@@ -1,5 +1,5 @@
 // import Vue from 'vue'
-import { deviceEnquire, DEVICE_TYPE } from '@/utils/device'
+import { DEVICE_TYPE, deviceEnquire } from '@/utils/device'
 import { mapState } from 'vuex'
 
 // const mixinsComputed = Vue.config.optionMergeStrategies.computed
@@ -29,7 +29,7 @@ const mixin = {
       return !this.isTopMenu()
     }
   }
-}
+};
 
 const mixinDevice = {
   computed: {
@@ -48,29 +48,29 @@ const mixinDevice = {
       return this.device === DEVICE_TYPE.TABLET
     }
   }
-}
+};
 
 const AppDeviceEnquire = {
   mounted () {
-    const { $store } = this
+    const { $store } = this;
     deviceEnquire(deviceType => {
       switch (deviceType) {
         case DEVICE_TYPE.DESKTOP:
-          $store.commit('TOGGLE_DEVICE', 'desktop')
-          $store.dispatch('setSidebar', true)
-          break
+          $store.commit('TOGGLE_DEVICE', 'desktop');
+          $store.dispatch('setSidebar', true);
+          break;
         case DEVICE_TYPE.TABLET:
-          $store.commit('TOGGLE_DEVICE', 'tablet')
-          $store.dispatch('setSidebar', false)
-          break
+          $store.commit('TOGGLE_DEVICE', 'tablet');
+          $store.dispatch('setSidebar', false);
+          break;
         case DEVICE_TYPE.MOBILE:
         default:
-          $store.commit('TOGGLE_DEVICE', 'mobile')
-          $store.dispatch('setSidebar', true)
+          $store.commit('TOGGLE_DEVICE', 'mobile');
+          $store.dispatch('setSidebar', true);
           break
       }
     })
   }
-}
+};
 
 export { mixin, AppDeviceEnquire, mixinDevice }

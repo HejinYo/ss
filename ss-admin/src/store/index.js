@@ -6,7 +6,7 @@ import user from './modules/user'
 import permission from './modules/permission'
 import getters from './getters'
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
@@ -14,14 +14,8 @@ export default new Vuex.Store({
     user,
     permission
   },
-  state: {
-
-  },
-  mutations: {
-
-  },
-  actions: {
-
-  },
+  state: {},
+  mutations: {},
+  actions: {},
   getters
 })

@@ -5,15 +5,15 @@ const VueAxios = {
     if (this.installed) {
       return
     }
-    this.installed = true
+    this.installed = true;
 
     if (!instance) {
       // eslint-disable-next-line no-console
-      console.error('You have to install axios')
+      console.error('You have to install axios');
       return
     }
 
-    Vue.axios = instance
+    Vue.axios = instance;
 
     Object.defineProperties(Vue.prototype, {
       axios: {
@@ -28,7 +28,7 @@ const VueAxios = {
       }
     })
   }
-}
+};
 
 export {
   VueAxios
