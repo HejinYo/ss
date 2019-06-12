@@ -14,10 +14,10 @@ import './core/use'
 import './permission' // permission control
 import './utils/filter' // global filter
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
 // mount axios Vue.$http and this.$http
-Vue.use(VueAxios);
+Vue.use(VueAxios)
 
 new Vue({
   router,
@@ -26,4 +26,4 @@ new Vue({
     bootstrap()
   },
   render: h => h(App)
-}).$mount('#app');
+}).$mount('#app')
