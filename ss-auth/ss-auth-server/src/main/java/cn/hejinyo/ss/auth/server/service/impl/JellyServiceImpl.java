@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -154,5 +155,22 @@ public class JellyServiceImpl implements JellyService {
             }
         } catch (Exception ignored) {
         }
+    }
+
+    /**
+     * 获得当前用户redis中的用户信息
+     */
+    @Override
+    public SysUserDTO getUserInfo(String userToken) {
+        try {
+            //验证token是否有效
+            JwtTools.verifyToken(userToken, JwtTools.JWT_SIGN_KEY);
+            //token中获取用户名
+            String userName = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERNAME, String.class);
+            return jellySysUserService.findByUserName(userName).get();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

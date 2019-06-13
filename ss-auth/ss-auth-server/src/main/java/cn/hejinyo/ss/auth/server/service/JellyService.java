@@ -30,4 +30,9 @@ public interface JellyService {
      * 注销
      */
     void logout(String token);
+
+    /**
+     * 获得当前用户信息
+     */
+    SysUserDTO getUserInfo(String userToken);
 }

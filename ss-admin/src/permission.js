@@ -22,10 +22,11 @@ router.beforeEach((to, from, next) => {
       NProgress.done()
     } else {
       if (!store.getters.routeGeneration) {
+        // 获取用户信息
+        store.dispatch('GetInfo')
         store
-          .dispatch('GetInfo')
-          .then(res => {
-            const menus = res.result && res.result.menus
+          .dispatch('GetMenus')
+          .then(menus => {
             store.dispatch('GenerateRoutes', { menus }).then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表

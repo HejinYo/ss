@@ -31,10 +31,10 @@
 </template>
 
 <script>
-import { ArticleListContent } from '@/components'
-import IconText from '@/views/list/search/components/IconText'
+  import { ArticleListContent } from '@/components'
+  import IconText from '@/views/list/search/components/IconText'
 
-export default {
+  export default {
   name: 'Article',
   components: {
     IconText,

@@ -2,7 +2,7 @@ import Mock from 'mockjs2'
 import { builder } from '../util'
 
 const info = (options) => {
-  console.log('options', options);
+  console.log('options', options)
 
   const userInfo = {
     'id': '4291d7da9005377ec9aec4a71ea837f',
@@ -20,14 +20,24 @@ const info = (options) => {
     'deleted': 0,
     'roleId': 'admin',
     'role': {}
-  };
+  }
 
   // 权限字符串
-  userInfo.actionList = ['add', 'get', 'update', 'delete'];
+  userInfo.actionList = ['add', 'get', 'update', 'delete']
 
   // 菜单编码
-  userInfo.menus = ['dashboard', 'exception', 'result', 'profile', 'table', 'form', 'order', 'permission', 'role', 'table', 'user', 'support'];
+  userInfo.menus = ['dashboard', 'exception', 'result', 'profile', 'table', 'form', 'order', 'permission', 'role', 'table', 'user', 'support']
   return builder(userInfo)
-};
+}
 
-Mock.mock(/\/api\/user\/info/, 'get', info);
+const menus = () => {
+  return builder(['dashboard', 'exception', 'result', 'profile', 'table', 'form', 'order', 'permission', 'role', 'table', 'user', 'support'])
+}
+
+const perm = () => {
+  return builder(['add', 'get', 'update', 'delete'])
+}
+
+Mock.mock(/\/api\/user\/info/, 'get', info)
+Mock.mock(/\/jelly\/userMenus/, 'get', menus)
+Mock.mock(/\/jelly\/userPerm/, 'get', perm)

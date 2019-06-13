@@ -44,7 +44,7 @@ public class JellyLoginController {
         Cookie cookie = new Cookie(JwtTools.AUTHOR_PARAM, token);
         cookie.setPath("/");
         response.addCookie(cookie);
-        return Result.ok(token);
+        return Result.result(token);
     }
 
     /**
@@ -53,6 +53,33 @@ public class JellyLoginController {
     @PutMapping(value = "/logout")
     @ApiOperation(value = "登出", notes = "返回userToken")
     public Result logout(HttpServletRequest request, HttpServletResponse response) {
+        String userToken = this.getToken(request);
+        if (StringUtils.isNotEmpty(userToken)) {
+            jellyService.logout(userToken);
+            Cookie cookie = new Cookie(JwtTools.AUTHOR_PARAM, "");
+            cookie.setPath("/");
+            // 设置保存cookie最大时长为0，即使其失效
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
+        return Result.result(userToken);
+    }
+
+
+    /**
+     * 获得当前用户信息
+     */
+    @GetMapping("/userInfo")
+    @ApiOperation(value = "获得当前用户信息", notes = "获得当前用户信息")
+    public Result getUserInfo(HttpServletRequest request) {
+        String userToken = this.getToken(request);
+        if (StringUtils.isNotEmpty(userToken)) {
+            return Result.result(jellyService.getUserInfo(userToken));
+        }
+        return Result.ok();
+    }
+
+    private String getToken(HttpServletRequest request) {
         String userToken = null;
         // 先从cookie中获取
         Cookie[] cookies = request.getCookies();
@@ -72,15 +99,7 @@ public class JellyLoginController {
         if (StringUtils.isEmpty(userToken)) {
             userToken = request.getParameter(JwtTools.AUTHOR_PARAM);
         }
-        if (StringUtils.isNotEmpty(userToken)) {
-            jellyService.logout(userToken);
-            Cookie cookie = new Cookie(JwtTools.AUTHOR_PARAM, "");
-            cookie.setPath("/");
-            // 设置保存cookie最大时长为0，即使其失效
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
-        return Result.result(userToken);
+        return userToken;
     }
 
 }

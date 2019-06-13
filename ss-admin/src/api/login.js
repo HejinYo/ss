@@ -28,9 +28,38 @@ export function getSmsCaptcha (parameter) {
   })
 }
 
+/**
+ * 获取用户基本信息
+ */
 export function getInfo () {
   return axios({
-    url: '/user/info',
+    url: '/jelly/userInfo',
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 获取用户菜单
+ */
+export function getMenus () {
+  return axios({
+    url: '/jelly/userMenus',
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
+/**
+ * 获取用户操作權限
+ */
+export function getPerm () {
+  return axios({
+    url: '/jelly/userPerm',
     method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
