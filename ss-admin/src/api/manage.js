@@ -7,7 +7,7 @@ const api = {
   permission: '/permission',
   permissionNoPager: '/permission/no-pager',
   orgTree: '/org/tree'
-};
+}
 
 export default api
 

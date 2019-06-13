@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import {UserLayout, BasicLayout, RouteView, BlankLayout, PageView} from '@/layouts'
+import { BasicLayout, BlankLayout, PageView, RouteView, UserLayout } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
 export const asyncRouterMap = [
@@ -322,7 +322,7 @@ export const asyncRouterMap = [
   {
     path: '*', redirect: '/404', hidden: true
   }
-];
+]
 
 /**
  * 基础路由
@@ -371,4 +371,4 @@ export const constantRouterMap = [
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   }
 
-];
+]
