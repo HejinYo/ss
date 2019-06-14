@@ -30,14 +30,4 @@ const info = (options) => {
   return builder(userInfo)
 }
 
-const menus = () => {
-  return builder(['dashboard', 'exception', 'result', 'profile', 'table', 'form', 'order', 'permission', 'role', 'table', 'user', 'support'])
-}
-
-const perm = () => {
-  return builder(['add', 'get', 'update', 'delete'])
-}
-
 Mock.mock(/\/api\/user\/info/, 'get', info)
-Mock.mock(/\/jelly\/userMenus/, 'get', menus)
-Mock.mock(/\/jelly\/userPerm/, 'get', perm)

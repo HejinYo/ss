@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { getInfo, getMenus, login, logout } from '@/api/login'
+import { getInfo, login, logout } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 import Cookies from 'js-cookie'
@@ -64,20 +64,8 @@ const user = {
           commit('SET_INFO', result)
           commit('SET_NAME', { name: result.nickName, welcome: welcome() })
           commit('SET_AVATAR', result.avatar)
-          resolve(result)
-        }).catch(error => {
-          reject(error)
-        })
-      })
-    },
-
-    // 获取用户菜單
-    GetMenus ({ commit }) {
-      return new Promise((resolve, reject) => {
-        getMenus().then(data => {
-          let { result } = data
-          commit('SET_ROLES', result.role)
-          commit('SET_MENUS', result)
+          commit('SET_ROLES', result.roles)
+          commit('SET_MENUS', result.menus)
           resolve(result)
         }).catch(error => {
           reject(error)
@@ -93,7 +81,6 @@ const user = {
         Vue.ls.remove(ACCESS_TOKEN)
         // 移除cookie
         Cookies.remove('x-access-token')
-
         logout(state.token).then(() => {
           resolve()
         }).catch(() => {

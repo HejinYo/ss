@@ -3,7 +3,7 @@ package cn.hejinyo.ss.common.framework.exception;
 import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.exception.CommonException;
 import cn.hejinyo.ss.common.exception.MicroserviceException;
-import cn.hejinyo.ss.common.framework.utils.ResponseUtils;
+import cn.hejinyo.ss.common.framework.utils.WebUtils;
 import cn.hejinyo.ss.common.framework.utils.Result;
 import cn.hejinyo.ss.common.utils.MicroserviceResult;
 import lombok.extern.slf4j.Slf4j;
@@ -82,9 +82,9 @@ public class ExceptionHandle {
         if ((contextPath + uri).startsWith(CommonConstant.MICRO_SERVER_API)) {
             // 如果是微服务调用，状态码为200,返回 ServerResult对象
             MicroserviceResult re = MicroserviceResult.result(httpStatus.value(), result.getCode(), result.getMsg(), result.getResult());
-            ResponseUtils.response(response, HttpStatus.OK.value(), re);
+            WebUtils.response(response, HttpStatus.OK.value(), re);
         } else {
-            ResponseUtils.response(response, httpStatus.value(), result);
+            WebUtils.response(response, httpStatus.value(), result);
         }
     }
 }

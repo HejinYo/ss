@@ -2,6 +2,7 @@ package cn.hejinyo.ss.auth.server.service;
 
 
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
+import cn.hejinyo.ss.auth.server.model.vo.JellyUserInfoVO;
 import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 import cn.hejinyo.ss.jelly.model.dto.UserNameLoginDTO;
 
@@ -34,5 +35,5 @@ public interface JellyService {
     /**
      * 获得当前用户信息
      */
-    SysUserDTO getUserInfo(String userToken);
+    JellyUserInfoVO getUserInfo(String userToken);
 }

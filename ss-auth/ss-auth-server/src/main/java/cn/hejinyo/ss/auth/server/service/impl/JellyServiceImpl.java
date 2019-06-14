@@ -2,6 +2,7 @@ package cn.hejinyo.ss.auth.server.service.impl;
 
 import cn.hejinyo.ss.auth.server.dto.AuthCheckResult;
 import cn.hejinyo.ss.auth.server.feign.JellySysUserService;
+import cn.hejinyo.ss.auth.server.model.vo.JellyUserInfoVO;
 import cn.hejinyo.ss.auth.server.service.JellyService;
 import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.framework.consts.StatusCode;
@@ -9,6 +10,7 @@ import cn.hejinyo.ss.common.framework.exception.InfoException;
 import cn.hejinyo.ss.common.framework.utils.JwtTools;
 import cn.hejinyo.ss.common.redis.utils.RedisUtils;
 import cn.hejinyo.ss.common.utils.JsonUtil;
+import cn.hejinyo.ss.common.utils.PojoConvertUtil;
 import cn.hejinyo.ss.common.utils.Tools;
 import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 import cn.hejinyo.ss.jelly.model.dto.UserNameLoginDTO;
@@ -19,10 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
@@ -81,60 +81,35 @@ public class JellyServiceImpl implements JellyService {
         List<String> storeUserInfo = RedisUtils.hmget(JellyRedisKeys.storeUser(userId), fields);
         AuthCheckResult result = new AuthCheckResult();
         if (storeUserInfo.size() == fields.size()) {
-            String checkJti = storeUserInfo.get(0);
-            String roleStr = storeUserInfo.get(1);
-            String permStr = storeUserInfo.get(2);
             // 验证成功
-            if (jti.equals(checkJti)) {
+            if (jti.equals(storeUserInfo.get(0))) {
                 result.setPass(true);
-                result.setRoleSet(getUserRoleSet(userId, roleStr));
-                result.setPermSet(getUserPermSet(userId, permStr));
+                result.setRoleSet(this.getInfoSet(userId, storeUserInfo.get(1), fields.get(1),
+                        () -> jellySysUserService.getUserRoleSet(userId).get()));
+                result.setPermSet(this.getInfoSet(userId, storeUserInfo.get(2), fields.get(2),
+                        () -> jellySysUserService.getUserPermSet(userId).get()));
             }
         }
         return result;
     }
 
-    /**
-     * 查找用户编号对应的角色编码字符串
-     */
-    private Set<String> getUserRoleSet(int userId, String roleStr) {
-        Set<String> roleSet;
-        // redis中获得角色信息
-        if (roleStr != null) {
-            roleSet = JsonUtil.parseObject(roleStr, new TypeReference<Set<String>>() {
-            }.getType());
-        } else {
-            // 不存在则数据库获得角色信息
-            roleSet = jellySysUserService.getUserRoleSet(userId).get();
-        }
-        if (roleSet != null) {
-            roleSet.removeIf(Objects::isNull);
-            RedisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_ROLE, roleSet);
-        }
-        return roleSet;
-    }
-
-    /**
-     * 查找用户编号对应的权限编码字符串
-     */
-    private Set<String> getUserPermSet(int userId, String permStr) {
-        Set<String> permissionsSet;
-
+    private Set<String> getInfoSet(int userId, String str, String key, Supplier<? extends Set<String>> mapper) {
+        Set<String> set;
         // redis中获得权限信息
-        if (permStr != null) {
-            permissionsSet = JsonUtil.parseObject(permStr, new TypeReference<Set<String>>() {
+        if (str != null) {
+            return JsonUtil.parseObject(str, new TypeReference<Set<String>>() {
             }.getType());
-        } else {
-            // 不存在则数据库获得权限信息
-            permissionsSet = jellySysUserService.getUserPermSet(userId).get();
         }
-
-        if (permissionsSet != null) {
-            permissionsSet.removeIf(Objects::isNull);
-            RedisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_PERM, permissionsSet);
+        // 不存在则数据库获得权限信息
+        set = mapper.get();
+        if (set != null) {
+            set.removeIf(Objects::isNull);
+            RedisUtils.hset(JellyRedisKeys.storeUser(userId), key, set);
+            return set;
         }
-        return permissionsSet;
+        return new HashSet<>();
     }
+
 
     /**
      * 注销
@@ -161,14 +136,34 @@ public class JellyServiceImpl implements JellyService {
      * 获得当前用户redis中的用户信息
      */
     @Override
-    public SysUserDTO getUserInfo(String userToken) {
+    public JellyUserInfoVO getUserInfo(String userToken) {
         try {
             //验证token是否有效
             JwtTools.verifyToken(userToken, JwtTools.JWT_SIGN_KEY);
             //token中获取用户名
             String userName = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERNAME, String.class);
-            return jellySysUserService.findByUserName(userName).get();
+            return jellySysUserService.findByUserName(userName).then(userDto -> {
+                Integer userId = userDto.getUserId();
+                JellyUserInfoVO userInfoVO = PojoConvertUtil.convert(userDto, JellyUserInfoVO.class);
+
+                List<String> fields = Arrays.asList(JellyRedisKeys.USER_ROLE, JellyRedisKeys.USER_PERM);
+                // 读取用户TOKEN 角色 权限信息
+                List<String> storeUserInfo = RedisUtils.hmget(JellyRedisKeys.storeUser(userId), fields);
+                if (storeUserInfo.size() == fields.size()) {
+                    // 查询用户角色
+                    userInfoVO.setRoles(this.getInfoSet(userId, storeUserInfo.get(0), fields.get(0),
+                            () -> jellySysUserService.getUserRoleSet(userId).get()));
+                    // 查询用户权限
+                    userInfoVO.setPerms(this.getInfoSet(userId, storeUserInfo.get(1), fields.get(1),
+                            () -> jellySysUserService.getUserPermSet(userId).get()));
+                }
+                // 查询用户菜单
+                userInfoVO.setMenus(Arrays.asList("dashboard", "exception", "result", "profile", "table", "form",
+                        "order", "permission", "role", "table", "user", "support"));
+                return userInfoVO;
+            });
         } catch (UnsupportedEncodingException e) {
+            // 登录过期 TODO
             e.printStackTrace();
         }
         return null;

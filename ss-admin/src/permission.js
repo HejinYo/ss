@@ -23,10 +23,10 @@ router.beforeEach((to, from, next) => {
     } else {
       if (!store.getters.routeGeneration) {
         // 获取用户信息
-        store.dispatch('GetInfo')
         store
-          .dispatch('GetMenus')
-          .then(menus => {
+          .dispatch('GetInfo')
+          .then(data => {
+            const menus = data.menus
             store.dispatch('GenerateRoutes', { menus }).then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表

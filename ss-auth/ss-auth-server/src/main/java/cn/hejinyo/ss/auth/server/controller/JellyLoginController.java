@@ -3,6 +3,7 @@ package cn.hejinyo.ss.auth.server.controller;
 import cn.hejinyo.ss.auth.server.service.JellyService;
 import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.framework.utils.JwtTools;
+import cn.hejinyo.ss.common.framework.utils.WebUtils;
 import cn.hejinyo.ss.common.framework.utils.Result;
 import cn.hejinyo.ss.common.model.validator.RestfulValid;
 import cn.hejinyo.ss.common.utils.StringUtils;
@@ -53,7 +54,7 @@ public class JellyLoginController {
     @PutMapping(value = "/logout")
     @ApiOperation(value = "登出", notes = "返回userToken")
     public Result logout(HttpServletRequest request, HttpServletResponse response) {
-        String userToken = this.getToken(request);
+        String userToken = WebUtils.getRequestToken(request);
         if (StringUtils.isNotEmpty(userToken)) {
             jellyService.logout(userToken);
             Cookie cookie = new Cookie(JwtTools.AUTHOR_PARAM, "");
@@ -72,34 +73,11 @@ public class JellyLoginController {
     @GetMapping("/userInfo")
     @ApiOperation(value = "获得当前用户信息", notes = "获得当前用户信息")
     public Result getUserInfo(HttpServletRequest request) {
-        String userToken = this.getToken(request);
+        String userToken = WebUtils.getRequestToken(request);
         if (StringUtils.isNotEmpty(userToken)) {
             return Result.result(jellyService.getUserInfo(userToken));
         }
         return Result.ok();
-    }
-
-    private String getToken(HttpServletRequest request) {
-        String userToken = null;
-        // 先从cookie中获取
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(JwtTools.AUTHOR_PARAM)) {
-                    userToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
-        // cookie中没有，从header中获取
-        if (StringUtils.isEmpty(userToken)) {
-            userToken = request.getHeader(JwtTools.AUTHOR_PARAM);
-        }
-        // header没有，从param中获取
-        if (StringUtils.isEmpty(userToken)) {
-            userToken = request.getParameter(JwtTools.AUTHOR_PARAM);
-        }
-        return userToken;
     }
 
 }
