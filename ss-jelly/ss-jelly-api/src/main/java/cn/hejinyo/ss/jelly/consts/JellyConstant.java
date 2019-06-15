@@ -5,45 +5,6 @@ package cn.hejinyo.ss.jelly.consts;
  * @date :  2018/1/29 23:12
  */
 public class JellyConstant {
-    /**
-     * 数据权限过滤
-     */
-    public static final String SQL_FILTER = "sqlFilter";
-    /**
-     * 超级管理员ID
-     */
-    public static final Integer SUPER_ADMIN = 1;
-    /**
-     * 树根节点ID
-     */
-    public static final Integer TREE_ROOT = 1;
-
-    /**
-     * server_jwt_sub
-     */
-    public static final String JWT_SERVER = "clam-server";
-
-    /**
-     * 服务内部接口前缀
-     */
-    public static final String SERVER_API = "/ss-server/api/";
-    public static final String SERVER_API_ANON = SERVER_API + "**";
-
-    /**
-     * jwtToken 超时时间 小时
-     */
-    public static final int JWT_EXPIRES_DEFAULT = 12;
-
-    /**
-     * 用户登录token的续命时长 秒
-     */
-    public static final int USER_TOKEN_EXPIRE = 1800;
-
-    /**
-     * 用户权限的有效时长 秒
-     */
-    public static final int USER_PERM_EXPIRE = 600;
-
 
     public enum Dept {
         /**

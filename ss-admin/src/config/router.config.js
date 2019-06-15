@@ -1,128 +1,8 @@
 // eslint-disable-next-line
 import { BasicLayout, BlankLayout, PageView, RouteView, UserLayout } from '@/layouts'
-import { bxAnaalyse } from '@/core/icons'
-
-export const asyncRouterMap = [
-
-  {
-    path: '/',
-    name: 'index',
-    component: BasicLayout,
-    meta: { title: '首页' },
-    redirect: '/dashboard/workplace',
-    children: [
-      // dashboard
-      {
-        path: '/dashboard',
-        name: 'dashboard',
-        redirect: '/dashboard/workplace',
-        component: RouteView,
-        meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
-        children: [
-          {
-            path: '/dashboard/analysis',
-            name: 'Analysis',
-            component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: '分析页', keepAlive: false, permission: ['dashboard'] }
-          },
-          // 外部链接
-          {
-            path: 'https://www.baidu.com/',
-            name: 'Monitor',
-            meta: { title: '监控页（外部）', target: '_blank' }
-          },
-          {
-            path: '/dashboard/workplace',
-            name: 'Workplace',
-            component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: '工作台', keepAlive: true, permission: ['dashboard'] }
-          }
-        ]
-      },
-
-      // account
-      {
-        path: '/account',
-        component: RouteView,
-        redirect: '/account/center',
-        name: 'account',
-        meta: { title: '个人页', icon: 'user', keepAlive: true, permission: ['user'] },
-        children: [
-          {
-            path: '/account/center',
-            name: 'center',
-            component: () => import('@/views/account/center/Index'),
-            meta: { title: '个人中心', keepAlive: true, permission: ['user'] }
-          },
-          {
-            path: '/account/settings',
-            name: 'settings',
-            component: () => import('@/views/account/settings/Index'),
-            meta: { title: '个人设置', hideHeader: true, permission: ['user'] },
-            redirect: '/account/settings/base',
-            hideChildrenInMenu: true,
-            children: [
-              {
-                path: '/account/settings/base',
-                name: 'BaseSettings',
-                component: () => import('@/views/account/settings/BaseSetting'),
-                meta: { title: '基本设置', hidden: true, permission: ['user'] }
-              },
-              {
-                path: '/account/settings/security',
-                name: 'SecuritySettings',
-                component: () => import('@/views/account/settings/Security'),
-                meta: { title: '安全设置', hidden: true, keepAlive: true, permission: ['user'] }
-              },
-              {
-                path: '/account/settings/custom',
-                name: 'CustomSettings',
-                component: () => import('@/views/account/settings/Custom'),
-                meta: { title: '个性化设置', hidden: true, keepAlive: true, permission: ['user'] }
-              },
-              {
-                path: '/account/settings/binding',
-                name: 'BindingSettings',
-                component: () => import('@/views/account/settings/Binding'),
-                meta: { title: '账户绑定', hidden: true, keepAlive: true, permission: ['user'] }
-              },
-              {
-                path: '/account/settings/notification',
-                name: 'NotificationSettings',
-                component: () => import('@/views/account/settings/Notification'),
-                meta: { title: '新消息通知', hidden: true, keepAlive: true, permission: ['user'] }
-              }
-            ]
-          }
-        ]
-      },
-
-      // other
-      {
-        path: '/other',
-        name: 'otherPage',
-        component: PageView,
-        meta: { title: '其他组件', icon: 'slack', permission: ['dashboard'] },
-        redirect: '/other/icon-selector',
-        children: [
-          {
-            path: '/other/icon-selector',
-            name: 'TestIconSelect',
-            component: () => import('@/views/other/IconSelectorView'),
-            meta: { title: 'IconSelector', icon: 'tool', keepAlive: true, permission: ['dashboard'] }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    path: '*', redirect: '/404', hidden: true
-  }
-]
 
 /**
  * 基础路由
- * @type { *[] }
  */
 export const constantRouterMap = [
   {
@@ -148,7 +28,6 @@ export const constantRouterMap = [
       }
     ]
   },
-
   {
     path: '/test',
     component: BlankLayout,
@@ -168,3 +47,92 @@ export const constantRouterMap = [
   }
 
 ]
+
+// 前端路由表
+const constantRouterComponents = {
+  // 基础页面 layout 必须引入
+  BasicLayout: BasicLayout,
+  BlankLayout: BlankLayout,
+  RouteView: RouteView,
+  PageView: PageView,
+  // 外部链接
+  monitor: () => import('@/views/dashboard/Monitor'),
+  // 分析页
+  dashboardAnalysis: () => import('@/views/dashboard/Analysis'),
+  // 工作台
+  dashboardWorkplace: () => import('@/views/dashboard/Workplace'),
+  // 个人中心
+  accountCenter: () => import('@/views/account/center/Index'),
+  // 个人设置
+  accountSettings: () => import('@/views/account/settings/Index'),
+  // 基本设置
+  accountSettingsBase: () => import('@/views/account/settings/BaseSetting'),
+  // 安全设置
+  accountSettingsSecurity: () => import('@/views/account/settings/Security'),
+  // 个性化设置
+  accountSettingsCustom: () => import('@/views/account/settings/Custom'),
+  // 账户绑定
+  accountSettingsBinding: () => import('@/views/account/settings/Binding'),
+  // 新消息通知
+  accountSettingsNotification: () => import('@/views/account/settings/Notification'),
+  // IconSelector
+  otherIconSelector: () => import('@/views/other/IconSelectorView'),
+  // 资源管理
+  systemResource: () => import('@/views/system/resource')
+}
+
+/**
+ * 获取路由菜单信息
+ *
+ * 1. 调用 getRouterByUser() 访问后端接口获得路由结构数组
+ *   https://github.com/sendya/ant-design-pro-vue/blob/feature/dynamic-menu/public/dynamic-menu.json
+ */
+export const generatorDynamicRouter = (data) => {
+  return new Promise((resolve, reject) => {
+    const routers = generator(data)
+    // 前端未找到页面路由（固定不用改）
+    routers.push({ path: '*', redirect: '/404', hidden: true })
+    resolve(routers)
+  })
+}
+
+/**
+ * 格式化 后端 结构信息并递归生成层级路由表
+ */
+export const generator = (routerMap, parent) => {
+  return routerMap.map(item => {
+    const currentRouter = {
+      // 路由地址 动态拼接生成如 /dashboard/workplace
+      path: item.meta.path || '',
+      // 路由名称，建议唯一
+      name: item.resCode || '',
+      // 该路由对应页面的 组件
+      component: constantRouterComponents[item.meta.component] || null,
+      // 隐藏子菜单
+      hideChildrenInMenu: item.meta.hideChildrenInMenu || false,
+      // meta
+      meta: {
+        // 页面标题
+        title: item.resName,
+        // 菜单图标
+        icon: item.icon || undefined,
+        // 页面权限(供指令权限用，可去掉)
+        permission: (item.code && [item.code]) || null,
+        // 外部链接
+        target: (item.meta.target) || null,
+        // 隐藏菜单
+        hideHeader: (item.meta.hideHeader) || false
+      }
+    }
+    // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠
+    !item.meta.target && (currentRouter.path = currentRouter.path.replace('//', '/'))
+    // 重定向
+    item.meta.redirect && (currentRouter.redirect = item.meta.redirect)
+    // 是否有子菜单，并递归处理
+    if (item.children && item.children.length > 0) {
+      // Recursion
+      currentRouter.children = generator(item.children, currentRouter)
+    }
+    return currentRouter
+  })
+}

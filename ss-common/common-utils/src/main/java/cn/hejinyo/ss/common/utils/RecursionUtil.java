@@ -17,6 +17,8 @@ public class RecursionUtil {
     private final static String DEF_ID_NAME = "getId";
     private final static String DEF_PID_NAME = "getParentId";
     private final static String DEF_CHILDREN_NAME = "setChildren";
+    private final static String LIST_KEY = "list";
+    private final static String TREE_KEY = "tree";
 
 
     /**
@@ -41,6 +43,16 @@ public class RecursionUtil {
     }
 
     /**
+     * 获取列表+=树数据
+     */
+    public static <T, K> HashMap<String, List<T>> listTree(boolean isRoot, Class<T> clazz, String getIdName, List<T> list, List<K> parentIdList) {
+        HashMap<String, List<T>> map = new HashMap<>(2);
+        map.put(LIST_KEY, list);
+        map.put(TREE_KEY, tree(isRoot, clazz, getIdName, DEF_PID_NAME, new CopyOnWriteArrayList<>(list), parentIdList));
+        return map;
+    }
+
+    /**
      * 将列表递归成树
      *
      * @param isRoot          是否显示根节点
@@ -55,6 +67,11 @@ public class RecursionUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T, K> List<T> tree(boolean isRoot, Class<T> clazz, String getIdName, String getPidName, String setChildernName, List<T> list, List<K> parentIdList) {
+
+        if (list == null) {
+            return null;
+        }
+
         List<T> result = new ArrayList<>();
         try {
 
@@ -71,10 +88,10 @@ public class RecursionUtil {
                     // 获取对象父节点方法
                     K pid = (K) getParentId.invoke(value);
 
-                    //如果是true，需要将根节点加入树节点，否则递归查询子节点
+                    // 如果是true，需要将根节点加入树节点，否则递归查询子节点
                     boolean checkRelation = isRoot ? rId.equals(id) : rId.equals(pid);
 
-                    //!value.getRoleId().equals(value.getParentId()) 杜绝死循环情况
+                    // 杜绝死循环情况
                     if (checkRelation && !id.equals(pid)) {
                         setChildren.invoke(value, tree(false, clazz, getIdName, list, new ArrayList<>(Collections.singletonList(id))));
                         result.add(value);
@@ -89,24 +106,13 @@ public class RecursionUtil {
     }
 
     /**
-     * 获取列表+=树数据
-     */
-    public static <T, K> HashMap<String, List<T>> listTree(boolean isRoot, Class<T> clazz, String getIdName, List<T> list, List<K> parentIdList) {
-        HashMap<String, List<T>> map = new HashMap<>(2);
-        map.put("list", list);
-        map.put("tree", tree(isRoot, clazz, getIdName, DEF_PID_NAME, new CopyOnWriteArrayList<>(list), parentIdList));
-        return map;
-    }
-
-    /**
      * 递归获取节点下所有子节点
      *
-     * @param isRoot       是否显示根节点
      * @param list         需要遍历的列表
      * @param parentIdList 父节点编号列表
      */
     @SuppressWarnings("unchecked")
-    public static <T, K> List<K> list(List<K> allList, Class<T> clazz, String getIdName, boolean isRoot, List<T> list, List<K> parentIdList) {
+    public static <T, K> List<K> list(List<K> allList, Class<T> clazz, String getIdName, List<T> list, List<K> parentIdList) {
 
         try {
 
@@ -123,11 +129,11 @@ public class RecursionUtil {
                     K pid = (K) getParentId.invoke(value);
 
                     //如果是true，需要将根节点加入树节点，否则递归查询子节点
-                    boolean checkRelation = isRoot ? rId.equals(id) : rId.equals(pid);
+                    boolean checkRelation = rId.equals(pid);
 
                     //!value.getRoleId().equals(value.getParentId()) 杜绝死循环情况
                     if (checkRelation && !id.equals(pid)) {
-                        list(allList, clazz, getIdName, false, list, new ArrayList<>(Collections.singletonList(id)));
+                        list(allList, clazz, getIdName, list, new ArrayList<>(Collections.singletonList(id)));
                         allList.add(id);
                         list.remove(value);
                     }

@@ -35,6 +35,12 @@ spring:
   application:
     # 应用名称
     name: ss-jelly-server
+  jackson:
+    serialization:
+      # 日期解析成时间戳
+      WRITE_DATES_AS_TIMESTAMPS: false
+      # 不序列化null字段
+    default-property-inclusion: non_null
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
     show-sql: true
