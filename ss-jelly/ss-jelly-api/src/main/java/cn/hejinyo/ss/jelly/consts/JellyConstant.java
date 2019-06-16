@@ -1,10 +1,37 @@
 package cn.hejinyo.ss.jelly.consts;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * @author : HejinYo   hejinyo@gmail.com
  * @date :  2018/1/29 23:12
  */
 public class JellyConstant {
+
+    @Getter
+    @AllArgsConstructor
+    public enum PermCode {
+        /**
+         * 查看
+         */
+        VIEW("view"),
+        /**
+         * 更新
+         */
+        UPDATE("update"),
+        /**
+         * 新增
+         */
+        INSERT("insert"),
+        /**
+         * 删除
+         */
+        DELETE("delete");
+
+        private String value;
+    }
+
 
     public enum Dept {
         /**

@@ -41,6 +41,19 @@ export function getInfo () {
   })
 }
 
+/**
+ * 获取用户基本信息
+ */
+export function getUserMenus () {
+  return axios({
+    url: '/login/userMenus',
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    }
+  })
+}
+
 export function logout () {
   return axios({
     url: '/auth/logout',

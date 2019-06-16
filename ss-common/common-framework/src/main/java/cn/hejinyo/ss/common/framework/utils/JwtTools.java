@@ -2,6 +2,7 @@ package cn.hejinyo.ss.common.framework.utils;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 
 import java.io.UnsupportedEncodingException;
@@ -88,7 +89,10 @@ public class JwtTools {
     /**
      * 验证token 有效性
      */
-    public static void verifyToken(String token, String password) throws UnsupportedEncodingException {
+    public static void verifyToken(String token, String password) {
+        if (token == null || "".equals(token)) {
+            throw new JWTVerificationException("token is null");
+        }
         JWT.require(Algorithm.HMAC256(password)).build().verify(token);
     }
 

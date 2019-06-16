@@ -38,5 +38,12 @@ eureka:
 feign:
   hystrix:
     enabled: true
-  httpclient:
-    connection-timeout: 5000
+
+# 超时设置
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000

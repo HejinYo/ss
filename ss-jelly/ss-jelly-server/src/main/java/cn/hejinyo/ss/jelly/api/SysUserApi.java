@@ -3,6 +3,8 @@ package cn.hejinyo.ss.jelly.api;
 import cn.hejinyo.ss.common.utils.MicroserviceResult;
 import cn.hejinyo.ss.common.utils.PojoConvertUtil;
 import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
+import cn.hejinyo.ss.jelly.service.SysPermissionService;
+import cn.hejinyo.ss.jelly.service.SysRoleService;
 import cn.hejinyo.ss.jelly.service.SysUserApiService;
 import cn.hejinyo.ss.jelly.service.SysUserService;
 import io.swagger.annotations.Api;
@@ -31,12 +33,18 @@ public class SysUserApi implements SysUserApiService {
     @Autowired
     private SysUserService sysUserService;
 
+    @Autowired
+    private SysPermissionService sysPermissionService;
+
+    @Autowired
+    private SysRoleService sysRoleService;
+
     /**
      * 根据用户名查询用户信息
      */
     @Override
     @ApiOperation(value = "根据用户名查询用户信息", notes = "findByUserName")
-    public MicroserviceResult<SysUserDTO> findByUserName(@PathVariable String userName) {
+    public MicroserviceResult<SysUserDTO> getByUserName(@PathVariable String userName) {
         return MicroserviceResult.ok(sysUserService.getByUserName(userName));
     }
 
@@ -46,7 +54,7 @@ public class SysUserApi implements SysUserApiService {
     @Override
     @ApiOperation(value = "获得角色信息", notes = "返回角色字符串Set<String>")
     public MicroserviceResult<Set<String>> getUserRoleSet(@PathVariable int userId) {
-        return MicroserviceResult.ok(new HashSet<>(Arrays.asList("admin", "class")));
+        return MicroserviceResult.ok(sysRoleService.getRoleCodeSetByUserId(userId));
     }
 
     /**
@@ -55,6 +63,6 @@ public class SysUserApi implements SysUserApiService {
     @Override
     @ApiOperation(value = "获得权限信息", notes = "返回权限字符串Set<String>")
     public MicroserviceResult<Set<String>> getUserPermSet(@PathVariable int userId) {
-        return MicroserviceResult.ok(new HashSet<>(Arrays.asList("select", "update")));
+        return MicroserviceResult.ok(sysPermissionService.getCodeSetByUserId(userId));
     }
 }

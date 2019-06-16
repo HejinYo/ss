@@ -21,7 +21,7 @@ public class GenConfig {
     public static final String FILE_PATH = "ss-common/common-generator/src/main/java";
     public static final String DTO_PACKAGE_PATH = "cn.hejinyo.ss.entity";
     public static final String PACKAGE_PATH = "cn.hejinyo.ss";
-    private static final String TABLE_NAME = "sys_resource";
+    private static final String TABLE_NAME = "sys_role";
     private static final String DOMAIN_OBJECT_NAME = "_Entity";
     private static final String MAPPER_NAME = "_Dao";
 

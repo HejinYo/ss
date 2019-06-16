@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -41,7 +40,7 @@ public class JellyServiceImpl implements JellyService {
     @Override
     public SysUserDTO checkUser(UserNameLoginDTO nameLoginVO) {
         // 根据用户名查找用户，进行密码匹配
-        return jellySysUserService.findByUserName(nameLoginVO.getUserName()).then(userDTO -> {
+        return jellySysUserService.getByUserName(nameLoginVO.getUserName()).then(userDTO -> {
             // 如果无相关用户或已删除则返回null
             if (null == userDTO) {
                 throw new InfoException(StatusCode.LOGIN_USER_NOEXIST);
@@ -67,7 +66,10 @@ public class JellyServiceImpl implements JellyService {
         String token = JwtTools.createToken(CommonConstant.JELLY_AUTH, true,
                 userId, userDTO.getUserName(), JwtTools.JWT_SIGN_KEY, CommonConstant.JWT_EXPIRES_DEFAULT);
         String jti = JwtTools.tokenInfo(token, JwtTools.JWT_ID, String.class);
-        RedisUtils.hset(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, jti);
+        //清除用户原来所有缓存
+        RedisUtils.delete(JellyRedisKeys.storeUser(userId));
+        // 设置新的token
+        RedisUtils.hsetEX(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, jti, CommonConstant.USER_TOKEN_EXPIRE);
         return token;
     }
 
@@ -83,6 +85,8 @@ public class JellyServiceImpl implements JellyService {
         if (storeUserInfo.size() == fields.size()) {
             // 验证成功
             if (jti.equals(storeUserInfo.get(0))) {
+                // 续命
+                RedisUtils.expire(JellyRedisKeys.storeUser(userId), CommonConstant.USER_TOKEN_EXPIRE);
                 result.setPass(true);
                 result.setRoleSet(this.getInfoSet(userId, storeUserInfo.get(1), fields.get(1),
                         () -> jellySysUserService.getUserRoleSet(userId).get()));
@@ -117,14 +121,10 @@ public class JellyServiceImpl implements JellyService {
     @Override
     public void logout(String token) {
         try {
-            //验证token是否有效
-            JwtTools.verifyToken(token, JwtTools.JWT_SIGN_KEY);
+            AuthCheckResult result = this.getAuthUser(token);
             //token中获取用户名
             Integer userId = JwtTools.tokenInfo(token, JwtTools.JWT_TOKEN_USERID, Integer.class);
-            String jti = JwtTools.tokenInfo(token, JwtTools.JWT_ID, String.class);
-            //查询缓存中的用户信息
-            String checkJti = RedisUtils.hget(JellyRedisKeys.storeUser(userId), JellyRedisKeys.USER_TOKEN, String.class);
-            if (jti.equals(checkJti)) {
+            if (result.isPass()) {
                 //清除用户原来所有缓存
                 RedisUtils.delete(JellyRedisKeys.storeUser(userId));
             }
@@ -137,35 +137,32 @@ public class JellyServiceImpl implements JellyService {
      */
     @Override
     public JellyUserInfoVO getUserInfo(String userToken) {
+        //token中获取用户名
+        AuthCheckResult authUser = this.getAuthUser(userToken);
+        String userName = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERNAME, String.class);
+        return jellySysUserService.getByUserName(userName).then(userDto -> {
+            JellyUserInfoVO userInfoVO = PojoConvertUtil.convert(userDto, JellyUserInfoVO.class);
+            // 查询用户角色
+            userInfoVO.setRoles(authUser.getRoleSet());
+            // 查询用户权限
+            userInfoVO.setPerms(authUser.getRoleSet());
+            return userInfoVO;
+        });
+    }
+
+    private AuthCheckResult getAuthUser(String userToken) {
         try {
             //验证token是否有效
             JwtTools.verifyToken(userToken, JwtTools.JWT_SIGN_KEY);
-            //token中获取用户名
-            String userName = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERNAME, String.class);
-            return jellySysUserService.findByUserName(userName).then(userDto -> {
-                Integer userId = userDto.getUserId();
-                JellyUserInfoVO userInfoVO = PojoConvertUtil.convert(userDto, JellyUserInfoVO.class);
-
-                List<String> fields = Arrays.asList(JellyRedisKeys.USER_ROLE, JellyRedisKeys.USER_PERM);
-                // 读取用户TOKEN 角色 权限信息
-                List<String> storeUserInfo = RedisUtils.hmget(JellyRedisKeys.storeUser(userId), fields);
-                if (storeUserInfo.size() == fields.size()) {
-                    // 查询用户角色
-                    userInfoVO.setRoles(this.getInfoSet(userId, storeUserInfo.get(0), fields.get(0),
-                            () -> jellySysUserService.getUserRoleSet(userId).get()));
-                    // 查询用户权限
-                    userInfoVO.setPerms(this.getInfoSet(userId, storeUserInfo.get(1), fields.get(1),
-                            () -> jellySysUserService.getUserPermSet(userId).get()));
-                }
-                // 查询用户菜单
-                userInfoVO.setMenus(Arrays.asList("dashboard", "exception", "result", "profile", "table", "form",
-                        "order", "permission", "role", "table", "user", "support"));
-                return userInfoVO;
-            });
-        } catch (UnsupportedEncodingException e) {
-            // 登录过期 TODO
-            e.printStackTrace();
+            AuthCheckResult result = this.checkToken(
+                    JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERID, Integer.class),
+                    JwtTools.tokenInfo(userToken, JwtTools.JWT_ID, String.class));
+            if (result.isPass()) {
+                return result;
+            }
+        } catch (Exception ignored) {
         }
-        return null;
+        // 登录过期
+        throw new InfoException(StatusCode.TOKEN_FAULT);
     }
 }

@@ -32,4 +32,6 @@ public class SysResourceController {
     public Result editTree() {
         return Result.result(sysResourceService.getOperateTree());
     }
+
+
 }

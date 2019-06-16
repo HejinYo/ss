@@ -31,24 +31,27 @@ public class RecursionUtil {
     /**
      * 将列表递归成树，默认方法  "getParentId"，"setChildren"
      */
-    public static <T, K> List<T> tree(boolean isRoot, Class<T> clazz, String getIdName, List<T> list, List<K> parentIdList) {
+    public static <T, K> List<T> tree(boolean isRoot, Class<T> clazz, String getIdName,
+                                      List<T> list, List<K> parentIdList) {
         return tree(isRoot, clazz, getIdName, DEF_PID_NAME, list, parentIdList);
     }
 
     /**
      * 将列表递归成树，默认方法  "setChildren"
      */
-    public static <T, K> List<T> tree(boolean isRoot, Class<T> clazz, String getIdName, String getPidName, List<T> list, List<K> parentIdList) {
-        return tree(isRoot, clazz, getIdName, getPidName, DEF_CHILDREN_NAME, list, parentIdList);
+    public static <T, K> List<T> tree(boolean isRoot, Class<T> clazz, String getIdName,
+                                      String getPidName, List<T> list, List<K> parentIdList) {
+        return tree(isRoot, clazz, getIdName, getPidName, DEF_CHILDREN_NAME, new CopyOnWriteArrayList<>(list), parentIdList);
     }
 
     /**
      * 获取列表+=树数据
      */
-    public static <T, K> HashMap<String, List<T>> listTree(boolean isRoot, Class<T> clazz, String getIdName, List<T> list, List<K> parentIdList) {
+    public static <T, K> HashMap<String, List<T>> listTree(boolean isRoot, Class<T> clazz,
+                                                           String getIdName, List<T> list, List<K> parentIdList) {
         HashMap<String, List<T>> map = new HashMap<>(2);
         map.put(LIST_KEY, list);
-        map.put(TREE_KEY, tree(isRoot, clazz, getIdName, DEF_PID_NAME, new CopyOnWriteArrayList<>(list), parentIdList));
+        map.put(TREE_KEY, tree(isRoot, clazz, getIdName, DEF_PID_NAME, list, parentIdList));
         return map;
     }
 

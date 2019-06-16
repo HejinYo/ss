@@ -21,7 +21,7 @@ public interface SysUserApiService {
      * 获取用户信息
      */
     @GetMapping("/info/findByUserName/{userName}")
-    MicroserviceResult<SysUserDTO> findByUserName(@PathVariable String userName);
+    MicroserviceResult<SysUserDTO> getByUserName(@PathVariable String userName);
 
     /**
      * 获得角色信息

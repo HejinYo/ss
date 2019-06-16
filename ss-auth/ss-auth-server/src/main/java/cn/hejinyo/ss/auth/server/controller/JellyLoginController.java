@@ -3,8 +3,8 @@ package cn.hejinyo.ss.auth.server.controller;
 import cn.hejinyo.ss.auth.server.service.JellyService;
 import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.framework.utils.JwtTools;
-import cn.hejinyo.ss.common.framework.utils.WebUtils;
 import cn.hejinyo.ss.common.framework.utils.Result;
+import cn.hejinyo.ss.common.framework.utils.WebUtils;
 import cn.hejinyo.ss.common.model.validator.RestfulValid;
 import cn.hejinyo.ss.common.utils.StringUtils;
 import cn.hejinyo.ss.jelly.model.dto.UserNameLoginDTO;
@@ -63,7 +63,7 @@ public class JellyLoginController {
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         }
-        return Result.result(userToken);
+        return Result.ok();
     }
 
 
@@ -74,10 +74,7 @@ public class JellyLoginController {
     @ApiOperation(value = "获得当前用户信息", notes = "获得当前用户信息")
     public Result getUserInfo(HttpServletRequest request) {
         String userToken = WebUtils.getRequestToken(request);
-        if (StringUtils.isNotEmpty(userToken)) {
-            return Result.result(jellyService.getUserInfo(userToken));
-        }
-        return Result.ok();
+        return Result.result(jellyService.getUserInfo(userToken));
     }
 
 }

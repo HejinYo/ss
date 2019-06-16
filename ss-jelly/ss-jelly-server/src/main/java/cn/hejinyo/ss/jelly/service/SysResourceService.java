@@ -5,6 +5,7 @@ import cn.hejinyo.ss.jelly.model.entity.SysResourceEntity;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 系统资源管理
@@ -18,4 +19,14 @@ public interface SysResourceService {
      * 资源管理树数据
      */
     HashMap<String, List<SysResourceDTO>> getOperateTree();
+
+    /**
+     * 所有有效菜单资源
+     */
+    List<SysResourceDTO> getAllMenus();
+
+    /**
+     * 根据角色查询有效用户菜单
+     */
+    List<SysResourceDTO> getMenusByRoleSet(Set<String> roleSet);
 }

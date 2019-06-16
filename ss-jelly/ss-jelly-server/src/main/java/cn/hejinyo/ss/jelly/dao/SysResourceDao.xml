@@ -205,4 +205,25 @@
         where sr.state = ${@cn.hejinyo.ss.common.consts.CommonConstant$Status@VALID.getValue}
         ORDER BY sr.parent_id, sr.seq
     </select>
+
+    <!-- 根据角色查询有效资源列表，状态正常 -->
+    <select id="findResourceListByRoleSet" parameterType="java.util.Set" resultMap="DTOResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_resource sr
+        where sr.state = ${@cn.hejinyo.ss.common.consts.CommonConstant$Status@VALID.getValue}
+        and sr.res_id in
+        ( select sp.res_id
+        from sys_role sr
+        left join sys_role_permission srp on srp.role_id = sr.role_id
+        left join sys_permission sp on sp.perm_id = srp.perm_id
+        where sp.state = ${@cn.hejinyo.ss.common.consts.CommonConstant$Status@VALID.getValue}
+        and sp.perm_code = '${@cn.hejinyo.ss.jelly.consts.JellyConstant$PermCode@VIEW.getValue}' <!-- 菜单对应的权限 -->
+        and sr.state = ${@cn.hejinyo.ss.common.consts.CommonConstant$Status@VALID.getValue}
+        and sr.role_code in
+        <foreach collection="roleSet" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>)
+        ORDER BY sr.parent_id, sr.seq
+    </select>
 </mapper>

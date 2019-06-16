@@ -24,9 +24,10 @@ public class JellySysUserServiceFallbackImpl implements JellySysUserService {
      * 获取用户信息
      */
     @Override
-    public MicroserviceResult<SysUserDTO> findByUserName(String userName) {
+    public MicroserviceResult<SysUserDTO> getByUserName(String userName) {
         log.error("调用JellySysUserService.{} 参数:{},异常:{}", "findByUserName", userName, cause);
-        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "findByUserName", userName);
+        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{},异常:{}",
+                "findByUserName", userName, cause.getMessage());
     }
 
     /**
