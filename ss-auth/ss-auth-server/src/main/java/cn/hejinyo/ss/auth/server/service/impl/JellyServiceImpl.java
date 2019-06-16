@@ -145,7 +145,7 @@ public class JellyServiceImpl implements JellyService {
             // 查询用户角色
             userInfoVO.setRoles(authUser.getRoleSet());
             // 查询用户权限
-            userInfoVO.setPerms(authUser.getRoleSet());
+            userInfoVO.setPerms(authUser.getPermSet());
             return userInfoVO;
         });
     }
