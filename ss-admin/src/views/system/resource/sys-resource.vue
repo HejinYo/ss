@@ -1,25 +1,21 @@
 <template>
-  <a-tree
-    :treeData="resTeeData"
-    autoExpandParent
-    showLine
-    defaultExpandAll
-    :defaultSelectedKeys="['0-0-0']"
-  >
-    <template slot="title" slot-scope="{title}">
-      1{title}
-    </template>
-    <a-icon slot="smile" type="smile-o"/>
-    <a-icon slot="meh" type="smile-o"/>
-    <template slot="custom" slot-scope="{selected}">
-      <a-icon :type="selected ? 'frown':'frown-o'"/>
-    </template>
-  </a-tree>
+  <div>
+    <a-card title="资源树" :bordered="false" style="width: 300px">
+      <el-tree :data="resTeeData" node-key="resId" default-expand-all>
+        <span class="ss-tree-title" slot-scope="{ node, data }">
+          <a-icon :type="data.icon"/>
+          <span>{{data.resName}} </span>
+          <span class="ss-tree-optional">
+            <a-icon type="ellipsis" spin/>
+          </span>
+        </span>
+      </el-tree>
+    </a-card>
+  </div>
 </template>
 
 <script>
   import { getOperateTree } from '@/api/sys-resource'
-
 
   export default {
     name: 'sys-resource',
@@ -27,7 +23,11 @@
     computed: {},
     data () {
       return {
-        resTeeData: []
+        resTeeData: [],
+        defaultProps: {
+          children: 'children',
+          label: 'resName'
+        }
       }
     },
     mounted () {
@@ -40,32 +40,29 @@
       // 加载资源树数据
       loadResTreeData () {
         getOperateTree().then(res => {
-          console.log(res)
           const { result, code, msg } = res
           if (code === 1) {
             console.log(result)
             this.resTeeData = result && result.tree
           } else {
-            this.resTeeData = [{
-              title: 'parent 1',
-              key: '0-0',
-              slots: {
-                icon: 'smile',
-              },
-              children: [
-                { title: 'leaf', key: '0-0-0', slots: { icon: 'meh' } },
-                { title: 'leaf', key: '0-0-1', scopedSlots: { icon: 'custom' } }],
-            }]
+            this.resTeeData = []
           }
         })
 
       },
-      onSelect (selectedKeys, info) {
-        console.log('selected', selectedKeys, info)
-      },
-      onCheck (checkedKeys, info) {
-        console.log('onCheck', checkedKeys, info)
-      },
     },
   }
 </script>
+
+<style scoped lang="less">
+
+  .ss-tree-title:hover {
+    .ss-tree-optional {
+      display: inline;
+    }
+  }
+
+  .ss-tree-optional {
+    display: none;
+  }
+</style>

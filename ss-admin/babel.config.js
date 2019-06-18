@@ -7,6 +7,15 @@ module.exports = {
         'useBuiltIns': 'entry'
       }
     ]
+  ],
+  plugins: [
+    [
+      'component',
+      {
+        'libraryName': 'element-ui',
+        'styleLibraryName': 'theme-chalk'
+      }
+    ]
   ]
   // if your use import on Demand, Use this code
   // ,
