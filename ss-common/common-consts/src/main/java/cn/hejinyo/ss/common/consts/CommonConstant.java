@@ -17,7 +17,7 @@ public class CommonConstant {
     /**
      * 微服务内部接口前缀
      */
-    public static final String MICRO_SERVER_API = "/ss-micro-service/api";
+    public static final String MICRO_SERVER_API = "/ss-micro-service";
 
     /**
      * 超级管理员ID

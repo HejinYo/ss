@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
@@ -42,16 +43,17 @@ public class SysUserServiceImpl implements SysUserService {
     /**
      * 获取菜单信息
      *
-     * @param userDetails 登录用户信息
+     * @param userId  用户编号
+     * @param roleSet 用户角色
      */
     @Override
-    public List<SysResourceDTO> getUserMenus(SsUserDetails userDetails) {
+    public List<SysResourceDTO> getUserMenus(Integer userId, Set<String> roleSet) {
         // 超级管理员查询所有
-        if (CommonConstant.SUPER_ADMIN.equals(userDetails.getUserId())) {
+        if (CommonConstant.SUPER_ADMIN.equals(userId)) {
             // 直接返回所有菜单资源
             return sysResourceService.getAllMenus();
         }
         // 普通用户根据角色查询
-        return sysResourceService.getMenusByRoleSet(userDetails.getRoleSet());
+        return sysResourceService.getMenusByRoleSet(roleSet);
     }
 }

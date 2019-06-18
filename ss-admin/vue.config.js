@@ -106,16 +106,8 @@ module.exports = {
     // development server port 8000
     port: 8080,
     proxy: {
-      '/api/jelly': {
-        target: 'http://127.0.0.1:8100',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api': ''
-        }
-      },
-      '/api/login/userMenus': {
-        target: 'http://127.0.0.1:8200',
+      '/api': {
+        target: 'http://127.0.0.1:8020',
         ws: false,
         changeOrigin: true,
         pathRewrite: {

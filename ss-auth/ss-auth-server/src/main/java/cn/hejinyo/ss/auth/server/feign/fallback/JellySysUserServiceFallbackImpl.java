@@ -6,6 +6,7 @@ import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,5 +47,14 @@ public class JellySysUserServiceFallbackImpl implements JellySysUserService {
     public MicroserviceResult<Set<String>> getUserPermSet(int userId) {
         log.error("调用JellySysUserService.{} 参数:{},异常:{}", "getUserPermSet", userId, cause);
         return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{}", "getUserPermSet", userId);
+    }
+
+    /**
+     * 获取用户菜单
+     */
+    @Override
+    public MicroserviceResult<List> getUserMenus(Integer userId, Set<String> roleSet) {
+        log.error("调用JellySysUserService.{} 参数:{},{},异常:{}", "getUserMenus", userId, roleSet, cause);
+        return MicroserviceResult.fallback("调用JellySysUserService.{} 参数:{},{}", "getUserMenus", userId, roleSet);
     }
 }

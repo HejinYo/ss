@@ -6,6 +6,7 @@ import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
@@ -23,7 +24,8 @@ public interface SysUserService {
     /**
      * 获取菜单信息
      *
-     * @param userDetails 登录用户信息
+     * @param userId  用户编号
+     * @param roleSet 用户角色
      */
-    List<SysResourceDTO> getUserMenus(SsUserDetails userDetails);
+    List<SysResourceDTO> getUserMenus(Integer userId, Set<String> roleSet);
 }

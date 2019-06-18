@@ -6,14 +6,15 @@ import cn.hejinyo.ss.jelly.model.dto.SysUserDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Set;
 
 /**
  * @author : anthony.s.he   hejinyo@gmail.com
  * @date : 2019/04/27 00:57
  */
-
 @RequestMapping(CommonConstant.MICRO_SERVER_API)
 public interface SysUserApiService {
 
@@ -34,4 +35,10 @@ public interface SysUserApiService {
      */
     @GetMapping("/permSet/{userId}")
     MicroserviceResult<Set<String>> getUserPermSet(@PathVariable int userId);
+
+    /**
+     * 获取用户菜单
+     */
+    @GetMapping("/userMenus")
+    MicroserviceResult<List> getUserMenus(@RequestParam("userId") Integer userId, @RequestParam("roleSet") Set<String> roleSet);
 }

@@ -71,7 +71,7 @@ public class JellyUserInfoVO implements Serializable {
     /**
      * 用户菜单字符串列表
      */
-    private List<String> menus;
+    private List menus;
 
 
 }

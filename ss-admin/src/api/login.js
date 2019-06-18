@@ -1,6 +1,8 @@
 import api from './index'
 import { axios } from '@/utils/request'
 
+const server = '/SS-AUTH-SERVER'
+
 /**
  * login func
  * parameter: {
@@ -14,15 +16,7 @@ import { axios } from '@/utils/request'
  */
 export function login (parameter) {
   return axios({
-    url: '/jelly/login',
-    method: 'post',
-    data: parameter
-  })
-}
-
-export function getSmsCaptcha (parameter) {
-  return axios({
-    url: api.SendSms,
+    url: `${server}/jelly/login`,
     method: 'post',
     data: parameter
   })
@@ -33,7 +27,7 @@ export function getSmsCaptcha (parameter) {
  */
 export function getInfo () {
   return axios({
-    url: '/jelly/userInfo',
+    url: `${server}/jelly/userInfo`,
     method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -41,16 +35,11 @@ export function getInfo () {
   })
 }
 
-/**
- * 获取用户基本信息
- */
-export function getUserMenus () {
+export function getSmsCaptcha (parameter) {
   return axios({
-    url: '/login/userMenus',
-    method: 'get',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    url: api.SendSms,
+    method: 'post',
+    data: parameter
   })
 }
 

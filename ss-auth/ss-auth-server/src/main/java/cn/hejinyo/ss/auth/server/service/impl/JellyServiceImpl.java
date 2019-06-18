@@ -137,7 +137,7 @@ public class JellyServiceImpl implements JellyService {
      */
     @Override
     public JellyUserInfoVO getUserInfo(String userToken) {
-        //token中获取用户名
+        // token中获取用户名
         AuthCheckResult authUser = this.getAuthUser(userToken);
         String userName = JwtTools.tokenInfo(userToken, JwtTools.JWT_TOKEN_USERNAME, String.class);
         return jellySysUserService.getByUserName(userName).then(userDto -> {
@@ -146,6 +146,8 @@ public class JellyServiceImpl implements JellyService {
             userInfoVO.setRoles(authUser.getRoleSet());
             // 查询用户权限
             userInfoVO.setPerms(authUser.getPermSet());
+            // 查询菜单
+            userInfoVO.setMenus(jellySysUserService.getUserMenus(userDto.getUserId(), userInfoVO.getRoles()).get());
             return userInfoVO;
         });
     }
