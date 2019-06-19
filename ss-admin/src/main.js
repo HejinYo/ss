@@ -13,13 +13,18 @@ import bootstrap from './core/bootstrap'
 import './core/use'
 import './permission' // permission control
 import './utils/filter' // global filter
-import { Button, Tree } from 'element-ui'
+import { Tree, Checkbox, Table, TableColumn, Loading } from 'element-ui'
 
 Vue.config.productionTip = false
 
 // mount axios Vue.$http and this.$http
 Vue.use(VueAxios)
-Vue.use(Button).use(Tree)
+Vue.use(Tree)
+Vue.use(Checkbox)
+Vue.use(Table)
+Vue.use(TableColumn)
+Vue.use(Loading.directive)
+
 new Vue({
   router,
   store,

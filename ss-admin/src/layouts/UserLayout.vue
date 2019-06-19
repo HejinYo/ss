@@ -24,7 +24,7 @@
         <div class="copyright">
           Copyright
           <a-icon type="copyright"/>
-          2018 <a href="http://hejinyo.cn" target="_blank" style="margin: 0px 5px;">HejinYo</a> Presents 京ICP证17056403号
+          2018 <a href="http://hejinyo.cn" target="_blank" style="margin: 0 5px;">HejinYo</a> Presents 京ICP证17056403号
         </div>
       </div>
     </div>
