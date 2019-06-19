@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-card title="资源树" :bordered="false" style="width: 300px">
+    <a-card title="资源管理" :bordered="false" style="width: 300px">
       <el-tree :data="resTeeData" node-key="resId" default-expand-all>
         <span class="ss-tree-title" slot-scope="{ node, data }">
           <a-icon :type="data.icon"/>
