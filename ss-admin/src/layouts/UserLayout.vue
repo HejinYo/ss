@@ -22,7 +22,9 @@
           <a href="_self">条款</a>
         </div>
         <div class="copyright">
-          Copyright &copy; 2018 白鹭学园技术组出品
+          Copyright
+          <a-icon type="copyright"/>
+          2018 <a href="http://hejinyo.cn" target="_blank" style="margin: 0px 5px;">HejinYo</a> Presents 京ICP证17056403号
         </div>
       </div>
     </div>
@@ -30,23 +32,23 @@
 </template>
 
 <script>
-import RouteView from './RouteView'
-import { mixinDevice } from '@/utils/mixin'
+  import RouteView from './RouteView'
+  import { mixinDevice } from '@/utils/mixin'
 
-export default {
-  name: 'UserLayout',
-  components: { RouteView },
-  mixins: [mixinDevice],
-  data () {
-    return {}
-  },
-  mounted () {
-    document.body.classList.add('userLayout')
-  },
-  beforeDestroy () {
-    document.body.classList.remove('userLayout')
+  export default {
+    name: 'UserLayout',
+    components: { RouteView },
+    mixins: [mixinDevice],
+    data () {
+      return {}
+    },
+    mounted () {
+      document.body.classList.add('userLayout')
+    },
+    beforeDestroy () {
+      document.body.classList.remove('userLayout')
+    }
   }
-}
 </script>
 
 <style lang="less" scoped>
@@ -107,6 +109,7 @@ export default {
             top: 2px;
           }
         }
+
         .desc {
           font-size: 14px;
           color: rgba(0, 0, 0, 0.45);
@@ -132,14 +135,17 @@ export default {
         .links {
           margin-bottom: 8px;
           font-size: 14px;
+
           a {
             color: rgba(0, 0, 0, 0.45);
             transition: all 0.3s;
+
             &:not(:last-child) {
               margin-right: 40px;
             }
           }
         }
+
         .copyright {
           color: rgba(0, 0, 0, 0.45);
           font-size: 14px;
