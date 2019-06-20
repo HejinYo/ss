@@ -31,5 +31,14 @@ new Vue({
   created () {
     bootstrap()
   },
+  mounted () {
+    this.$nextTick(function () {
+      // 保证完全挂载
+      window.onresize = function temp () {
+        let height = document.documentElement.clientHeight
+        store.commit('SET_CLIENT_HEIGHT', height - 5)
+      }
+    })
+  },
   render: h => h(App)
 }).$mount('#app')

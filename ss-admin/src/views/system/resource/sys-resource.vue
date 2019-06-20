@@ -1,107 +1,109 @@
 <template>
   <div>
-    <a-row>
-      <a-col :span="6">
-        <a-card title="资源管理">
-          <el-tree :data="resTeeData" node-key="resId" default-expand-all
-                   @node-click="treeNodeClick">
-        <span class="ss-tree" slot-scope="{ node, data }">
-          <span v-bind:style="{ color: (data.state!==1 ? 'red' : (data.meta.hideHeader?'#bbbebb': '')) }">
-            <a-icon :type="data.icon"/>
-            <span class="ss-tree-title">
-              {{data.resName}}
+    <a-layout>
+      <a-layout-sider collapsible collapsedWidth="0" v-model="collapsed" theme="light" width="300">
+        <a-card title="资源管理" :bodyStyle="{padding:5}">
+          <template class="ant-card-actions" slot="extra">
+            <a>
+              <a-icon type="ellipsis"></a-icon>
+            </a>
+          </template>
+          <div :style="{ height: `${clientHeight - 280}px`,overflowY: 'auto'}">
+            <el-tree ref="resTree" :data="resTeeData" node-key="resId" default-expand-all @node-click="treeNodeClick">
+            <span class="ss-tree" slot-scope="{ node, data }">
+              <span v-bind:style="{ color: (data.state!==1 ? 'red' : (data.meta.hideHeader?'#bbbebb': '')) }">
+                <a-icon :type="data.icon"/>
+                <span class="ss-tree-title">
+                  {{data.resName}}
+                </span>
+              </span>
+              <span class="ss-tree-optional">
+                <a-dropdown>
+                  <a class="btn" @click.stop=""><a-icon type="ellipsis"/></a>
+                  <a-menu slot="overlay">
+                    <a-menu-item key="add" @click="test(data)">新增</a-menu-item>
+                    <a-menu-item key="edit" @click="test(data)">修改</a-menu-item>
+                    <a-menu-item key="delete" @click="test(data)">移除</a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </span>
             </span>
-          </span>
-          <span class="ss-tree-optional">
-            <a-dropdown>
-              <a class="btn" @click.stop=""><a-icon type="ellipsis"/></a>
-              <a-menu slot="overlay">
-                <a-menu-item key="add" @click="test(data)">新增</a-menu-item>
-                <a-menu-item key="edit" @click="test(data)">修改</a-menu-item>
-                <a-menu-item key="delete" @click="test(data)">移除</a-menu-item>
-              </a-menu>
-            </a-dropdown>
-          </span>
-        </span>
-          </el-tree>
-        </a-card>
-      </a-col>
-      <a-col :span="18">
-        <a-card title="权限管理">
-          <!--操作工具条-->
-          <a-row>
-            <a-col :xs="24" :sm="12" :md="14" :lg="16">
-              <a-button type="primary">修改</a-button>
-              <a-button type="danger">删除</a-button>
-            </a-col>
-
-            <a-col :xs="24" :sm="12" :md="10" :lg="8">
-              <a-input-group compact>
-                <a-select defaultValue="Option1" style="width: 30%">
-                  <a-select-option value="Option1">Option1</a-select-option>
-                  <a-select-option value="Option2">Option2</a-select-option>
-                </a-select>
-                <a-input-search style="width: 70%" laceholder="查询..." :maxlength="32">
-                  <a-icon slot="enterButton" type="search"/>
-                </a-input-search>
-              </a-input-group>
-            </a-col>
-          </a-row>
-          <br/>
-          <div>
-            <div>
-              <!-- 权限表格 -->
-              <el-table stripe border highlight-current-row size="mini" element-loading-text="拼命加载中"
-                        :data="resListData" height="350px">
-                <el-table-column prop="resId" label="编号" sortable="custom" align="center" width="70"></el-table-column>
-                <el-table-column prop="resName" label="资源名称" sortable="custom" align="center" min-width="150"></el-table-column>
-                <el-table-column prop="permName" label="权限名称" sortable="custom" align="center" min-width="150"></el-table-column>
-                <el-table-column prop="resCode" label="权限编码" sortable="custom" align="center" min-width="150"></el-table-column>
-                <el-table-column prop="state" sortable="custom" label="状态" align="center" width="90">
-                  <template slot-scope="scope">
-                    <a-tag :color="scope.row.state === 1 ? '#2db7f5': '#bbbbbb' ">
-                      {{scope.row.state === 1 ? '正常' : '禁用'}}
-                    </a-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </div>
-
+            </el-tree>
           </div>
-          <br/>
-          <!--翻页工具条-->
-          <a-pagination hideOnSinglePage showSizeChanger size="small"
-                        :total="1000"
-                        :pageSize="10">
-          </a-pagination>
+        </a-card>
+      </a-layout-sider>
+      <a-layout>
+        <sys-permission :client-height="clientHeight" @sider-click="collapsed = !collapsed" :collapsed="collapsed"></sys-permission>
+      </a-layout>
+    </a-layout>
+    <a-row v-if="false">
+      <a-col :xs="12" :sm="10" :md="8" :lg="7" :xl="6" :xxl="5">
+        <a-card title="资源管理" :bodyStyle="{padding:5}">
+          <template class="ant-card-actions" slot="extra">
+            <a>
+              <a-icon type="ellipsis"></a-icon>
+            </a>
+          </template>
+          <div :style="{ height: `${clientHeight - differenceHigh}px`,overflowY: 'auto'}">
+            <el-tree ref="resTree" :data="resTeeData" node-key="resId" default-expand-all @node-click="treeNodeClick">
+            <span class="ss-tree" slot-scope="{ node, data }">
+              <span v-bind:style="{ color: (data.state!==1 ? 'red' : (data.meta.hideHeader?'#bbbebb': '')) }">
+                <a-icon :type="data.icon"/>
+                <span class="ss-tree-title">
+                  {{data.resName}}
+                </span>
+              </span>
+              <span class="ss-tree-optional">
+                <a-dropdown>
+                  <a class="btn" @click.stop=""><a-icon type="ellipsis"/></a>
+                  <a-menu slot="overlay">
+                    <a-menu-item key="add" @click="test(data)">新增</a-menu-item>
+                    <a-menu-item key="edit" @click="test(data)">修改</a-menu-item>
+                    <a-menu-item key="delete" @click="test(data)">移除</a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </span>
+            </span>
+            </el-tree>
+          </div>
         </a-card>
       </a-col>
-
+      <a-col :xs="12" :sm="14" :md="16" :lg="17" :xl="18" :xxl="19">
+        <sys-permission :client-height="clientHeight"></sys-permission>
+      </a-col>
     </a-row>
   </div>
 </template>
 
 <script>
   import { getOperateTree } from '@/api/sys-resource'
+  import sysPermission from './sys-permission'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'sys-resource',
-    components: {},
-    computed: {},
+    components: { sysPermission },
+    computed: {
+      ...mapGetters([
+        'clientHeight'
+      ])
+    },
     data () {
       return {
-        resTeeData: [],
-        resListData: [],
-        defaultProps: {
-          children: 'children',
-          label: 'resName'
-        }
+        collapsed: false,
+        differenceHigh: 0,
+        resTeeData: []
       }
     },
     mounted () {
       this.$nextTick(function () {
         // 保证完全挂载
         this.loadResTreeData()
+
+        // 滚动条置顶，因为我拿不到滚动条高度
+        window.scroll(0, 0)
+        let resTree = this.$refs.resTree.$el.getBoundingClientRect()
+        this.differenceHigh = resTree.top
       })
     },
     methods: {
@@ -112,10 +114,8 @@
           if (code === 1) {
             console.log(result)
             this.resTeeData = result && result.tree
-            this.resListData = result && result.list
           } else {
             this.resTeeData = []
-            this.resListData = []
           }
         })
 
@@ -133,6 +133,9 @@
 </script>
 
 <style scoped lang="less">
+  .testcss {
+
+  }
 
   .el-tree-node__content:hover {
     .ss-tree-optional {
