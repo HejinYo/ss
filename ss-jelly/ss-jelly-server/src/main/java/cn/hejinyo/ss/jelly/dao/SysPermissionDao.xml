@@ -133,22 +133,22 @@
         <include refid="Base_Column_List"/>
         from sys_permission
         <where>
-            <if test="resId != null and !&quot;&quot;.equals(resId)">and res_id = #{resId}</if>
-            <if test="permName != null and !&quot;&quot;.equals(permName)">and perm_name like
-                concat('%',#{permName},'%')
-            </if>
-            <if test="permCode != null and !&quot;&quot;.equals(permCode)">and perm_code like
-                concat('%',#{permCode},'%')
-            </if>
-            <if test="code != null and !&quot;&quot;.equals(code)">and code like concat('%',#{code},'%')</if>
-            <if test="state != null and !&quot;&quot;.equals(state)">and state = #{state}</if>
-            <if test="createId != null and !&quot;&quot;.equals(createId)">and create_id = #{createId}</if>
-            <if test="createTime != null and !&quot;&quot;.equals(createTime)">and DATE_FORMAT(create_time,'%Y-%m-%d') =
-                STR_TO_DATE(#{createTime},'%Y-%m-%d')
-            </if>
-            <if test="updateId != null and !&quot;&quot;.equals(updateId)">and update_id = #{updateId}</if>
-            <if test="updateTime != null and !&quot;&quot;.equals(updateTime)">and DATE_FORMAT(update_time,'%Y-%m-%d') =
-                STR_TO_DATE(#{updateTime},'%Y-%m-%d')
+            <if test="queryParam != null">
+                <if test="queryParam.resId != null and !&quot;&quot;.equals(queryParam.resId)">
+                    and res_id = #{queryParam.resId}
+                </if>
+                <if test="queryParam.permName != null and !&quot;&quot;.equals(queryParam.permName)">
+                    and perm_name like concat('%',#{queryParam.permName},'%')
+                </if>
+                <if test="queryParam.permCode != null and !&quot;&quot;.equals(queryParam.permCode)">
+                    and perm_code like concat('%',#{queryParam.permCode},'%')
+                </if>
+                <if test="queryParam.code != null and !&quot;&quot;.equals(queryParam.code)">
+                    and code like concat('%',#{queryParam.code},'%')
+                </if>
+                <if test="queryParam.state != null and !&quot;&quot;.equals(queryParam.state)">
+                    and state = #{queryParam.state}
+                </if>
             </if>
         </where>
     </select>

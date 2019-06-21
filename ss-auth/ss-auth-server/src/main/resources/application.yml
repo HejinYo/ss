@@ -20,7 +20,7 @@ eureka:
     service-url:
       defaultZone: http://hejinyo:password@localhost:8000/eureka
     # 缓存清单每隔30秒跟新一次
-    registry-fetch-interval-seconds: 30
+    registry-fetch-interval-seconds: 5
   instance:
     # 服务续约任务调用间隔时间，默认30秒
     lease-renewal-interval-in-seconds: 30

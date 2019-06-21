@@ -49,7 +49,7 @@ public interface BaseDao<T, ID extends Serializable> {
     /**
      * 查询分页
      */
-    List<T> findPage(PageQuery<T> pageQuery);
+    List<T> findPage(PageQuery pageQuery);
 
 
 }

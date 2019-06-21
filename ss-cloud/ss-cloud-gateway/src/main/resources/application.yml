@@ -22,7 +22,7 @@ eureka:
     serviceUrl:
       defaultZone: http://hejinyo:password@localhost:8000/eureka
     # 缓存清单每隔30秒跟新一次
-    registry-fetch-interval-seconds: 10
+    registry-fetch-interval-seconds: 5
   instance:
     hostname: ss-gateway-server
     # 实例使用ip进行访问
