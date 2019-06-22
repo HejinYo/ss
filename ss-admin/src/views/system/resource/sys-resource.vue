@@ -23,9 +23,9 @@
                 <a-dropdown>
                   <a class="btn" @click.stop=""><a-icon type="ellipsis"/></a>
                   <a-menu slot="overlay">
-                    <a-menu-item key="add" @click="test(data)">新增</a-menu-item>
-                    <a-menu-item key="edit" @click="test(data)">修改</a-menu-item>
-                    <a-menu-item key="delete" @click="test(data)">移除</a-menu-item>
+                    <a-menu-item key="add" @click="openModal(optTypeEnum.insert,data)">新增</a-menu-item>
+                    <a-menu-item key="edit" @click="openModal(optTypeEnum.update,data)">修改</a-menu-item>
+                    <a-menu-item key="delete" @click="openModal(optTypeEnum.delete,data)">删除</a-menu-item>
                   </a-menu>
                 </a-dropdown>
               </span>
@@ -38,6 +38,35 @@
         <sys-permission :client-height="clientHeight" :tree-node-res-id="treeNodeResId"></sys-permission>
       </a-col>
     </a-row>
+
+    <a-modal :title="operationTitile" v-model="resourceVisible" destroyOnClose>
+      <a-form>
+
+        <a-form-item label="名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input v-model="resModel.resName"/>
+        </a-form-item>
+
+        <a-form-item label="类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input v-model="resModel.type"/>
+        </a-form-item>
+
+        <a-form-item label="编码" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input v-model="resModel.resCode"/>
+        </a-form-item>
+
+        <a-form-item label="图标" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input v-model="resModel.icon"/>
+        </a-form-item>
+
+        <a-divider>扩展</a-divider>
+        <a-form-item v-for="(resMeta,index) in resMetaSelect" :key="index" :label="resMeta.label"
+                     :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input v-if="resMeta.type === 'string'" v-model="resMetaModel[resMeta.value]"/>
+          <a-switch v-else-if="resMeta.type  === 'boolean'" v-model="resMetaModel[resMeta.value]" defaultChecked/>
+        </a-form-item>
+
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
@@ -52,14 +81,75 @@
     computed: {
       ...mapGetters([
         'clientHeight'
-      ])
+      ]),
+      // 操作类型标题
+      operationTitile () {
+        return this.operationType === this.optTypeEnum.update ? '修改资源' : '添加资源'
+      }
     },
     data () {
       return {
+        optTypeEnum: {
+          insert: 1,
+          update: 2,
+          delete: 3,
+        },
+        formItemLayout: {
+          labelCol: { span: 4 },
+          wrapperCol: { span: 20 },
+        },
+        resMetaSelect: [
+          {
+            label: '路径',
+            value: 'path',
+            type: 'string'
+          },
+          {
+            label: '重定向',
+            value: 'redirect',
+            type: 'string'
+          },
+          {
+            label: '组件',
+            value: 'component',
+            type: 'string'
+          },
+          {
+            label: 'target',
+            value: 'target',
+            type: 'string'
+          },
+          {
+            label: 'keepAlive',
+            value: 'keepAlive',
+            type: 'boolean'
+          },
+          {
+            label: '隐藏',
+            value: 'hideHeader',
+            type: 'boolean'
+          },
+          {
+            label: '隐藏子菜单',
+            value: 'hideChildrenInMenu',
+            type: 'boolean'
+          },
+        ],
+        // 树样式
         bodyStyle: { padding: 0 },
+        // 高度差，计算书高度
         differenceHigh: 0,
+        // 资源树数据
         resTeeData: [],
-        treeNodeResId: null
+        // 点击资源节点的编号
+        treeNodeResId: null,
+        // 资源编辑弹出层
+        resourceVisible: false,
+        // 操作类型
+        operationType: null,
+        // 资源模型
+        resModel: {},
+        resMetaModel: {}
       }
     },
     mounted () {
@@ -95,9 +185,24 @@
           this.treeNodeResId = null
         }
       },
-      // 测试方法
-      test (data) {
-        console.log('操作按钮被点击.....', data)
+      // 打开弹出层
+      openModal (type, data) {
+        this.operationType = type
+        switch (this.operationType) {
+          case this.optTypeEnum.insert:
+            this.resMetaModel = {}
+            this.resModel = {}
+            this.resourceVisible = true
+            break
+          case this.optTypeEnum.update:
+            this.resMetaModel = { ...data.meta }
+            this.resModel = { ...data }
+            this.resourceVisible = true
+            break
+          case this.optTypeEnum.delete:
+            break
+          default:
+        }
       }
     },
   }
