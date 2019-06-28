@@ -1,9 +1,11 @@
 package cn.hejinyo.ss.jelly.service.impl;
 
+import cn.hejinyo.ss.auth.jelly.token.SsUserDetails;
 import cn.hejinyo.ss.common.consts.CommonConstant;
 import cn.hejinyo.ss.common.utils.RecursionUtil;
 import cn.hejinyo.ss.jelly.dao.SysResourceDao;
 import cn.hejinyo.ss.jelly.model.dto.SysResourceDTO;
+import cn.hejinyo.ss.jelly.model.entity.SysResourceEntity;
 import cn.hejinyo.ss.jelly.service.SysResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,32 @@ public class SysResourceServiceImpl implements SysResourceService {
                     list, Collections.singletonList(CommonConstant.TREE_ROOT));
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * 增加一个资源
+     */
+    @Override
+    public int saveResource(SysResourceEntity sysResource, SsUserDetails ssUserDetails) {
+        sysResource.setCreateId(ssUserDetails.getUserId());
+        sysResource.setCreateTime(new Date());
+        return sysResourceDao.save(sysResource);
+    }
+
+    /**
+     * 更新资源信息
+     */
+    @Override
+    public int updateResource(Integer resId, SysResourceEntity sysResource) {
+        return sysResourceDao.update(sysResource);
+    }
+
+    /**
+     * 删除资源
+     */
+    @Override
+    public int deleteResource(Integer resId) {
+        return sysResourceDao.deleteByPk(resId);
     }
 
 }

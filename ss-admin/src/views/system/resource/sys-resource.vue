@@ -4,8 +4,11 @@
       <a-col :xs="12" :sm="10" :md="8" :lg="7" :xl="6" :xxl="5">
         <a-card title="资源管理" :bodyStyle="bodyStyle">
           <template class="ant-card-actions" slot="extra">
-            <a>
-              <a-icon type="ellipsis"></a-icon>
+            <a @click="openModal(optTypeEnum.insert,{ resId : 1 })">
+              <a-icon type="plus"/>
+            </a>
+            <a @click="loadResTreeData" style="margin-left: 5px">
+              <a-icon type="reload"/>
             </a>
           </template>
           <div :style="{ height: `${clientHeight - differenceHigh}px`,overflowY: 'auto'}">
@@ -39,7 +42,7 @@
       </a-col>
     </a-row>
 
-    <a-modal :title="operationTitile" v-model="resourceVisible" destroyOnClose>
+    <a-modal :title="operationTitile" v-model="resourceVisible" destroyOnClose @ok="submitForm">
       <a-form>
 
         <a-form-item label="名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
@@ -47,31 +50,50 @@
         </a-form-item>
 
         <a-form-item label="类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-input v-model="resModel.type"/>
+          <a-radio-group v-model="resModel.type" :defaultValue="1" buttonStyle="solid">
+            <a-radio-button :value="0">文件夹</a-radio-button>
+            <a-radio-button :value="1">菜单</a-radio-button>
+          </a-radio-group>
         </a-form-item>
 
         <a-form-item label="编码" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-input v-model="resModel.resCode"/>
         </a-form-item>
 
+        <a-form-item label="序号" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input-number :min="1" :max="10" v-model="resModel.seq"/>
+        </a-form-item>
+
         <a-form-item label="图标" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-input v-model="resModel.icon"/>
         </a-form-item>
 
-        <a-divider>扩展</a-divider>
-        <a-form-item v-for="(resMeta,index) in resMetaSelect" :key="index" :label="resMeta.label"
-                     :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-input v-if="resMeta.type === 'string'" v-model="resMetaModel[resMeta.value]"/>
-          <a-switch v-else-if="resMeta.type  === 'boolean'" v-model="resMetaModel[resMeta.value]" defaultChecked/>
+        <a-form-item label="状态" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-radio-group v-model="resModel.state" :defaultValue="1" buttonStyle="solid">
+            <a-radio-button :value="1">启用</a-radio-button>
+            <a-radio-button :value="0">禁用</a-radio-button>
+          </a-radio-group>
         </a-form-item>
 
+        <a-divider>
+          <a @click="spreadFlag = !spreadFlag">
+            扩展属性
+            <a-icon :type="spreadFlag ? 'up' : 'down'"/>
+          </a></a-divider>
+        <div v-if="spreadFlag">
+          <a-form-item v-for="(resMeta,index) in resMetaSelect" :key="index" :label="resMeta.label"
+                       :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+            <a-input v-if="resMeta.type === 'string'" v-model="resMetaModel[resMeta.value]"/>
+            <a-switch v-else-if="resMeta.type  === 'boolean'" v-model="resMetaModel[resMeta.value]" defaultChecked/>
+          </a-form-item>
+        </div>
       </a-form>
     </a-modal>
   </div>
 </template>
 
 <script>
-  import { getOperateTree } from '@/api/sys-resource'
+  import { getOperateTree, saveResource, updateResource, deleteResource } from '@/api/sys-resource'
   import sysPermission from './sys-permission'
   import { mapGetters } from 'vuex'
 
@@ -89,15 +111,18 @@
     },
     data () {
       return {
+        // 操作类型
         optTypeEnum: {
           insert: 1,
           update: 2,
           delete: 3,
         },
+        // 表单样式
         formItemLayout: {
           labelCol: { span: 4 },
           wrapperCol: { span: 20 },
         },
+        // 扩展属性
         resMetaSelect: [
           {
             label: '路径',
@@ -149,7 +174,10 @@
         operationType: null,
         // 资源模型
         resModel: {},
-        resMetaModel: {}
+        // 资源扩展模型
+        resMetaModel: {},
+        // 扩展展开标志
+        spreadFlag: false
       }
     },
     mounted () {
@@ -187,19 +215,67 @@
       },
       // 打开弹出层
       openModal (type, data) {
+        this.spreadFlag = false
         this.operationType = type
         switch (this.operationType) {
+          // 新增
           case this.optTypeEnum.insert:
             this.resMetaModel = {}
-            this.resModel = {}
+            this.resModel = { parentId: data && data.resId }
             this.resourceVisible = true
             break
+          // 更新
           case this.optTypeEnum.update:
             this.resMetaModel = { ...data.meta }
             this.resModel = { ...data }
             this.resourceVisible = true
             break
+          // 删除
           case this.optTypeEnum.delete:
+            break
+          default:
+        }
+      },
+      // 表单确定
+      submitForm () {
+        // this.resModel.meta = this.resMetaModel
+        const sendData = { ...this.resModel }
+        console.log(sendData)
+        switch (this.operationType) {
+          // 新增
+          case this.optTypeEnum.insert:
+            saveResource(sendData).then(res => {
+              const { result, code, msg } = res
+              if (code === 1) {
+                this.resourceVisible = false
+                this.loadResTreeData()
+              } else {
+                this.$message.warning(msg);
+              }
+            })
+            break
+          // 更新
+          case this.optTypeEnum.update:
+            updateResource(sendData.resId, sendData).then(res => {
+              const { result, code, msg } = res
+              if (code === 1) {
+                this.resourceVisible = false
+                this.loadResTreeData()
+              } else {
+                this.$message.warning(msg);
+              }
+            })
+            break
+          // 删除
+          case this.optTypeEnum.delete:
+            deleteResource(sendData.resId).then(res => {
+              const { result, code, msg } = res
+              if (code === 1) {
+                this.loadResTreeData()
+              } else {
+                this.$message.warning(msg);
+              }
+            })
             break
           default:
         }

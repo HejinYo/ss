@@ -49,7 +49,15 @@ service.interceptors.request.use(config => {
 
 // response interceptor
 service.interceptors.response.use((response) => {
-  return response.data
+  let { code, msg } = response.data
+  if (code === 1) {
+    return response.data
+  }
+  notification.error({
+    message: '服务器拒绝处理',
+    description: msg
+  })
+  return Promise.reject(response)
 }, err)
 
 const installer = {

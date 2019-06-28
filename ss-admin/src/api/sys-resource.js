@@ -9,3 +9,29 @@ export function getOperateTree () {
     method: 'get'
   })
 }
+
+// 添加資源
+export function saveResource (data) {
+  return axios({
+    url: `${JELLY_SERVER}/resource`,
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改資源
+export function updateResource (resId, data) {
+  return axios({
+    url: `${JELLY_SERVER}/resource/${resId}`,
+    method: 'put',
+    data: data
+  })
+}
+
+// s删除資源
+export function deleteResource (resId) {
+  return axios({
+    url: `${JELLY_SERVER}/resource/${resId}`,
+    method: 'deleta'
+  })
+}
