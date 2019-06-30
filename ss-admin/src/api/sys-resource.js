@@ -28,10 +28,10 @@ export function updateResource (resId, data) {
   })
 }
 
-// s删除資源
+// 删除資源
 export function deleteResource (resId) {
   return axios({
     url: `${JELLY_SERVER}/resource/${resId}`,
-    method: 'deleta'
+    method: 'delete'
   })
 }

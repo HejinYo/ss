@@ -32,7 +32,7 @@ public class SysResourceServiceImpl implements SysResourceService {
     @Override
     public HashMap<String, List<SysResourceDTO>> getOperateTree() {
         List<SysResourceDTO> list = sysResourceDao.findAllResourceList();
-        return RecursionUtil.listTree(Boolean.FALSE, SysResourceDTO.class, TREE_ID,
+        return RecursionUtil.listTree(Boolean.TRUE, SysResourceDTO.class, TREE_ID,
                 list, Collections.singletonList(CommonConstant.TREE_ROOT));
     }
 

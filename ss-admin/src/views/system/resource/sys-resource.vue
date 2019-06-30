@@ -4,9 +4,6 @@
       <a-col :xs="12" :sm="10" :md="8" :lg="7" :xl="6" :xxl="5">
         <a-card title="资源管理" :bodyStyle="bodyStyle">
           <template class="ant-card-actions" slot="extra">
-            <a @click="openModal(optTypeEnum.insert,{ resId : 1 })">
-              <a-icon type="plus"/>
-            </a>
             <a @click="loadResTreeData" style="margin-left: 5px">
               <a-icon type="reload"/>
             </a>
@@ -16,7 +13,7 @@
                      default-expand-all @node-click="treeNodeClick">
             <span class="ss-tree" slot-scope="{ node, data }">
               <span
-                v-bind:style="{ color: (data.state!==1 ? '#e2b9b9' : (data.meta.hideHeader?'#bbbebb': '#1890ff')) }">
+                v-bind:style="{ color: (data.state!==1 ? '#e2b9b9' : ((data.meta && data.meta.hideHeader)?'#bbbebb': '#1890ff')) }">
                 <a-icon :type="data.icon"/>
                 <span class="ss-tree-title">
                   {{data.resName}}
@@ -28,7 +25,11 @@
                   <a-menu slot="overlay">
                     <a-menu-item key="add" @click="openModal(optTypeEnum.insert,data)">新增</a-menu-item>
                     <a-menu-item key="edit" @click="openModal(optTypeEnum.update,data)">修改</a-menu-item>
-                    <a-menu-item key="delete" @click="openModal(optTypeEnum.delete,data)">删除</a-menu-item>
+                    <a-menu-item key="delete">
+                      <a-popconfirm :title="`确定删除资源【${data.resName}】?`" @confirm="doDeleteResource(data)" okText="确定" cancelText="取消">
+                         <a href="#">删除</a>
+                       </a-popconfirm>
+                    </a-menu-item>
                   </a-menu>
                 </a-dropdown>
               </span>
@@ -114,8 +115,7 @@
         // 操作类型
         optTypeEnum: {
           insert: 1,
-          update: 2,
-          delete: 3,
+          update: 2
         },
         // 表单样式
         formItemLayout: {
@@ -194,20 +194,21 @@
     methods: {
       // 加载资源树数据
       loadResTreeData () {
+        this.resTeeData = []
         getOperateTree().then(res => {
           const { result, code, msg } = res
           if (code === 1) {
-            console.log(result)
             this.resTeeData = result && result.tree
           } else {
-            this.resTeeData = []
+            this.$message.warning(msg);
           }
         })
 
       },
       // 树节点被点击
       treeNodeClick (data, node) {
-        if (node.id !== 1) {
+        console.log(data, node)
+        if (data.resId !== 1) {
           this.treeNodeResId = data.resId
         } else {
           this.treeNodeResId = null
@@ -229,9 +230,6 @@
             this.resMetaModel = { ...data.meta }
             this.resModel = { ...data }
             this.resourceVisible = true
-            break
-          // 删除
-          case this.optTypeEnum.delete:
             break
           default:
         }
@@ -266,19 +264,19 @@
               }
             })
             break
-          // 删除
-          case this.optTypeEnum.delete:
-            deleteResource(sendData.resId).then(res => {
-              const { result, code, msg } = res
-              if (code === 1) {
-                this.loadResTreeData()
-              } else {
-                this.$message.warning(msg);
-              }
-            })
-            break
           default:
         }
+      },
+      // 删除资源
+      doDeleteResource (data) {
+        deleteResource(data.resId).then(res => {
+          const { result, code, msg } = res
+          if (code === 1) {
+            this.loadResTreeData()
+          } else {
+            this.$message.warning(msg);
+          }
+        })
       }
     },
   }

@@ -101,15 +101,16 @@ export const generatorDynamicRouter = (data) => {
  */
 export const generator = (routerMap, parent) => {
   return routerMap.map(item => {
+    let meta = item.meta || {}
     const currentRouter = {
       // 路由地址 动态拼接生成如 /dashboard/workplace
-      path: item.meta.path || '',
+      path: meta.path || '',
       // 路由名称，建议唯一
       name: item.resCode || '',
       // 该路由对应页面的 组件
-      component: constantRouterComponents[item.meta.component] || null,
+      component: constantRouterComponents[meta.component] || null,
       // 隐藏子菜单
-      hideChildrenInMenu: item.meta.hideChildrenInMenu || false,
+      hideChildrenInMenu: meta.hideChildrenInMenu || false,
       // meta
       meta: {
         // 页面标题
@@ -119,15 +120,15 @@ export const generator = (routerMap, parent) => {
         // 页面权限(供指令权限用，可去掉)
         permission: (item.code && [item.code]) || null,
         // 外部链接
-        target: (item.meta.target) || null,
+        target: (meta.target) || null,
         // 隐藏菜单
-        hideHeader: (item.meta.hideHeader) || false
+        hideHeader: (meta.hideHeader) || false
       }
     }
     // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠
-    !item.meta.target && (currentRouter.path = currentRouter.path.replace('//', '/'))
+    !meta.target && (currentRouter.path = currentRouter.path.replace('//', '/'))
     // 重定向
-    item.meta.redirect && (currentRouter.redirect = item.meta.redirect)
+    meta.redirect && (currentRouter.redirect = meta.redirect)
     // 是否有子菜单，并递归处理
     if (item.children && item.children.length > 0) {
       // Recursion
