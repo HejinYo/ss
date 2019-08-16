@@ -245,7 +245,7 @@ export default {
         // 新增
         case this.optTypeEnum.insert:
           saveResource(sendData).then(res => {
-            const { result, code, msg } = res
+            const { code, msg } = res
             if (code === 1) {
               this.resourceVisible = false
               this.loadResTreeData()
@@ -257,7 +257,7 @@ export default {
           // 更新
         case this.optTypeEnum.update:
           updateResource(sendData.resId, sendData).then(res => {
-            const { result, code, msg } = res
+            const { code, msg } = res
             if (code === 1) {
               this.resourceVisible = false
               this.loadResTreeData()
@@ -272,7 +272,7 @@ export default {
     // 删除资源
     doDeleteResource (data) {
       deleteResource(data.resId).then(res => {
-        const { result, code, msg } = res
+        const { code, msg } = res
         if (code === 1) {
           this.loadResTreeData()
         } else {

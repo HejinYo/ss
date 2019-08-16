@@ -2,12 +2,14 @@
 
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
+  parser: 'vue-eslint-parser',
   parserOptions: {
     sourceType: 'module'
   },
   env: {
     browser: true,
+    node: true,
+    es6: true,
   },
   // https://github.com/standard/standard/blob/master/docs/RULES-en.md
   extends: 'standard',
@@ -17,9 +19,10 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
+    'no-console': 'off',
     // allow async-await
     'generator-star-spacing': 'off',
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }
-};
+}
