@@ -97,191 +97,191 @@
 </template>
 
 <script>
-  import { getOperateTree, saveResource, updateResource, deleteResource } from '@/api/sys-resource'
-  import sysPermission from './sys-permission'
-  import { mapGetters } from 'vuex'
+import { getOperateTree, saveResource, updateResource, deleteResource } from '@/api/sys-resource'
+import sysPermission from './sys-permission'
+import { mapGetters } from 'vuex'
 
-  export default {
-    name: 'sys-resource',
-    components: { sysPermission },
-    computed: {
-      ...mapGetters([
-        'clientHeight'
-      ]),
-      // 操作类型标题
-      operationTitile () {
-        return this.operationType === this.optTypeEnum.update ? '修改资源' : '添加资源'
-      }
-    },
-    data () {
-      return {
-        // 操作类型
-        optTypeEnum: {
-          insert: 1,
-          update: 2
+export default {
+  name: 'sys-resource',
+  components: { sysPermission },
+  computed: {
+    ...mapGetters([
+      'clientHeight'
+    ]),
+    // 操作类型标题
+    operationTitile () {
+      return this.operationType === this.optTypeEnum.update ? '修改资源' : '添加资源'
+    }
+  },
+  data () {
+    return {
+      // 操作类型
+      optTypeEnum: {
+        insert: 1,
+        update: 2
+      },
+      // 表单样式
+      formItemLayout: {
+        labelCol: { span: 4 },
+        wrapperCol: { span: 20 }
+      },
+      // 扩展属性
+      resMetaSelect: [
+        {
+          label: '路径',
+          value: 'path',
+          type: 'string'
         },
-        // 表单样式
-        formItemLayout: {
-          labelCol: { span: 4 },
-          wrapperCol: { span: 20 }
+        {
+          label: '重定向',
+          value: 'redirect',
+          type: 'string'
         },
-        // 扩展属性
-        resMetaSelect: [
-          {
-            label: '路径',
-            value: 'path',
-            type: 'string'
-          },
-          {
-            label: '重定向',
-            value: 'redirect',
-            type: 'string'
-          },
-          {
-            label: '组件',
-            value: 'component',
-            type: 'string'
-          },
-          {
-            label: 'target',
-            value: 'target',
-            type: 'string'
-          },
-          {
-            label: 'keepAlive',
-            value: 'keepAlive',
-            type: 'boolean'
-          },
-          {
-            label: '隐藏',
-            value: 'hideHeader',
-            type: 'boolean'
-          },
-          {
-            label: '隐藏子菜单',
-            value: 'hideChildrenInMenu',
-            type: 'boolean'
-          }
-        ],
-        // 树样式
-        bodyStyle: { padding: 0 },
-        // 高度差，计算书高度
-        differenceHigh: 0,
-        // 资源树数据
-        resTeeData: [],
-        // 点击资源节点的编号
-        treeNodeResId: null,
-        // 资源编辑弹出层
-        resourceVisible: false,
-        // 操作类型
-        operationType: null,
-        // 资源模型
-        resModel: {},
-        // 资源扩展模型
-        resMetaModel: {},
-        // 扩展展开标志
-        spreadFlag: false
-      }
-    },
-    mounted () {
-      this.$nextTick(function () {
-        // 保证完全挂载
-        this.loadResTreeData()
+        {
+          label: '组件',
+          value: 'component',
+          type: 'string'
+        },
+        {
+          label: 'target',
+          value: 'target',
+          type: 'string'
+        },
+        {
+          label: 'keepAlive',
+          value: 'keepAlive',
+          type: 'boolean'
+        },
+        {
+          label: '隐藏',
+          value: 'hideHeader',
+          type: 'boolean'
+        },
+        {
+          label: '隐藏子菜单',
+          value: 'hideChildrenInMenu',
+          type: 'boolean'
+        }
+      ],
+      // 树样式
+      bodyStyle: { padding: 0 },
+      // 高度差，计算书高度
+      differenceHigh: 0,
+      // 资源树数据
+      resTeeData: [],
+      // 点击资源节点的编号
+      treeNodeResId: null,
+      // 资源编辑弹出层
+      resourceVisible: false,
+      // 操作类型
+      operationType: null,
+      // 资源模型
+      resModel: {},
+      // 资源扩展模型
+      resMetaModel: {},
+      // 扩展展开标志
+      spreadFlag: false
+    }
+  },
+  mounted () {
+    this.$nextTick(function () {
+      // 保证完全挂载
+      this.loadResTreeData()
 
-        // 滚动条置顶，因为我拿不到滚动条高度
-        window.scroll(0, 0)
-        let resTree = this.$refs.resTree.$el.getBoundingClientRect()
-        this.differenceHigh = resTree.top + 1
+      // 滚动条置顶，因为我拿不到滚动条高度
+      window.scroll(0, 0)
+      let resTree = this.$refs.resTree.$el.getBoundingClientRect()
+      this.differenceHigh = resTree.top + 1
+    })
+  },
+  methods: {
+    // 加载资源树数据
+    loadResTreeData () {
+      this.resTeeData = []
+      getOperateTree().then(res => {
+        const { result, code, msg } = res
+        if (code === 1) {
+          this.resTeeData = result && result.tree
+        } else {
+          this.$message.warning(msg)
+        }
       })
     },
-    methods: {
-      // 加载资源树数据
-      loadResTreeData () {
-        this.resTeeData = []
-        getOperateTree().then(res => {
-          const { result, code, msg } = res
-          if (code === 1) {
-            this.resTeeData = result && result.tree
-          } else {
-            this.$message.warning(msg)
-          }
-        })
-      },
-      // 树节点被点击
-      treeNodeClick (data, node) {
-        console.log(data, node)
-        if (data.resId !== 1) {
-          this.treeNodeResId = data.resId
-        } else {
-          this.treeNodeResId = null
-        }
-      },
-      // 打开弹出层
-      openModal (type, data) {
-        this.spreadFlag = false
-        this.operationType = type
-        switch (this.operationType) {
-          // 新增
-          case this.optTypeEnum.insert:
-            this.resMetaModel = {}
-            this.resModel = { parentId: data && data.resId }
-            this.resourceVisible = true
-            break
-          // 更新
-          case this.optTypeEnum.update:
-            this.resMetaModel = { ...data.meta }
-            this.resModel = { ...data }
-            this.resourceVisible = true
-            break
-          default:
-        }
-      },
-      // 表单确定
-      submitForm () {
-        // this.resModel.meta = this.resMetaModel
-        const sendData = { ...this.resModel }
-        console.log(sendData)
-        switch (this.operationType) {
-          // 新增
-          case this.optTypeEnum.insert:
-            saveResource(sendData).then(res => {
-              const { result, code, msg } = res
-              if (code === 1) {
-                this.resourceVisible = false
-                this.loadResTreeData()
-              } else {
-                this.$message.warning(msg)
-              }
-            })
-            break
-          // 更新
-          case this.optTypeEnum.update:
-            updateResource(sendData.resId, sendData).then(res => {
-              const { result, code, msg } = res
-              if (code === 1) {
-                this.resourceVisible = false
-                this.loadResTreeData()
-              } else {
-                this.$message.warning(msg)
-              }
-            })
-            break
-          default:
-        }
-      },
-      // 删除资源
-      doDeleteResource (data) {
-        deleteResource(data.resId).then(res => {
-          const { result, code, msg } = res
-          if (code === 1) {
-            this.loadResTreeData()
-          } else {
-            this.$message.warning(msg)
-          }
-        })
+    // 树节点被点击
+    treeNodeClick (data, node) {
+      console.log(data, node)
+      if (data.resId !== 1) {
+        this.treeNodeResId = data.resId
+      } else {
+        this.treeNodeResId = null
       }
+    },
+    // 打开弹出层
+    openModal (type, data) {
+      this.spreadFlag = false
+      this.operationType = type
+      switch (this.operationType) {
+        // 新增
+        case this.optTypeEnum.insert:
+          this.resMetaModel = {}
+          this.resModel = { parentId: data && data.resId }
+          this.resourceVisible = true
+          break
+          // 更新
+        case this.optTypeEnum.update:
+          this.resMetaModel = { ...data.meta }
+          this.resModel = { ...data }
+          this.resourceVisible = true
+          break
+        default:
+      }
+    },
+    // 表单确定
+    submitForm () {
+      // this.resModel.meta = this.resMetaModel
+      const sendData = { ...this.resModel }
+      console.log(sendData)
+      switch (this.operationType) {
+        // 新增
+        case this.optTypeEnum.insert:
+          saveResource(sendData).then(res => {
+            const { result, code, msg } = res
+            if (code === 1) {
+              this.resourceVisible = false
+              this.loadResTreeData()
+            } else {
+              this.$message.warning(msg)
+            }
+          })
+          break
+          // 更新
+        case this.optTypeEnum.update:
+          updateResource(sendData.resId, sendData).then(res => {
+            const { result, code, msg } = res
+            if (code === 1) {
+              this.resourceVisible = false
+              this.loadResTreeData()
+            } else {
+              this.$message.warning(msg)
+            }
+          })
+          break
+        default:
+      }
+    },
+    // 删除资源
+    doDeleteResource (data) {
+      deleteResource(data.resId).then(res => {
+        const { result, code, msg } = res
+        if (code === 1) {
+          this.loadResTreeData()
+        } else {
+          this.$message.warning(msg)
+        }
+      })
     }
   }
+}
 </script>
 
 <style scoped lang="less">
