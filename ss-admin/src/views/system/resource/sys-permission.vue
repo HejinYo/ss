@@ -63,83 +63,83 @@
 </template>
 
 <script>
-  import { pageList } from '@/api/sys-permission'
+import { pageList } from '@/api/sys-permission'
 
-  export default {
-    name: 'sys-permission',
-    components: {},
-    computed: {},
-    props: {
-      clientHeight: {
-        type: Number
+export default {
+  name: 'sys-permission',
+  components: {},
+  computed: {},
+  props: {
+    clientHeight: {
+      type: Number
+    },
+    treeNodeResId: {
+      type: Number
+    }
+  },
+  data () {
+    return {
+      // 差额高
+      differenceHigh: 0,
+      // 表格加载
+      listLoading: false,
+      // 表格数据
+      permListData: [],
+      // 分页查询参数
+      pageParam: {
+        total: 0,
+        pageNum: 1,
+        pageSize: 10,
+        sidx: null,
+        sort: null
       },
-      treeNodeResId: {
-        type: Number
-      }
-    },
-    data () {
-      return {
-        // 差额高
-        differenceHigh: 0,
-        // 表格加载
-        listLoading: false,
-        // 表格数据
-        permListData: [],
-        // 分页查询参数
-        pageParam: {
-          total: 0,
-          pageNum: 1,
-          pageSize: 10,
-          sidx: null,
-          sort: null
-        },
-        // 查询参数
-        queryModel: { key: 'permName', value: null }
-      }
-    },
-    watch: {
-      treeNodeResId (data) {
-        this.loadPermissionData()
-      }
-    },
-    mounted () {
-      // 保证完全挂载
-      this.$nextTick(function () {
-        // 滚动条置顶，因为我拿不到滚动条高度
-        window.scroll(0, 0)
-        let permInstance = this.$refs.permInstance.$el.getBoundingClientRect()
-        let permTable = this.$refs.permTable.$el.getBoundingClientRect()
-        this.differenceHigh = permTable.top + permInstance.bottom - permTable.bottom
-        this.loadPermissionData()
+      // 查询参数
+      queryModel: { key: 'permName', value: null }
+    }
+  },
+  watch: {
+    treeNodeResId (data) {
+      this.loadPermissionData()
+    }
+  },
+  mounted () {
+    // 保证完全挂载
+    this.$nextTick(function () {
+      // 滚动条置顶，因为我拿不到滚动条高度
+      window.scroll(0, 0)
+      let permInstance = this.$refs.permInstance.$el.getBoundingClientRect()
+      let permTable = this.$refs.permTable.$el.getBoundingClientRect()
+      this.differenceHigh = permTable.top + permInstance.bottom - permTable.bottom
+      this.loadPermissionData()
+    })
+  },
+  methods: {
+    // 加载权限表格数据
+    loadPermissionData () {
+      this.listLoading = true
+      this.pageParam.queryParam = { [this.queryModel.key]: this.queryModel.value, resId: this.treeNodeResId }
+      const param = { ...this.pageParam }
+      pageList(param).then(res => {
+        let { result } = res
+        this.permListData = result.list
+        this.pageParam.total = result.total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 100)
       })
     },
-    methods: {
-      // 加载权限表格数据
-      loadPermissionData () {
-        this.listLoading = true
-        this.pageParam.queryParam = { [this.queryModel.key]: this.queryModel.value, resId: this.treeNodeResId }
-        const param = { ...this.pageParam }
-        pageList(param).then(res => {
-          let { result } = res
-          this.permListData = result.list
-          this.pageParam.total = result.total
-          setTimeout(() => {
-            this.listLoading = false
-          }, 100)
-        })
-      },
-      // 翻页
-      pageNumChange (page, pageSize) {
-        this.pageParam.pageNum = page
-        this.loadPermissionData()
-      },
-      // 分页大小
-      pageSizeChange (current, size) {
-        this.pageParam.pageSize = size
-        this.loadPermissionData()
-      }
+    // 翻页
+    pageNumChange (page, pageSize) {
+      this.pageParam.pageNum = page
+      this.loadPermissionData()
+    },
+    // 分页大小
+    pageSizeChange (current, size) {
+      this.pageParam.pageSize = size
+      this.loadPermissionData()
     }
   }
+}
 </script>
 
 <style scoped>
