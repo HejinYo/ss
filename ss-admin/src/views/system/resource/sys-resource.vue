@@ -12,10 +12,13 @@
             <el-tree ref="resTree" :data="resTeeData" node-key="resId" highlight-current :expand-on-click-node="false"
                      default-expand-all @node-click="treeNodeClick">
             <span class="ss-tree" slot-scope="{ node, data }">
-              <span
-                v-bind:style="{ color: (data.state!==1 ? '#e2b9b9' : ((data.meta && data.meta.hideHeader)?'#bbbebb': '#1890ff')) }">
-                <a-icon :type="data.icon"/>
-                <span class="ss-tree-title">
+              <span>
+                <span v-if="data.state===1">
+                  <a-icon v-if="data.meta && data.meta.hideHeader" style="color: deepskyblue" type="eye-invisible"/>
+                  <a-icon v-else :type="data.icon"/>
+                </span>
+                <a-icon v-else style="color: red" type="stop"/>
+                <span class="ss-tree-title" :style="{textDecoration:data.state !==1 ? 'line-through' : 'none'}">
                   {{data.resName}}
                 </span>
               </span>
@@ -120,7 +123,7 @@
         // 表单样式
         formItemLayout: {
           labelCol: { span: 4 },
-          wrapperCol: { span: 20 },
+          wrapperCol: { span: 20 }
         },
         // 扩展属性
         resMetaSelect: [
@@ -158,7 +161,7 @@
             label: '隐藏子菜单',
             value: 'hideChildrenInMenu',
             type: 'boolean'
-          },
+          }
         ],
         // 树样式
         bodyStyle: { padding: 0 },
@@ -200,10 +203,9 @@
           if (code === 1) {
             this.resTeeData = result && result.tree
           } else {
-            this.$message.warning(msg);
+            this.$message.warning(msg)
           }
         })
-
       },
       // 树节点被点击
       treeNodeClick (data, node) {
@@ -248,7 +250,7 @@
                 this.resourceVisible = false
                 this.loadResTreeData()
               } else {
-                this.$message.warning(msg);
+                this.$message.warning(msg)
               }
             })
             break
@@ -260,7 +262,7 @@
                 this.resourceVisible = false
                 this.loadResTreeData()
               } else {
-                this.$message.warning(msg);
+                this.$message.warning(msg)
               }
             })
             break
@@ -274,11 +276,11 @@
           if (code === 1) {
             this.loadResTreeData()
           } else {
-            this.$message.warning(msg);
+            this.$message.warning(msg)
           }
         })
       }
-    },
+    }
   }
 </script>
 

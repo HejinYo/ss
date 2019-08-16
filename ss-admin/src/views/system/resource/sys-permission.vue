@@ -138,7 +138,7 @@
         this.pageParam.pageSize = size
         this.loadPermissionData()
       }
-    },
+    }
   }
 </script>
 
