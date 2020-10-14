@@ -75,6 +75,9 @@
         <!-- elasticsearch -->
         <module>ss-elasticsearch</module>
 
+        <!-- spring-cloud-alibaba -->
+        <module>ss-alibaba</module>
+
     </modules>
 
     <!-- 使用aliyun镜像 -->
