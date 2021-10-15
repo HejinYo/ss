@@ -7,8 +7,8 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>ss</name>
-    <description>ss project</description>
+    <name>${project.artifactId}</name>
+    <description>${project.artifactId} project</description>
 
 
     <properties>
@@ -25,7 +25,17 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <!-- 依赖全局引入  -->
+    <dependencies>
+        <!--Lombok-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
+    <!-- 依赖版本管理  -->
     <dependencyManagement>
         <dependencies>
 
@@ -54,29 +64,12 @@
         </dependencies>
     </dependencyManagement>
 
-
-    <dependencies>
-
-    </dependencies>
-
     <modules>
         <!-- 微服务认证模块 -->
         <module>ss-auth</module>
 
-        <!-- 微服务中心 -->
-        <module>ss-cloud</module>
-
-        <!-- 公共模块 -->
-        <module>ss-common</module>
-
-        <!-- 系统管理模块 -->
-        <module>ss-jelly</module>
-
-        <!-- elasticsearch -->
-        <module>ss-elasticsearch</module>
-
-        <!-- spring-cloud-alibaba -->
-        <module>ss-alibaba</module>
+        <!-- 微服务网关 -->
+        <module>ss-gateway</module>
 
     </modules>
 
