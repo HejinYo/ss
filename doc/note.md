@@ -24,6 +24,30 @@ clone 时 使用'git clone' 或 git lfs clone均可
 
 ```
 
+# git 使用toke操作
+```shell
+vim .git/config 
+
+[core]
+    repositoryformatversion = 0
+    filemode = true
+    bare = false
+    logallrefupdates = true
+    ignorecase = true
+    precomposeunicode = true
+[submodule]
+    active = .
+[remote "origin"]
+    url = https://ellisonpei:TOKE@github.com/HejinYo/ss.git
+    #url = https://github.com/HejinYo/ss.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+    remote = origin
+    merge = refs/heads/master
+[lfs]
+    repositoryformatversion = 0
+~                                    
+```
 
 # Terminal 使用macos自己的梯子代理
 
