@@ -1,0 +1,28 @@
+# spring.cloud.nacos.discovery。*的配置应该放置到application.yml /属性中。
+# spring.cloud.nacos.config。*的配置应该放置到bootstrap.yml/properties中。
+
+server:
+  port: 9000
+spring:
+  application:
+    # 应用名称
+    name: gateway-service
+    # 当前环境对应的 profile
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        service: ss-gateway
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
