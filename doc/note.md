@@ -103,3 +103,20 @@ function proxy_on() {
 
 ```
 
+# win 代理
+```shell
+
+# 下载软件
+  http://www.privoxy.org/sf-download-mirror/Win32/3.0.26%20%28stable%29/
+# 编辑文件
+  listen-address  127.0.0.1:8118
+  forward-socks5 / localhost:57239 .
+# 设置git全局代理
+  git config --global http.proxy http://127.0.0.1:8118
+  git config --global https.proxy https://127.0.0.1:8118
+# 取消代理设置
+  git config --global --unset http.proxy
+  git config --global --unset https.proxy
+# 参考原文
+  https://tzrgaga.github.io/2017/04/12/forward-socks-by-privoxy/
+```

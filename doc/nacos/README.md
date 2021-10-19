@@ -1,6 +1,6 @@
 ```shell
 
-cd nacos/bin
+cd doc/nacos/bin
 
 ./startup.sh -m standalone
 
