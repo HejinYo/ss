@@ -14,6 +14,22 @@
 	<description>ss 微服务认证模块</description>
 
 	<dependencies>
+		<!-- Spring Cloud Alibaba discovery 微服务客户端 -->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+		</dependency>
+		<!-- Spring Cloud Alibaba config 配置客户端 -->
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+		</dependency>
+		<!-- spring-cloud-starter-oauth2 -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-oauth2</artifactId>
+			<version>2.2.5.RELEASE</version>
+		</dependency>
 	</dependencies>
 
 	<build>
