@@ -7,6 +7,15 @@ spring:
   application:
     # 应用名称
     name: auth-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://m.hejinyo.cn:3306/ss?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
+    username: root
+    password: redhat
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
     # 当前环境对应的 profile
   profiles:
     active: dev
