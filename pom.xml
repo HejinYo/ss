@@ -79,6 +79,12 @@
         <!-- 微服务网关 -->
         <module>ss-gateway</module>
 
+        <!-- 系统管理 -->
+        <module>ss-admin</module>
+
+        <!-- 客户端 -->
+        <module>ss-client</module>
+
     </modules>
 
     <!-- 使用aliyun镜像 -->
