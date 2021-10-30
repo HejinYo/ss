@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SS 统一认证系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/login.css" type="text/css"/>
+</head>
+<body>
+<div class="login">
+    <form action="/authentication/form" method="post" class="container loginform">
+        <div id="owl-login">
+            <div id="hand" class="hand"></div>
+            <div class="hand hand-r"></div>
+            <div class="arms">
+                <div class="arm"></div>
+                <div class="arm arm-r"></div>
+            </div>
+        </div>
+        <div class="pad">
+            <div class="alert alert-info">
+                <div style="text-align: center;font-size: 24px">
+                    SS 统一认证登录
+                </div>
+            </div>
+            <div class="input-group">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-info"><i class="fa fa-user"></i></button>
+                </span>
+                <input id="username" name="username" class="form-control" tabindex="1" placeholder="用户名" required="">
+            </div>
+            <div class="input-group" style="margin-top: 10px;">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-info"><i class="fa fa-lock"></i></button>
+                </span>
+                <input type="password" id="password" name="password" tabindex="2"
+                       onmouseover="mOver()" onmouseout="mOut()"
+                       class="form-control" placeholder="密码" required="">
+            </div>
+            <div th:if="${param.error ne null}" class="input-group" style="width: 100%">
+                <div class="alert alert-danger" style="margin-top: 10px;margin-bottom: 0;padding: 8px">
+                    <!-- 如果查询参数error存在，则尝试进行身份验证并失败 -->
+                    无效的用户名和密码
+                </div>
+            </div>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-info btn-block" tabindex="3">登录</button>
+        </div>
+    </form>
+</div>
+<script>
+    let actionPassword = document.getElementById("owl-login");
+
+    function mOver() {
+        actionPassword.setAttribute("class", "password");
+    }
+
+    function mOut() {
+        actionPassword.setAttribute("class", "");
+    }
+</script>
+</body>
+</html>

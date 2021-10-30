@@ -12,6 +12,8 @@ spring:
     url: jdbc:mysql://m.hejinyo.cn:3306/ss-auth?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
     username: root
     password: redhat
+  thymeleaf:
+    mode: LEGACYHTML5
   jpa:
     hibernate:
       ddl-auto: update
