@@ -6,9 +6,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 
 /**
- * @author : 贺双双   hejinyo@gmail.com
- * @date : 2021/10/18 23:46
  * SsAuthApplication
+ *
+ * @author : HejinYo   hejinyo@gmail.com
+ * @date : 2021/10/18 23:46
  */
 @EnableDiscoveryClient
 @SpringBootApplication

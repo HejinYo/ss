@@ -18,6 +18,7 @@
         <spring-cloud.version>2020.0.4</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <security.oauth.version>2.5.5</security.oauth.version>
+        <mysql-connector.version>8.0.27</mysql-connector.version>
     </properties>
 
     <parent>
@@ -69,21 +70,25 @@
                 <version>${security.oauth.version}</version>
             </dependency>
 
+            <!-- database -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <modules>
-        <!-- 微服务认证模块 -->
-        <module>ss-auth</module>
-
         <!-- 微服务网关 -->
         <module>ss-gateway</module>
 
-        <!-- 系统管理 -->
-        <module>ss-admin</module>
+        <!-- 微服务认证模块 -->
+        <module>ss-auth</module>
 
-        <!-- 客户端 -->
-        <module>ss-client</module>
+        <!-- demo -->
+        <module>ss-demo</module>
 
     </modules>
 

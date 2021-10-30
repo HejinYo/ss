@@ -2,11 +2,11 @@
 # spring.cloud.nacos.config。*的配置应该放置到bootstrap.yml/properties中。
 
 server:
-  port: 9001
+  port: 8081
 spring:
   application:
     # 应用名称
-    name: auth-service
+    name: demo-admin-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://m.hejinyo.cn:3306/ss-auth?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
@@ -23,4 +23,4 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-        service: ss-auth
+        service: ss-demo-admin
