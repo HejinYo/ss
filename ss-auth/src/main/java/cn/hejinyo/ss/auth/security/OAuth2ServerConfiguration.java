@@ -1,11 +1,12 @@
 package cn.hejinyo.ss.auth.security;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -28,16 +29,20 @@ import javax.sql.DataSource;
 import java.util.Arrays;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableAuthorizationServer //开启授权服务器
 public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdapter {
-    @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+
+    private final DataSource dataSource;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final UserDetailsService userDetailsService;
 
     /**
      * 我们配置了使用数据库来维护客户端信息。虽然在各种Demo中我们经常看到的是在内存中维护客户端信息，通过配置直接写死在这里。
      * 但是，对于实际的应用我们一般都会用数据库来维护这个信息，甚至还会建立一套工作流来允许客户端自己申请ClientID，实现OAuth客户端接入的审批。
+     *
      * @param clients
      * @throws Exception
      */
@@ -49,6 +54,7 @@ public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdap
     /**
      * 这里干了两件事儿。首先，打开了验证Token的访问权限（以便之后我们演示）。
      * 然后，允许ClientSecret明文方式保存，并且可以通过表单提交（而不仅仅是Basic Auth方式提交），之后会演示到这个。
+     *
      * @param security
      * @throws Exception
      */
@@ -66,6 +72,7 @@ public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdap
      * 2. 配置JWT Token的非对称加密来进行签名
      * 3. 配置一个自定义的Token增强器，把更多信息放入Token中
      * 4. 配置使用JDBC数据库方式来保存用户的授权批准记录
+     *
      * @param endpoints
      * @throws Exception
      */
@@ -84,6 +91,7 @@ public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdap
 
     /**
      * 使用JDBC数据库方式来保存授权码
+     *
      * @return
      */
     @Bean
@@ -93,6 +101,7 @@ public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdap
 
     /**
      * 使用JWT存储
+     *
      * @return
      */
     @Bean
@@ -102,6 +111,7 @@ public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdap
 
     /**
      * 使用JDBC数据库方式来保存用户的授权批准记录
+     *
      * @return
      */
     @Bean
@@ -111,6 +121,7 @@ public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdap
 
     /**
      * 自定义的Token增强器，把更多信息放入Token中
+     *
      * @return
      */
     @Bean
@@ -120,6 +131,7 @@ public class OAuth2ServerConfiguration extends AuthorizationServerConfigurerAdap
 
     /**
      * 配置JWT使用非对称加密方式来验证
+     *
      * @return
      */
     @Bean
