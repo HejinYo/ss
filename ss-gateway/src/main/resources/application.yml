@@ -6,7 +6,7 @@ server:
 spring:
   application:
     # 应用名称
-    name: gateway-service
+    name: ss-gateway
     # 当前环境对应的 profile
   profiles:
     active: dev
@@ -14,15 +14,14 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-        service: ss-gateway
     gateway:
       discovery:
         locator:
           enabled: true
+          lower-case-service-id: true
       routes:
-        - id: user-service
-          uri: lb://user-service
-          predicates:
-            - Path=/user/**
+        - id: ss-auth
+          uri: lb://ss-auth
+          predicates: Path=/auth/**
           filters:
             - StripPrefix=1

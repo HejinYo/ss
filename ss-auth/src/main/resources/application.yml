@@ -6,7 +6,7 @@ server:
 spring:
   application:
     # 应用名称
-    name: auth-service
+    name: ss-auth
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://m.hejinyo.cn:3306/ss-auth?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
@@ -18,11 +18,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    # 当前环境对应的 profile
-  profiles:
-    active: dev
   cloud:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-        service: ss-auth
