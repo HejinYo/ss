@@ -1,12 +1,12 @@
 package cn.hejinyo.ss.auth.security;
 
+import cn.hejinyo.ss.auth.handler.SsAuthenticationFailureHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,19 +45,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // 登陆的页面和登陆成功跳转页面配置 .loginProcessingUrl()=登陆逻辑的处理路径，默认POST /login
+        // .successForwardUrl()=成功转发 .defaultSuccessUrl(url,true)=成功重定向 .successHandler()=自定义成功逻辑处理
+        // 登陆失败的路径需要放开无认证访问
+        // .failureForwardUrl()=失败转发 .failureUrl()=失败重定向 .failureHandler()=失败的处理器
+        // formLogin().usernameParameter() formLogin().passwordParameter() 重写username password参数名称
+        http.formLogin().loginPage("/login").failureHandler(new SsAuthenticationFailureHandler("/login", true));
+
+        // 配合权限校验，不认证/认证访问页面
         http.authorizeRequests()
-                .antMatchers("/login", "/oauth/authorize")
-                .permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().loginPage("/login")
-                .and()
-                .csrf().disable();
+                // 可以不认证访问的页面
+                .antMatchers("/login", "/oauth/authorize","/css/**", "/img/**", "/test/**").permitAll()
+                // 其他的都需要认证访问
+                .anyRequest().authenticated();
+        // 关闭 csrf
+        http.csrf().disable();
     }
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/css/**", "/img/**","/test/**");
-    }
-
 }
