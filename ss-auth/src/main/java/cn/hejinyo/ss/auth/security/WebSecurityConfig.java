@@ -55,7 +55,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 配合权限校验，不认证/认证访问页面
         http.authorizeRequests()
                 // 可以不认证访问的页面
-                .antMatchers("/login", "/oauth/authorize","/css/**", "/img/**", "/test/**").permitAll()
+                .antMatchers("/login", "/oauth/authorize").permitAll()
+                .antMatchers("/css/**", "/img/**", "/test/**").permitAll()
                 // 其他的都需要认证访问
                 .anyRequest().authenticated();
         // 关闭 csrf
