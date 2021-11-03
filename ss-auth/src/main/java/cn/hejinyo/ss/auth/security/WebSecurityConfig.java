@@ -54,8 +54,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 配合权限校验，不认证/认证访问页面
         http.authorizeRequests()
+                // .anonymous() 只能匿名访问，登陆后不能访问 .fullyAuthenticated() 完整登陆才能访问
+                .antMatchers("/login").anonymous()
                 // 可以不认证访问的页面
-                .antMatchers("/login", "/oauth/authorize").permitAll()
+                .antMatchers( "/oauth/authorize").permitAll()
                 // 静态资源
                 .antMatchers("/favicon.ico", "/css/**", "/img/**").permitAll()
                 // 测试路径
