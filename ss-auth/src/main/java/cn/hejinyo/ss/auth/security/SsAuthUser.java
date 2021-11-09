@@ -1,5 +1,6 @@
 package cn.hejinyo.ss.auth.security;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -7,9 +8,12 @@ import org.springframework.security.core.userdetails.User;
 import java.util.Collection;
 
 /**
+ * 注解 JsonTypeInfo 多态类型处理 https://www.jianshu.com/p/a21f1633d79c
+ *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/10/31 20:38
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 public class SsAuthUser extends User {
 
     /**

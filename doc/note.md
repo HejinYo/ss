@@ -139,3 +139,8 @@ db.url.0=jdbc:mysql://m.hejinyo.cn:3306/nacos?characterEncoding=utf8&connectTime
 db.user.0=nacos
 db.password.0=nacos
 ```
+
+```shell
+docker run --name kris-redis -p 6388:6379 -d redis --requirepass "xxxxxx"
+
+```
