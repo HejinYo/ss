@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+title 授权码认证
+skinparam responseMessageBelowArrow true
+
+
+participant Browser as Browser order 0
+
+box "请求用户登陆页面" #LightBlue
+participant ExceptionTranslationFilter as ExceptionFilter order -1
+participant FilterSecurityInterceptor as SecurityInterceptor order -2
+participant OAuth2AuthorizationEndpointFilter as Filter order -3
+participant OAuth2AuthorizationCodeRequestAuthenticationConverter as Converter order -4
+participant OAuth2AuthorizationCodeRequestAuthenticationProvider as Provider order -5
+database RegisteredClientRepository as Client order -6
+database OAuth2AuthorizationService as Service order -7
+
+Browser -[#0000FF]-> Filter: 端点：http://hejinyo.com:9001/oauth2/authorize?client_id=csdn&response_type=code&redirect_uri=https://www.baidu.com&scope=user.userInfo
+Filter <-[#0000FF]-> Converter: 获取并校验请求参数，\n拼装 Authentication（AnonymousAuthenticationToken）
+Filter -[#0000FF]-> Provider:ProviderManager「supports()=是否支持的Authentication」「authenticate()=验证客户端请求」
+Provider <-[#0000FF]-> Client:根据 clientId 查询表 oauth2_registered_client
+Provider -[#0000FF]-> Service:保存本次查询和请求信息（OAuth2AuthorizationService）
+Filter <-[#0000FF]- Provider:返回OAuth2AuthorizationCodeRequestAuthenticationToken
+SecurityInterceptor <-[#0000FF]- Filter: 客户端请求处理成功，执行下一个Filter
+ExceptionFilter <-[#0000FF]- SecurityInterceptor: beforeInvocation() 检测未登陆 AccessDeniedException
+Browser <-[#0000FF]- ExceptionFilter: 执行重定向 /login
+end box
+
+box "请求用户登陆页面" #LightBlue
+participant AbstractAuthenticationProcessingFilter as ProcessingFilter order 1
+participant UsernamePasswordAuthenticationFilter as LoginFilter order 2
+participant DaoAuthenticationProvider as DaoProvider order 3
+participant UserDetailsService as UserService order 4
+
+end box
+
+Browser --> ProcessingFilter:拦截器（UsernamePasswordAuthenticationFilter）处理登陆 /login
+ProcessingFilter --> DaoProvider: 获取用户名称密码
+DaoProvider <--> UserService: 查询用户表
+ProcessingFilter <--> DaoProvider: 验证用户，创建Authentication
+ProcessingFilter --> Filter: 验证成功，重定向到 Redirect=http://hejinyo.com:9001/oauth2/authorize?client_id=csdn&response_type=code&redirect_uri=https://www.baidu.com&scope=user.userInfo
+Filter <--> Converter: SecurityContextHolder.getContext().getAuthentication() 获取登陆凭证信息 UsernamePasswordAuthenticationToken
+Filter --> Provider:ProviderManager「supports()=是否支持的Authentication」「authenticate()=验证客户端请求」
+Provider <--> Client:根据 clientId 查询表 oauth2_registered_client
+Provider --> Service:生成code(generateAuthorizationCode()),保存本次查询和请求信息（OAuth2AuthorizationService）
+Filter <-- Provider: 重定向地址到客户端配置地址 (onAuthenticationSuccess uriBuilder.toUriString())
+Browser <-[#0000FF]- ExceptionFilter: 执行重定向 https://www.baidu.com?code=xxxxxxx
+@enduml

@@ -15,7 +15,7 @@
  */
 package cn.hejinyo.ss.auth.config;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
+import cn.hejinyo.ss.auth.security.Ss0auth2AuthorizationServiceImpl;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -28,7 +28,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
@@ -215,21 +214,22 @@ public class AuthorizationServerConfig {
      */
     @Bean
     public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate, RegisteredClientRepository registeredClientRepository) {
-        JdbcOAuth2AuthorizationService authorizationService = new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
-
-        class CustomOAuth2AuthorizationRowMapper extends JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper {
-            public CustomOAuth2AuthorizationRowMapper(RegisteredClientRepository registeredClientRepository) {
-                super(registeredClientRepository);
-                getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                this.setLobHandler(new DefaultLobHandler());
-            }
-        }
-
-        CustomOAuth2AuthorizationRowMapper oAuth2AuthorizationRowMapper =
-                new CustomOAuth2AuthorizationRowMapper(registeredClientRepository);
-
-        authorizationService.setAuthorizationRowMapper(oAuth2AuthorizationRowMapper);
-        return authorizationService;
+//        JdbcOAuth2AuthorizationService authorizationService = new JdbcOAuth2AuthorizationService(jdbcTemplate, registeredClientRepository);
+//
+//        class CustomOAuth2AuthorizationRowMapper extends JdbcOAuth2AuthorizationService.OAuth2AuthorizationRowMapper {
+//            public CustomOAuth2AuthorizationRowMapper(RegisteredClientRepository registeredClientRepository) {
+//                super(registeredClientRepository);
+//                getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//                this.setLobHandler(new DefaultLobHandler());
+//            }
+//        }
+//
+//        CustomOAuth2AuthorizationRowMapper oAuth2AuthorizationRowMapper =
+//                new CustomOAuth2AuthorizationRowMapper(registeredClientRepository);
+//
+//        authorizationService.setAuthorizationRowMapper(oAuth2AuthorizationRowMapper);
+//        return authorizationService;
+        return new Ss0auth2AuthorizationServiceImpl();
     }
 
     /**
