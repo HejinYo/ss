@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+title 授权码认证
+skinparam responseMessageBelowArrow true
+
+participant Client as Client order 0
+
+box "客户端根据code获取token" #LightBlue
+participant OAuth2ClientAuthenticationFilter as ClientFilter order -2
+participant ClientSecretPostAuthenticationConverter as SecretPostConverter order -3
+participant OAuth2ClientAuthenticationProvider as Provider order -4
+participant OAuth2TokenEndpointFilter as EndpointFilter order -5
+participant OAuth2AuthorizationCodeAuthenticationConverter as CodeConverter order -6
+participant OAuth2AuthorizationCodeAuthenticationProvider as CodeProvider order -7
+
+Client -[#0000FF]-> ClientFilter: 端点(/oauth2/[token,introspect,revoke])：\nhttp://hejinyo.com:9001/oauth2/token?\ngrant_type=authorization_code&\nclient_id=csdn&\nclient_secret=csdn123&\nredirect_uri=https://www.baidu.com&\ncode=code
+ClientFilter <-[#0000FF]-> SecretPostConverter: 构建 OAuth2ClientAuthenticationToken
+ClientFilter -[#0000FF]-> Provider: 查询并验证client信息
+ClientFilter <-[#0000FF]- Provider: 返回 包含 registeredClient信息 的 OAuth2ClientAuthenticationToken
+ClientFilter -[#0000FF]-> EndpointFilter: 验证成功，执行下一个filter, 端点：/oauth2/token
+EndpointFilter -[#0000FF]-> CodeConverter: 构建 OAuth2AuthorizationCodeAuthenticationToken
+EndpointFilter -[#0000FF]-> CodeProvider: this.authorizationService.findByToken(code) 查询code信息，并验证client信息和本次请求信息对比
+EndpointFilter <-[#0000FF]- CodeProvider: 构建JWT token 信息 ，this.authorizationService.save(authorization)，返回 OAuth2AccessTokenAuthenticationToken
+EndpointFilter -[#0000FF]-> Client: 返回 JWT token 信息
+
+
+
+end box
+
+box "请求用户登陆页面" #LightBlue
+
+end box
+@enduml
