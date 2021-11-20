@@ -103,6 +103,7 @@ public class AuthorizationServerConfig {
                 response.setContentType(MediaType.APPLICATION_JSON.toString());
                 response.getWriter().write("{\"code\":-1,\"msg\":\"认证失败\"}");
             });
+
         });
 
         // token 端点
@@ -183,7 +184,7 @@ public class AuthorizationServerConfig {
                 // 密码模式,已经不支持了
                 .authorizationGrantType(AuthorizationGrantType.PASSWORD)
                 // 重定向url
-                .redirectUri("https://www.baidu.com")
+                .redirectUri("http://localhost:9010/login/code")
                 // 客户端申请的作用域，也可以理解这个客户端申请访问用户的哪些信息，比如：获取用户信息，获取用户照片等
                 .scope("user.userInfo")
                 .scope("user.photos")
