@@ -4,6 +4,8 @@
 server:
   port: 9001
 spring:
+  profiles:
+    active: dev
   application:
     # 应用名称
     name: ss-auth
@@ -21,7 +23,7 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: localhost:8848
   redis:
     host: m.hejinyo.cn
     port: 6388

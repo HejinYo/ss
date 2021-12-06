@@ -1,11 +1,13 @@
 package cn.hejinyo.ss.auth.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Collection;
@@ -18,8 +20,8 @@ import java.util.Set;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/10/31 20:30
  */
-// @RequiredArgsConstructor
-// @Service("userDetailsService")
+ @RequiredArgsConstructor
+ @Service("userDetailsService")
 public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override

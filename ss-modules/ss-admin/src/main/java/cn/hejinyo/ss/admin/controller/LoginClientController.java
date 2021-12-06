@@ -6,14 +6,17 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Map;
 
 /**
@@ -28,6 +31,31 @@ public class LoginClientController {
 
     private final RestTemplate restTemplate;
 
+    private final String CODE_CHALLENGE = "hejinyo";
+
+
+    @GetMapping("/toLogin")
+    public void toLogin(HttpServletResponse response) throws IOException {
+        String url = "http://hejinyo.com:9001/oauth2/authorize";
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(CODE_CHALLENGE.getBytes(StandardCharsets.US_ASCII));
+            String encodedVerifier = Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
+            UriComponents uriComponents = UriComponentsBuilder.fromUriString(url)
+                    .queryParam("response_type", "code")
+                    .queryParam("scope", "user.userInfo")
+                    .queryParam("client_id", "csdn")
+                    .queryParam("code_challenge", encodedVerifier)
+                    .queryParam("code_challenge_method", "S256")
+                    .queryParam("redirect_uri", "http://hejinyo.com:9010/login/code")
+                    .build();
+            response.sendRedirect(uriComponents.toUri().toString());
+        } catch (NoSuchAlgorithmException ex) {
+            // It is unlikely that SHA-256 is not available on the server. If it is not available,
+            // there will likely be bigger issues as well. We default to SERVER_ERROR.
+        }
+    }
+
     @GetMapping("/code")
     public ResponseEntity<String> codeLogin(@RequestParam("code") String code) {
         //header
@@ -38,7 +66,8 @@ public class LoginClientController {
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(url)
                 .queryParam("grant_type", "authorization_code")
                 .queryParam("client_id", "csdn")
-                .queryParam("client_secret", "csdn123")
+                // .queryParam("client_secret", "csdn123")
+                .queryParam("code_verifier", CODE_CHALLENGE)
                 .queryParam("redirect_uri", "http://hejinyo.com:9010/login/code")
                 .queryParam("code", code)
                 .build();
