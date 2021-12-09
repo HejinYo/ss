@@ -2,10 +2,9 @@ package cn.hejinyo.ss.auth.handler;
 
 import cn.hejinyo.ss.auth.util.OAuth2EndpointUtils;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationException;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
@@ -18,21 +17,31 @@ import javax.servlet.http.HttpServletRequest;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/4 21:24
  */
-public class SsAuthAccessTokenConverter implements AuthenticationConverter {
+public class SsAuthLoginConverter implements AuthenticationConverter {
     private static final String DEFAULT_ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1";
 
     @Override
     public Authentication convert(HttpServletRequest request) {
-        Authentication principal = SecurityContextHolder.getContext().getAuthentication();
-        if (!(principal instanceof SsAuthClientToken) || !principal.isAuthenticated()) {
+        MultiValueMap<String, String> parameters = OAuth2EndpointUtils.getParameters(request);
+
+        // client_id (REQUIRED)
+        String clientId = parameters.getFirst(SsAuthParameterNames.CLIENT_ID);
+        if (!StringUtils.hasText(clientId)) {
             return null;
         }
 
-        MultiValueMap<String, String> parameters = OAuth2EndpointUtils.getParameters(request);
-        SsAuthClientToken clientToken = (SsAuthClientToken) principal;
-        String principalType = clientToken.getPrincipalType();
+        // principal_type (REQUIRED)
+        String principalType = parameters.getFirst(SsAuthParameterNames.PRINCIPAL_TYPE);
+        if (!StringUtils.hasText(principalType)) {
+            return null;
+        }
 
-        RegisteredClient registeredClient = (RegisteredClient) clientToken.getDetails();
+        // grant_type (REQUIRED)
+        String grantType = parameters.getFirst(SsAuthParameterNames.GRANT_TYPE);
+        // 只处理 grantType = password
+        if (!StringUtils.hasText(grantType) || !AuthorizationGrantType.PASSWORD.getValue().equals(grantType)) {
+            return null;
+        }
 
         // 用户名密码登陆
         if (SsAuthParameterNames.PRINCIPAL_USERNAME.equals(principalType)) {
@@ -44,7 +53,7 @@ public class SsAuthAccessTokenConverter implements AuthenticationConverter {
             if (!StringUtils.hasText(password)) {
                 throwError("用户密码不能为空", SsAuthParameterNames.PASSWORD);
             }
-            return new SsAuthAccessToken(registeredClient, principalType, username, password);
+            return new SsAuthLoginToken(clientId, principalType, username, password);
         }
 
         // 手机验证码
@@ -57,7 +66,7 @@ public class SsAuthAccessTokenConverter implements AuthenticationConverter {
             if (!StringUtils.hasText(phoneCode)) {
                 throwError("验证码不能为空", SsAuthParameterNames.PHONE_CODE);
             }
-            return new SsAuthAccessToken(registeredClient, principalType, phoneNumber, phoneCode);
+            return new SsAuthLoginToken(clientId, principalType, phoneNumber, phoneCode);
         }
         return null;
     }

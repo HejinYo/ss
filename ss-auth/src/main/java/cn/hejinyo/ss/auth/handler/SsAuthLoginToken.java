@@ -17,34 +17,31 @@ package cn.hejinyo.ss.auth.handler;
 
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
 
 /**
  * SsAuthAccessToken
+ *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/4 21:24
  */
 @Getter
-public class SsAuthAccessToken extends AbstractAuthenticationToken {
+public class SsAuthLoginToken extends AbstractAuthenticationToken {
 
+    private final String clientId;
     private final String principalType;
     private final String principal;
     private final String credentials;
-    /**
-     * 客户端详情
-     */
-    private final RegisteredClient registeredClient;
 
-    public SsAuthAccessToken(RegisteredClient registeredClient, String principalType, String principal, String credentials) {
+    public SsAuthLoginToken(String clientId, String principalType, String principal, String credentials) {
         super(Collections.emptyList());
-        Assert.notNull(registeredClient, "principalType cannot be empty");
+        Assert.notNull(clientId, "clientId cannot be empty");
         Assert.notNull(principalType, "principalType cannot be empty");
         Assert.notNull(principal, "principal cannot be empty");
         Assert.notNull(credentials, "credentials cannot be empty");
-        this.registeredClient = registeredClient;
+        this.clientId = clientId;
         this.principalType = principalType;
         this.principal = principal;
         this.credentials = credentials;

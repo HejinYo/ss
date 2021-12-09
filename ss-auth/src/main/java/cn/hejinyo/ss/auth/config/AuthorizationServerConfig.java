@@ -1,6 +1,6 @@
 package cn.hejinyo.ss.auth.config;
 
-import cn.hejinyo.ss.auth.handler.*;
+import cn.hejinyo.ss.auth.handler.SsAuthLoginEndpointConfigurer;
 import cn.hejinyo.ss.auth.util.Utils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -16,14 +16,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwsEncoder;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -42,6 +39,7 @@ import java.util.UUID;
 
 /**
  * AuthorizationServerConfig
+ *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/11/3 22:27
  */
@@ -58,38 +56,16 @@ public class AuthorizationServerConfig {
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http,
-                                                                      RegisteredClientRepository registeredClientRepository,
-                                                                      UserDetailsService userDetailsService,
-                                                                      PasswordEncoder passwordEncoder,
-                                                                      JWKSource<SecurityContext> jwkSource) throws Exception {
-        // 授权服务器配置
-        OAuth2AuthorizationServerConfigurer<HttpSecurity> configurer = new OAuth2AuthorizationServerConfigurer<>();
-        // 认证端点
-        configurer.authorizationEndpoint(config -> config.errorResponseHandler(new SsAuthFailureRestHandler("用户认证失败")));
-        // 客户端认证
-        configurer.clientAuthentication(config -> {
-            config.authenticationConverter(new SsAuthClientConverter());
-            config.authenticationProvider(new SsAuthClientProvider(registeredClientRepository));
-            config.errorResponseHandler(new SsAuthFailureRestHandler("获取client失败"));
-        });
-        // 令牌端点
-        configurer.tokenEndpoint(config -> {
-            config.accessTokenRequestConverter(new SsAuthAccessTokenConverter());
-            config.authenticationProvider(new SsAuthAccessTokenProvider(userDetailsService, passwordEncoder,
-                    new NimbusJwsEncoder(jwkSource), providerSettings()));
-            config.accessTokenResponseHandler((new SsAuthAccessTokenRespHandler()));
-            config.errorResponseHandler(new SsAuthFailureRestHandler("获取token失败"));
-        });
+    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        RequestMatcher endpointsMatcher = configurer.getEndpointsMatcher();
+        SsAuthLoginEndpointConfigurer<HttpSecurity> configurer = new SsAuthLoginEndpointConfigurer<>();
+
+        RequestMatcher endpointsMatcher = configurer.getRequestMatcher();
         return http
                 .requestMatcher(endpointsMatcher)
                 .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
                 .apply(configurer)
-                .and()
-                .formLogin()
                 .and()
                 .build();
     }

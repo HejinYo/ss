@@ -22,7 +22,7 @@ import java.util.Map;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/6 15:32
  */
-public class SsAuthAccessTokenRespHandler implements AuthenticationSuccessHandler {
+public class SsAuthLoginRespHandler implements AuthenticationSuccessHandler {
 
     /**
      * Called when a user has been successfully authenticated.

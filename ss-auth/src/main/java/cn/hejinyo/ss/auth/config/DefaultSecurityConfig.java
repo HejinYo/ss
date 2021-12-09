@@ -1,6 +1,5 @@
 package cn.hejinyo.ss.auth.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,7 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
  * @date : 2021/11/3 22:27
  */
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class DefaultSecurityConfig {
 
     /**
@@ -26,7 +24,7 @@ public class DefaultSecurityConfig {
         // 登陆失败的路径需要放开无认证访问
         // .failureForwardUrl()=失败转发 .failureUrl()=失败重定向 .failureHandler()=失败的处理器
         // formLogin().usernameParameter() formLogin().passwordParameter() 重写username password参数名称
-        http.formLogin().loginPage("/login");
+        // http.formLogin().loginPage("/login");
 
         // 配合权限校验，不认证/认证访问页面
         http.authorizeRequests()

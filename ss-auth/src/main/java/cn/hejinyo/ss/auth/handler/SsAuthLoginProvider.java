@@ -1,18 +1,3 @@
-/*
- * Copyright 2020-2021 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package cn.hejinyo.ss.auth.handler;
 
 import cn.hejinyo.ss.auth.util.JwtUtils;
@@ -30,17 +15,21 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jwt.JoseHeader;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.util.Assert;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An {@link AuthenticationProvider} implementation for the OAuth 2.0 Authorization Code Grant.
@@ -49,21 +38,29 @@ import java.util.HashSet;
  * @date : 2021/12/6 09:45
  */
 @Slf4j
-public class SsAuthAccessTokenProvider implements AuthenticationProvider {
+public class SsAuthLoginProvider implements AuthenticationProvider {
+
+    private static final String CLIENT_AUTHENTICATION_ERROR_URI = "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-01#section-3.2.1";
+
     private final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
+    private OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
     private final ProviderSettings providerSettings;
+    private final RegisteredClientRepository registeredClientRepository;
 
-    public SsAuthAccessTokenProvider(
+    public SsAuthLoginProvider(
+            RegisteredClientRepository registeredClientRepository,
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder,
             JwtEncoder jwtEncoder,
             ProviderSettings providerSettings) {
-        Assert.notNull(jwtEncoder, "registeredClientRepository cannot be null");
+        Assert.notNull(registeredClientRepository, "registeredClientRepository cannot be null");
         Assert.notNull(userDetailsService, "userDetailsService cannot be null");
         Assert.notNull(passwordEncoder, "passwordEncoder cannot be null");
+        Assert.notNull(jwtEncoder, "registeredClientRepository cannot be null");
+        this.registeredClientRepository = registeredClientRepository;
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.jwtEncoder = jwtEncoder;
@@ -72,10 +69,22 @@ public class SsAuthAccessTokenProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        SsAuthAccessToken authAccessToken = (SsAuthAccessToken) authentication;
-        RegisteredClient registeredClient = authAccessToken.getRegisteredClient();
+        SsAuthLoginToken authAccessToken = (SsAuthLoginToken) authentication;
+        String clientId = authAccessToken.getClientId();
         String username = authAccessToken.getPrincipal().toString();
         String password = authAccessToken.getCredentials().toString();
+        // 查询客户端
+        RegisteredClient registeredClient = this.registeredClientRepository.findByClientId(clientId);
+        if (registeredClient == null) {
+            throwInvalidClient(OAuth2ParameterNames.CLIENT_ID);
+        }
+        // 验证客户端是不是支持这种方式登陆
+        assert registeredClient != null;
+        Set<ClientAuthenticationMethod> methodSet = registeredClient.getClientAuthenticationMethods();
+        if (methodSet == null || methodSet.stream().noneMatch(ClientAuthenticationMethod.NONE::equals)) {
+            throwInvalidClient("authentication_method");
+        }
+
         // 查询用户
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
         UserDetails userDetails = this.retrieveUser(username);
@@ -92,7 +101,9 @@ public class SsAuthAccessTokenProvider implements AuthenticationProvider {
                 .authorizationGrant(authAccessToken)
                 .build();
 
-        // this.jwtCustomizer.customize(context);
+        if (this.jwtCustomizer != null) {
+            this.jwtCustomizer.customize(context);
+        }
 
         JoseHeader headers = context.getHeaders().build();
         JwtClaimsSet claims = context.getClaims().build();
@@ -144,6 +155,19 @@ public class SsAuthAccessTokenProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return SsAuthAccessToken.class.isAssignableFrom(authentication);
+        return SsAuthLoginToken.class.isAssignableFrom(authentication);
+    }
+
+    public void setJwtCustomizer(OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer) {
+        this.jwtCustomizer = jwtCustomizer;
+    }
+
+
+    private static void throwInvalidClient(String parameterName) {
+        OAuth2Error error = new OAuth2Error(
+                OAuth2ErrorCodes.INVALID_CLIENT,
+                "Ss-auth Client authentication failed: " + parameterName,
+                CLIENT_AUTHENTICATION_ERROR_URI);
+        throw new OAuth2AuthenticationException(error);
     }
 }
