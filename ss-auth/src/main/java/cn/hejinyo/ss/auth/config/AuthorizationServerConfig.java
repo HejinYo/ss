@@ -1,6 +1,6 @@
 package cn.hejinyo.ss.auth.config;
 
-import cn.hejinyo.ss.auth.handler.SsAuthLoginEndpointConfigurer;
+import cn.hejinyo.ss.auth.security.SsAuthServerConfigurer;
 import cn.hejinyo.ss.auth.util.Utils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -28,8 +28,6 @@ import org.springframework.security.oauth2.server.authorization.config.ProviderS
 import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -58,12 +56,12 @@ public class AuthorizationServerConfig {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        SsAuthLoginEndpointConfigurer<HttpSecurity> configurer = new SsAuthLoginEndpointConfigurer<>();
+        SsAuthServerConfigurer<HttpSecurity> configurer = new SsAuthServerConfigurer<>();
 
         RequestMatcher endpointsMatcher = configurer.getRequestMatcher();
         return http
                 .requestMatcher(endpointsMatcher)
-                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
+                .authorizeRequests((req) -> req.anyRequest().authenticated())
                 .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
                 .apply(configurer)
                 .and()
@@ -129,7 +127,8 @@ public class AuthorizationServerConfig {
     @Bean
     public ProviderSettings providerSettings() {
         return ProviderSettings.builder()
-                // 发布者的url地址,一般是本系统访问的根路径
+                .tokenEndpoint("/login/token")
+                // 发布者的url地址
                 .issuer("http://m.hejinyo.cn").build();
     }
 
@@ -139,13 +138,5 @@ public class AuthorizationServerConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Configuration
-    static class MvcConfig implements WebMvcConfigurer {
-        @Override
-        public void addViewControllers(ViewControllerRegistry registry) {
-            registry.addViewController("login").setViewName("login");
-        }
     }
 }

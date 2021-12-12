@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.util;
+package cn.hejinyo.ss.auth.constant;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public enum CommonStatusCode implements BaseStatusCode {
+public enum CommonStatusConstant implements BaseStatusConstant {
     /**
      * 通用业务状态码
      */

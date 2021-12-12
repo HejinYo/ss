@@ -1,6 +1,9 @@
 package cn.hejinyo.ss.auth.util;
 
 
+import cn.hejinyo.ss.auth.constant.BaseStatusConstant;
+import cn.hejinyo.ss.auth.constant.CommonStatusConstant;
+
 import java.util.HashMap;
 
 /**
@@ -10,8 +13,8 @@ import java.util.HashMap;
  * @date : 2017/8/5 18:25
  */
 public class Result extends HashMap<String, Object> {
-    private static final int SUCCESS = CommonStatusCode.SUCCESS.getCode();
-    private static final int ERROR = CommonStatusCode.FAILURE.getCode();
+    private static final int SUCCESS = CommonStatusConstant.SUCCESS.getCode();
+    private static final int ERROR = CommonStatusConstant.FAILURE.getCode();
     private static final int INITIAL = 4;
     private static final String MSG = "msg";
     private static final String CODE = "code";
@@ -49,7 +52,7 @@ public class Result extends HashMap<String, Object> {
         return jsonMap;
     }
 
-    public static Result status(BaseStatusCode statusCode) {
+    public static Result status(BaseStatusConstant statusCode) {
         Result jsonMap = new Result(INITIAL);
         jsonMap.put(CODE, statusCode.getCode());
         jsonMap.put(MSG, statusCode.getMsg());

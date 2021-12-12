@@ -1,14 +1,14 @@
-package cn.hejinyo.ss.auth.handler;
+package cn.hejinyo.ss.auth.security;
 
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 
 /**
- * ss 认证参数
+ * SsAuthServer 常量
  *
  * @author : HejinYo   hejinyo@gmail.com
- * @date : 2021/12/6 09:45
+ * @date : 2021/11/3 22:27
  */
-public class SsAuthParameterNames implements OAuth2ParameterNames {
+public class SsAuthServerConstant implements OAuth2ParameterNames {
 
     /**
      * {@code principal_type} -  username=用户名密码登陆 phone =手机验证码登陆

@@ -1,6 +1,5 @@
-package cn.hejinyo.ss.auth.handler;
+package cn.hejinyo.ss.auth.security;
 
-import cn.hejinyo.ss.auth.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -31,11 +30,12 @@ import org.springframework.util.Assert;
 import java.util.HashSet;
 import java.util.Set;
 
+
 /**
- * An {@link AuthenticationProvider} implementation for the OAuth 2.0 Authorization Code Grant.
+ * SsAuth 登陆处理
  *
  * @author : HejinYo   hejinyo@gmail.com
- * @date : 2021/12/6 09:45
+ * @date : 2021/11/3 22:27
  */
 @Slf4j
 public class SsAuthLoginProvider implements AuthenticationProvider {
@@ -92,8 +92,8 @@ public class SsAuthLoginProvider implements AuthenticationProvider {
         this.additionalAuthenticationChecks(userDetails, authRequest);
 
         String issuer = this.providerSettings != null ? this.providerSettings.getIssuer() : null;
-        JoseHeader.Builder headersBuilder = JwtUtils.headers();
-        JwtClaimsSet.Builder claimsBuilder = JwtUtils.accessTokenClaims(registeredClient, issuer, username, new HashSet<>());
+        JoseHeader.Builder headersBuilder = SsAuthServerJwtUtils.headers();
+        JwtClaimsSet.Builder claimsBuilder = SsAuthServerJwtUtils.accessTokenClaims(registeredClient, issuer, username, new HashSet<>());
         JwtEncodingContext context = JwtEncodingContext.with(headersBuilder, claimsBuilder)
                 .registeredClient(registeredClient)
                 .tokenType(OAuth2TokenType.ACCESS_TOKEN)

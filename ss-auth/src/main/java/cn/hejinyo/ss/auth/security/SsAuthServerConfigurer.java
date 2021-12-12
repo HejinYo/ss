@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.handler;
+package cn.hejinyo.ss.auth.security;
 
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -29,10 +29,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * SsAuthServer服务配置
+ *
  * @author : HejinYo   hejinyo@gmail.com
- * @date : 2021/12/8 22:09
+ * @date : 2021/11/3 22:27
  */
-public class SsAuthLoginEndpointConfigurer<B extends HttpSecurityBuilder<B>> extends AbstractHttpConfigurer<SsAuthLoginEndpointConfigurer<B>, B> {
+public class SsAuthServerConfigurer<B extends HttpSecurityBuilder<B>> extends AbstractHttpConfigurer<SsAuthServerConfigurer<B>, B> {
 
     private RequestMatcher requestMatcher;
     private AuthenticationConverter accessTokenRequestConverter;
@@ -48,7 +50,7 @@ public class SsAuthLoginEndpointConfigurer<B extends HttpSecurityBuilder<B>> ext
 
     @Override
     public void init(B builder) {
-        ProviderSettings providerSettings = SsAuthConfigurerUtils.getProviderSettings(builder);
+        ProviderSettings providerSettings = SsAuthServerUtils.getProviderSettings(builder);
         initEndpointMatchers(providerSettings);
         this.requestMatcher = new AntPathRequestMatcher(providerSettings.getTokenEndpoint(), HttpMethod.POST.name());
 
@@ -63,16 +65,16 @@ public class SsAuthLoginEndpointConfigurer<B extends HttpSecurityBuilder<B>> ext
     @Override
     public void configure(B builder) {
         AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
-        ProviderSettings providerSettings = SsAuthConfigurerUtils.getProviderSettings(builder);
+        ProviderSettings providerSettings = SsAuthServerUtils.getProviderSettings(builder);
 
         NimbusJwkSetEndpointFilter jwkSetEndpointFilter =
                 new NimbusJwkSetEndpointFilter(
-                        SsAuthConfigurerUtils.getJwkSource(builder),
+                        SsAuthServerUtils.getJwkSource(builder),
                         providerSettings.getJwkSetEndpoint());
         builder.addFilterBefore(postProcess(jwkSetEndpointFilter), AbstractPreAuthenticatedProcessingFilter.class);
 
-        SsAuthLoginEndpointFilter tokenEndpointFilter =
-                new SsAuthLoginEndpointFilter(authenticationManager, providerSettings.getTokenEndpoint());
+        SsAuthLoginFilter tokenEndpointFilter =
+                new SsAuthLoginFilter(authenticationManager, providerSettings.getTokenEndpoint());
         if (this.accessTokenResponseHandler != null) {
             tokenEndpointFilter.setAuthenticationSuccessHandler(this.accessTokenResponseHandler);
         }
@@ -101,12 +103,12 @@ public class SsAuthLoginEndpointConfigurer<B extends HttpSecurityBuilder<B>> ext
 
     private <B extends HttpSecurityBuilder<B>> List<AuthenticationProvider> createDefaultAuthenticationProviders(B builder) {
         List<AuthenticationProvider> authenticationProviders = new ArrayList<>();
-        JwtEncoder jwtEncoder = SsAuthConfigurerUtils.getJwtEncoder(builder);
-        OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = SsAuthConfigurerUtils.getJwtCustomizer(builder);
-        UserDetailsService userDetailsService = SsAuthConfigurerUtils.getBean(builder, UserDetailsService.class);
-        PasswordEncoder passwordEncoder = SsAuthConfigurerUtils.getBean(builder, PasswordEncoder.class);
-        ProviderSettings providerSettings = SsAuthConfigurerUtils.getProviderSettings(builder);
-        RegisteredClientRepository registeredClientRepository = SsAuthConfigurerUtils.getRegisteredClientRepository(builder);
+        JwtEncoder jwtEncoder = SsAuthServerUtils.getJwtEncoder(builder);
+        OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = SsAuthServerUtils.getJwtCustomizer(builder);
+        UserDetailsService userDetailsService = SsAuthServerUtils.getBean(builder, UserDetailsService.class);
+        PasswordEncoder passwordEncoder = SsAuthServerUtils.getBean(builder, PasswordEncoder.class);
+        ProviderSettings providerSettings = SsAuthServerUtils.getProviderSettings(builder);
+        RegisteredClientRepository registeredClientRepository = SsAuthServerUtils.getRegisteredClientRepository(builder);
         SsAuthLoginProvider ssAuthLoginProvider = new SsAuthLoginProvider(registeredClientRepository, userDetailsService, passwordEncoder, jwtEncoder, providerSettings);
         if (jwtCustomizer != null) {
             ssAuthLoginProvider.setJwtCustomizer(jwtCustomizer);

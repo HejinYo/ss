@@ -27,18 +27,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class ResourceServerConfig {
 
-	// @formatter:off
-	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.mvcMatcher("/messages/**")
-				.authorizeRequests()
-					.mvcMatchers("/messages/**").access("hasAuthority('SCOPE_user.userInfo')")
-					.and()
-			.oauth2ResourceServer()
-				.jwt();
-		return http.build();
-	}
-	// @formatter:on
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.mvcMatcher("/messages/**")
+                .authorizeRequests()
+                .mvcMatchers("/messages/**").access("hasAuthority('SCOPE_user.userInfo')")
+                .and()
+                .oauth2ResourceServer()
+                .jwt();
+        return http.build();
+    }
 
 }

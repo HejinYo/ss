@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.hejinyo.ss.auth.util;
+package cn.hejinyo.ss.auth.security;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -37,9 +37,9 @@ import java.util.Set;
  * @author Joe Grandja
  * @since 0.1.0
  */
-public class JwtUtils {
+public class SsAuthServerJwtUtils {
 
-    private JwtUtils() {
+    private SsAuthServerJwtUtils() {
     }
 
     public static JoseHeader.Builder headers() {

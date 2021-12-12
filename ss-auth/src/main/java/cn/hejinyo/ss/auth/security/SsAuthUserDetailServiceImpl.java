@@ -20,9 +20,9 @@ import java.util.Set;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/10/31 20:30
  */
- @RequiredArgsConstructor
- @Service("userDetailsService")
-public class UserDetailServiceImpl implements UserDetailsService {
+@RequiredArgsConstructor
+@Service("userDetailsService")
+public class SsAuthUserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {

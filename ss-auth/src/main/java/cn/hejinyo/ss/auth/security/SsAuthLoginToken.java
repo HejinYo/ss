@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.hejinyo.ss.auth.handler;
+package cn.hejinyo.ss.auth.security;
 
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -22,10 +22,10 @@ import org.springframework.util.Assert;
 import java.util.Collections;
 
 /**
- * SsAuthAccessToken
+ * SsAuth 登陆参数令牌
  *
  * @author : HejinYo   hejinyo@gmail.com
- * @date : 2021/12/4 21:24
+ * @date : 2021/11/3 22:27
  */
 @Getter
 public class SsAuthLoginToken extends AbstractAuthenticationToken {

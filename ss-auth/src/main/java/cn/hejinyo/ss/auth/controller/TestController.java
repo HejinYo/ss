@@ -1,48 +1,40 @@
-package cn.hejinyo.ss.auth.util;
+package cn.hejinyo.ss.auth.controller;
 
+import cn.hejinyo.ss.auth.util.Utils;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileInputStream;
 import java.security.*;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.UUID;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
- * @date : 2021/12/1 22:57
+ * @date : 2021/12/12 22:38
  */
-public class Test {
+@RestController
+@RequestMapping("/test")
+public class TestController {
 
-    public static PublicKey getPublicKey(String base64PublicKey) {
-        PublicKey publicKey = null;
-        try {
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(Base64.decodeBase64(base64PublicKey.getBytes()));
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            publicKey = keyFactory.generatePublic(keySpec);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return publicKey;
+    @Autowired
+    private ConfigurableApplicationContext configurableApplicationContext;
+
+    @Value("${useLocalCache:false}")
+    private boolean useLocalCache;
+
+    @RequestMapping("/get")
+    public String get() {
+        return useLocalCache + "--->" + configurableApplicationContext.getEnvironment().getProperty("useLocalCache");
     }
-
-    public static PrivateKey getPrivateKey(String base64PrivateKey) {
-        PrivateKey privateKey = null;
-        try {
-            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.decodeBase64(base64PrivateKey.getBytes()));
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            privateKey = keyFactory.generatePrivate(keySpec);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return privateKey;
-    }
-
 
     public static void main(String[] args) throws Exception {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
@@ -55,8 +47,8 @@ public class Test {
         System.out.println(publicK);
         System.out.println("--------");
         System.out.println(privateK);
-        PublicKey publicKeyp = getPublicKey(publicK);
-        PrivateKey privateKeyp = getPrivateKey(privateK);
+        PublicKey publicKeyp = Utils.getPublicKey(publicK);
+        PrivateKey privateKeyp = Utils.getPrivateKey(privateK);
         RSAKey rsaKey = new RSAKey.Builder(publicKey)
                 .privateKey(privateKey)
                 .keyID(UUID.randomUUID().toString())

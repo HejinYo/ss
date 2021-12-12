@@ -1,6 +1,5 @@
 # spring.cloud.nacos.discovery。*的配置应该放置到application.yml /属性中。
 # spring.cloud.nacos.config。*的配置应该放置到bootstrap.yml/properties中。
-
 server:
   port: 9001
 spring:
@@ -20,6 +19,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
   cloud:
     nacos:
       discovery:
@@ -29,3 +29,4 @@ spring:
     port: 6388
     password: redhat
     database: 0
+

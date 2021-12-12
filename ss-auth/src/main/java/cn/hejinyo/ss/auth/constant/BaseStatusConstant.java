@@ -1,10 +1,10 @@
-package cn.hejinyo.ss.auth.util;
+package cn.hejinyo.ss.auth.constant;
 
 /**
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/3 20:10
  */
-public interface BaseStatusCode {
+public interface BaseStatusConstant {
 
     /**
      * 状态码

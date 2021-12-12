@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.hejinyo.ss.auth.handler;
+package cn.hejinyo.ss.auth.security;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.OAuth2Error;
-import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.web.authentication.DelegatingAuthenticationConverter;
 import org.springframework.security.web.authentication.AuthenticationConverter;
@@ -35,6 +36,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -42,17 +44,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Map;
+
 
 /**
- * A {@code Filter} for the OAuth 2.0 Token endpoint,
- * which handles the processing of an OAuth 2.0 Authorization Grant.
+ * SsAuth 登陆拦截器
  *
- * @author Joe Grandja
- * @author Madhu Bhat
- * @author Daniel Garnier-Moiroux
+ * @author : HejinYo   hejinyo@gmail.com
+ * @date : 2021/11/3 22:27
  */
-public final class SsAuthLoginEndpointFilter extends OncePerRequestFilter {
+public final class SsAuthLoginFilter extends OncePerRequestFilter {
     /**
      * The default endpoint {@code URI} for access token requests.
      */
@@ -63,14 +66,14 @@ public final class SsAuthLoginEndpointFilter extends OncePerRequestFilter {
     private final RequestMatcher tokenEndpointMatcher;
     private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
     private AuthenticationConverter authenticationConverter = new DelegatingAuthenticationConverter(Collections.singletonList(new SsAuthLoginConverter()));
-    private AuthenticationSuccessHandler authenticationSuccessHandler = new SsAuthLoginRespHandler();
-    private AuthenticationFailureHandler authenticationFailureHandler = new SsAuthFailureRestHandler("");
+    private AuthenticationSuccessHandler authenticationSuccessHandler = this::sendAccessTokenResponse;
+    private AuthenticationFailureHandler authenticationFailureHandler = new SsAuthServerFailureHandler("登陆失败");
 
-    public SsAuthLoginEndpointFilter(AuthenticationManager authenticationManager) {
+    public SsAuthLoginFilter(AuthenticationManager authenticationManager) {
         this(authenticationManager, DEFAULT_TOKEN_ENDPOINT_URI);
     }
 
-    public SsAuthLoginEndpointFilter(AuthenticationManager authenticationManager, String tokenEndpointUri) {
+    public SsAuthLoginFilter(AuthenticationManager authenticationManager, String tokenEndpointUri) {
         Assert.notNull(authenticationManager, "authenticationManager cannot be null");
         Assert.hasText(tokenEndpointUri, "tokenEndpointUri cannot be empty");
         this.authenticationManager = authenticationManager;
@@ -128,6 +131,34 @@ public final class SsAuthLoginEndpointFilter extends OncePerRequestFilter {
     public void setAuthenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
         Assert.notNull(authenticationFailureHandler, "authenticationFailureHandler cannot be null");
         this.authenticationFailureHandler = authenticationFailureHandler;
+    }
+
+
+    private void sendAccessTokenResponse(HttpServletRequest request, HttpServletResponse response,
+                                         Authentication authentication) throws IOException {
+        OAuth2AccessTokenAuthenticationToken accessTokenAuthentication =
+                (OAuth2AccessTokenAuthenticationToken) authentication;
+
+        OAuth2AccessToken accessToken = accessTokenAuthentication.getAccessToken();
+        OAuth2RefreshToken refreshToken = accessTokenAuthentication.getRefreshToken();
+        Map<String, Object> additionalParameters = accessTokenAuthentication.getAdditionalParameters();
+
+        OAuth2AccessTokenResponse.Builder builder =
+                OAuth2AccessTokenResponse.withToken(accessToken.getTokenValue())
+                        .tokenType(accessToken.getTokenType())
+                        .scopes(accessToken.getScopes());
+        if (accessToken.getIssuedAt() != null && accessToken.getExpiresAt() != null) {
+            builder.expiresIn(ChronoUnit.SECONDS.between(accessToken.getIssuedAt(), accessToken.getExpiresAt()));
+        }
+        if (refreshToken != null) {
+            builder.refreshToken(refreshToken.getTokenValue());
+        }
+        if (!CollectionUtils.isEmpty(additionalParameters)) {
+            builder.additionalParameters(additionalParameters);
+        }
+        OAuth2AccessTokenResponse accessTokenResponse = builder.build();
+        ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
+        new OAuth2AccessTokenResponseHttpMessageConverter().write(accessTokenResponse, null, httpResponse);
     }
 
     private static void throwError(String errorCode, String parameterName) {
