@@ -73,8 +73,7 @@ public class SsAuthServerConfigurer<B extends HttpSecurityBuilder<B>> extends Ab
                         providerSettings.getJwkSetEndpoint());
         builder.addFilterBefore(postProcess(jwkSetEndpointFilter), AbstractPreAuthenticatedProcessingFilter.class);
 
-        SsAuthLoginFilter tokenEndpointFilter =
-                new SsAuthLoginFilter(authenticationManager, providerSettings.getTokenEndpoint());
+        SsAuthLoginFilter tokenEndpointFilter = new SsAuthLoginFilter(authenticationManager, providerSettings.getTokenEndpoint());
         if (this.accessTokenResponseHandler != null) {
             tokenEndpointFilter.setAuthenticationSuccessHandler(this.accessTokenResponseHandler);
         }
@@ -86,7 +85,6 @@ public class SsAuthServerConfigurer<B extends HttpSecurityBuilder<B>> extends Ab
         }
 
         builder.addFilterAfter(postProcess(tokenEndpointFilter), AbstractPreAuthenticatedProcessingFilter.class);
-
 
         ExceptionHandlingConfigurer<B> exceptionHandling = builder.getConfigurer(ExceptionHandlingConfigurer.class);
         if (exceptionHandling != null) {
@@ -109,7 +107,8 @@ public class SsAuthServerConfigurer<B extends HttpSecurityBuilder<B>> extends Ab
         PasswordEncoder passwordEncoder = SsAuthServerUtils.getBean(builder, PasswordEncoder.class);
         ProviderSettings providerSettings = SsAuthServerUtils.getProviderSettings(builder);
         RegisteredClientRepository registeredClientRepository = SsAuthServerUtils.getRegisteredClientRepository(builder);
-        SsAuthLoginProvider ssAuthLoginProvider = new SsAuthLoginProvider(registeredClientRepository, userDetailsService, passwordEncoder, jwtEncoder, providerSettings);
+        SsAuthLoginProvider ssAuthLoginProvider = new SsAuthLoginProvider(registeredClientRepository, userDetailsService,
+                passwordEncoder, jwtEncoder, providerSettings);
         if (jwtCustomizer != null) {
             ssAuthLoginProvider.setJwtCustomizer(jwtCustomizer);
         }

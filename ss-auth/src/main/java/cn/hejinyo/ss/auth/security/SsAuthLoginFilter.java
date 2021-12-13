@@ -22,10 +22,11 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.*;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AccessTokenResponse;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.http.converter.OAuth2AccessTokenResponseHttpMessageConverter;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AccessTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.web.authentication.DelegatingAuthenticationConverter;
@@ -56,18 +57,13 @@ import java.util.Map;
  * @date : 2021/11/3 22:27
  */
 public final class SsAuthLoginFilter extends OncePerRequestFilter {
-    /**
-     * The default endpoint {@code URI} for access token requests.
-     */
     private static final String DEFAULT_TOKEN_ENDPOINT_URI = "/oauth2/token";
-
-    private static final String DEFAULT_ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
     private final AuthenticationManager authenticationManager;
     private final RequestMatcher tokenEndpointMatcher;
     private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
     private AuthenticationConverter authenticationConverter = new DelegatingAuthenticationConverter(Collections.singletonList(new SsAuthLoginConverter()));
     private AuthenticationSuccessHandler authenticationSuccessHandler = this::sendAccessTokenResponse;
-    private AuthenticationFailureHandler authenticationFailureHandler = new SsAuthServerFailureHandler("登陆失败");
+    private AuthenticationFailureHandler authenticationFailureHandler = new SsAuthServerFailureHandler();
 
     public SsAuthLoginFilter(AuthenticationManager authenticationManager) {
         this(authenticationManager, DEFAULT_TOKEN_ENDPOINT_URI);
@@ -90,15 +86,12 @@ public final class SsAuthLoginFilter extends OncePerRequestFilter {
         }
 
         try {
-            String[] grantTypes = request.getParameterValues(OAuth2ParameterNames.GRANT_TYPE);
-            if (grantTypes == null || grantTypes.length != 1) {
-                throwError(OAuth2ErrorCodes.INVALID_REQUEST, OAuth2ParameterNames.GRANT_TYPE);
-            }
 
             Authentication authorizationGrantAuthentication = this.authenticationConverter.convert(request);
             if (authorizationGrantAuthentication == null) {
-                throwError(OAuth2ErrorCodes.UNSUPPORTED_GRANT_TYPE, OAuth2ParameterNames.GRANT_TYPE);
+                return;
             }
+
             if (authorizationGrantAuthentication instanceof AbstractAuthenticationToken) {
                 ((AbstractAuthenticationToken) authorizationGrantAuthentication)
                         .setDetails(this.authenticationDetailsSource.buildDetails(request));
@@ -107,7 +100,7 @@ public final class SsAuthLoginFilter extends OncePerRequestFilter {
             OAuth2AccessTokenAuthenticationToken accessTokenAuthentication =
                     (OAuth2AccessTokenAuthenticationToken) this.authenticationManager.authenticate(authorizationGrantAuthentication);
             this.authenticationSuccessHandler.onAuthenticationSuccess(request, response, accessTokenAuthentication);
-        } catch (OAuth2AuthenticationException ex) {
+        } catch (AuthenticationException ex) {
             SecurityContextHolder.clearContext();
             this.authenticationFailureHandler.onAuthenticationFailure(request, response, ex);
         }
@@ -132,7 +125,6 @@ public final class SsAuthLoginFilter extends OncePerRequestFilter {
         Assert.notNull(authenticationFailureHandler, "authenticationFailureHandler cannot be null");
         this.authenticationFailureHandler = authenticationFailureHandler;
     }
-
 
     private void sendAccessTokenResponse(HttpServletRequest request, HttpServletResponse response,
                                          Authentication authentication) throws IOException {
@@ -159,11 +151,6 @@ public final class SsAuthLoginFilter extends OncePerRequestFilter {
         OAuth2AccessTokenResponse accessTokenResponse = builder.build();
         ServletServerHttpResponse httpResponse = new ServletServerHttpResponse(response);
         new OAuth2AccessTokenResponseHttpMessageConverter().write(accessTokenResponse, null, httpResponse);
-    }
-
-    private static void throwError(String errorCode, String parameterName) {
-        OAuth2Error error = new OAuth2Error(errorCode, "OAuth 2.0 Parameter: " + parameterName, DEFAULT_ERROR_URI);
-        throw new OAuth2AuthenticationException(error);
     }
 
 }

@@ -81,14 +81,15 @@
     </dependencyManagement>
 
     <modules>
-        <!-- 微服务网关 -->
-        <module>ss-gateway</module>
 
         <!-- 微服务认证模块 -->
         <module>ss-auth</module>
 
-        <!-- demo -->
-        <module>ss-demo</module>
+        <!-- common -->
+        <module>ss-common</module>
+
+        <!-- 微服务网关 -->
+        <module>ss-gateway</module>
 
     </modules>
 

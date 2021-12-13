@@ -14,6 +14,11 @@
     <description>ss 微服务认证模块</description>
 
     <dependencies>
+        <dependency>
+            <groupId>cn.hejinyo</groupId>
+            <artifactId>ss-common-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- Spring Cloud Alibaba discovery 微服务客户端 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

@@ -1,20 +1,20 @@
 package cn.hejinyo.ss.auth.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.SpringSecurityMessageSource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.core.*;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.jwt.JoseHeader;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -39,10 +39,6 @@ import java.util.Set;
  */
 @Slf4j
 public class SsAuthLoginProvider implements AuthenticationProvider {
-
-    private static final String CLIENT_AUTHENTICATION_ERROR_URI = "https://datatracker.ietf.org/doc/html/draft-ietf-oauth-v2-1-01#section-3.2.1";
-
-    private final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
     private OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
@@ -76,13 +72,12 @@ public class SsAuthLoginProvider implements AuthenticationProvider {
         // 查询客户端
         RegisteredClient registeredClient = this.registeredClientRepository.findByClientId(clientId);
         if (registeredClient == null) {
-            throwInvalidClient(OAuth2ParameterNames.CLIENT_ID);
+            throw new SsAuthException("authentication failed: clientId");
         }
-        // 验证客户端是不是支持这种方式登陆
-        assert registeredClient != null;
+        // 验证客户端支持登陆方式
         Set<ClientAuthenticationMethod> methodSet = registeredClient.getClientAuthenticationMethods();
         if (methodSet == null || methodSet.stream().noneMatch(ClientAuthenticationMethod.NONE::equals)) {
-            throwInvalidClient("authentication_method");
+            throw new SsAuthException("authentication failed: authentication_method");
         }
 
         // 查询用户
@@ -121,13 +116,11 @@ public class SsAuthLoginProvider implements AuthenticationProvider {
     private void additionalAuthenticationChecks(UserDetails userDetails,
                                                 UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
         if (authentication.getCredentials() == null) {
-            log.debug("Failed to authenticate since no credentials provided");
-            throw new BadCredentialsException(this.messages.getMessage("SsAuthClientProvider.badCredentials", "Bad credentials"));
+            throw new BadCredentialsException("用户密码错误");
         }
         String presentedPassword = authentication.getCredentials().toString();
         if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            log.debug("Failed to authenticate since password does not match stored value");
-            throw new BadCredentialsException(this.messages.getMessage("SsAuthClientProvider.badCredentials", "Bad credentials"));
+            throw new BadCredentialsException("用户密码错误");
         }
     }
 
@@ -160,14 +153,5 @@ public class SsAuthLoginProvider implements AuthenticationProvider {
 
     public void setJwtCustomizer(OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer) {
         this.jwtCustomizer = jwtCustomizer;
-    }
-
-
-    private static void throwInvalidClient(String parameterName) {
-        OAuth2Error error = new OAuth2Error(
-                OAuth2ErrorCodes.INVALID_CLIENT,
-                "Ss-auth Client authentication failed: " + parameterName,
-                CLIENT_AUTHENTICATION_ERROR_URI);
-        throw new OAuth2AuthenticationException(error);
     }
 }
