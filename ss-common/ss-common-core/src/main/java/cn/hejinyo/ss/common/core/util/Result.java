@@ -2,8 +2,10 @@ package cn.hejinyo.ss.common.core.util;
 
 import cn.hejinyo.ss.common.core.constant.BaseStatusConstant;
 import cn.hejinyo.ss.common.core.constant.CommonStatusConstant;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.HashMap;
+import java.io.Serializable;
 
 /**
  * 返回结果
@@ -11,57 +13,49 @@ import java.util.HashMap;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2017/8/5 18:25
  */
-public class Result extends HashMap<String, Object> {
+@Getter
+@Setter
+public class Result<T> implements Serializable {
     private static final int SUCCESS = CommonStatusConstant.SUCCESS.getCode();
     private static final int ERROR = CommonStatusConstant.FAILURE.getCode();
-    private static final int INITIAL = 4;
-    private static final String MSG = "msg";
-    private static final String CODE = "code";
-    private static final String RESULT = "result";
+
+    private String msg;
+    private Integer code;
+    private Object data;
 
     private Result() {
         super();
     }
 
-    private Result(int initialCapacity) {
-        super(initialCapacity);
+    public static <T> Result<T> ok() {
+        Result<T> result = new Result<>();
+        result.setCode(SUCCESS);
+        return result;
     }
 
-    public static Result ok() {
-        Result jsonMap = new Result(INITIAL);
-        jsonMap.put(CODE, SUCCESS);
-        return jsonMap;
+    public static <T> Result<T> ok(Object data) {
+        Result<T> result = ok();
+        result.setData(data);
+        return result;
     }
 
-    public static Result ok(Object result) {
-        Result jsonMap = ok();
-        jsonMap.put(RESULT, result);
-        return jsonMap;
+    public static <T> Result<T> error() {
+        Result<T> result = new Result<>();
+        result.setCode(ERROR);
+        return result;
     }
 
-    public static Result error() {
-        Result jsonMap = new Result(INITIAL);
-        jsonMap.put(CODE, ERROR);
-        return jsonMap;
+    public static <T> Result<T> error(String msg) {
+        Result<T> result = error();
+        result.setMsg(msg);
+        return result;
     }
 
-    public static Result error(String msg) {
-        Result jsonMap = error();
-        jsonMap.put(MSG, msg);
-        return jsonMap;
-    }
-
-    public static Result status(BaseStatusConstant statusCode) {
-        Result jsonMap = new Result(INITIAL);
-        jsonMap.put(CODE, statusCode.getCode());
-        jsonMap.put(MSG, statusCode.getMsg());
-        return jsonMap;
-    }
-
-    @Override
-    public Result put(String key, Object value) {
-        super.put(key, value);
-        return this;
+    public static <T> Result<T> status(BaseStatusConstant statusCode) {
+        Result<T> result = new Result<>();
+        result.setCode(statusCode.getCode());
+        result.setMsg(statusCode.getMsg());
+        return result;
     }
 
 }
