@@ -168,7 +168,6 @@ GET /form/0b9c1b80fb0443f1a05b776d0f61869e/_search
 {
     "QUERY_NAME": {
         "FIELD_NAME": {
-            "ARGUMENT": "VALUE",
             "ARGUMENT": "VALUE"
         }
     }

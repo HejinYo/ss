@@ -113,7 +113,7 @@ Heap 是 Java 内存模型中最大的一块区域，它被分为 Young Generati
 
 因为对象头中记录 YGC 存活周期的字段只有 4 bit 长度，最大表示数字就是 15。但这并不是说对象**一定**要活过 15 次 YGC 才能晋升到老年代，因为每次 YGC 后都会对这个阈值进行重新计算。比如使用 Serial GC 和 ParNew GC 的情况下，JVM 对于这个阈值的计算逻辑：
 
-```java
+```text
 uint ageTable::compute_tenuring_threshold(size_t survivor_capacity) {
   // TargetSurvivorRatio 默认值是 50
   size_t desired_survivor_size = (size_t)((((double) survivor_capacity)*TargetSurvivorRatio)/100);
@@ -557,10 +557,10 @@ Main.java
 
 ```java
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Thread[] threads = new Thread[8];
         for (int i = 0; i < 8; i++) {
-            threads[i] = new Thread(new CreateTask());
+            threads[i] = new Thread(() -> new CreateTask());
         }
         for (int i = 0; i < 8; i++) {
             threads[i].start();
