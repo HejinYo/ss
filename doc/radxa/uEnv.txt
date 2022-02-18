@@ -1,0 +1,16 @@
+verbosity=7
+console=ttyAML0,115200
+overlay_prefix=meson
+rootfstype=ext4
+fdtfile=amlogic/meson-g12a-radxa-zero.dtb
+
+overlays=meson-g12a-uart-ao-a-on-gpioao-0-gpioao-1 meson-g12a-pwm-c-on-gpiox-8 meson-g12a-i2c-ee-m3-gpioa-14-gpioa-15 meson-g12a-spi-lcd-1.14
+param_spidev_spi_bus=1
+param_spidev_max_freq=96000000
+
+rootuuid=ec820ae0-b8e6-4885-8b33-4088ece00f91
+initrdsize=0xf8d047
+kernelversion=5.10.69-9-amlogic-g7c418f844e4b
+initrdimg=initrd.img-5.10.69-9-amlogic-g7c418f844e4b
+kernelimg=vmlinuz-5.10.69-9-amlogic-g7c418f844e4b
+
