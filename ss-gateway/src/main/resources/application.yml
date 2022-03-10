@@ -25,3 +25,9 @@ spring:
           predicates: Path=/auth/**
           filters:
             - StripPrefix=1
+        - id: ss-admin
+          uri: lb://ss-admin
+          predicates: Path=/admin/**
+          filters:
+            - StripPrefix=1
+            - SsAuth

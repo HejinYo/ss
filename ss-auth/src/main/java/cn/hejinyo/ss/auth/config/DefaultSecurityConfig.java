@@ -23,6 +23,7 @@ public class DefaultSecurityConfig {
         http.authorizeRequests(req -> {
             // 测试路径
             req.antMatchers("/test/**").permitAll();
+            req.antMatchers("/ms/auth/**").permitAll();
             // 其他的都需要认证访问
             req.anyRequest().authenticated();
         });

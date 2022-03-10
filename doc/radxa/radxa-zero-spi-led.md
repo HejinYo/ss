@@ -1,3 +1,41 @@
+
+
+sudo su
+
+nmcli r wifi on
+
+nmcli dev wifi
+
+nmcli dev wifi connect "wifi_name" password "wifi_password"
+
+
+
+# 大容量设备
+
+boot-g12.py /Users/hejinyo/Downloads/rz-udisk-loader.bin
+
+
+#Ubuntu连接蓝牙鼠标键盘
+代码:
+root@radxa-zero:/home/rock# bluetoothctl
+[bluetooth]# power off
+[bluetooth]# power on
+[bluetooth]# scan on
+[bluetooth]# connect XX:XX:XX:XX:XX:XX
+[Arc Touch Mouse SE]# trust
+[Arc Touch Mouse SE]# pair
+[Arc Touch Mouse SE]# unblock
+[Arc Touch Mouse SE]# power off
+[bluetooth]# power on
+
+
+
+connect DC:2C:26:06:B5:52
+
+
+
+
+
 # 新增SPI设备树
 
 ```shell
@@ -62,7 +100,7 @@ vim /boot/uEnv.txt
 
 # 编译驱动并替换原来的驱动
 make && cp {fb_st7789v.ko,fbtft.ko}  /usr/lib/modules/5.10.69-9-amlogic-g7c418f844e4b/kernel/drivers/staging/fbtft/
-
+cp  {fb_st7789v.ko,fbtft.ko}  /usr/lib/modules/5.10.69-10-amlogic-g617a45dd0fce/kernel/drivers/staging/fbtft/
 # 测试显示内容
 shutdown -r now
 
@@ -84,7 +122,7 @@ apt-get install fbi
 fbi -d /dev/fb1 -T 1 -noverbose -a  240x134.png
 
 # 播放视频
-mplayer -nolirc -vo fbdev2:/dev/fb1 test.mpg
+mplayer -nolirc -vo fbdev2:/dev/fb1 240x134.mp4
 
 
 # 这里是时钟，可以不用看
@@ -93,7 +131,9 @@ sudo apt-get install gcc musl-dev python3 python3-pip python3-dev
 sudo python3 -m pip install --upgrade pip
 sudo python3 -m pip install fire
 sudo python3 -m pip install ruamel.yaml   -i  https://mirrors.aliyun.com/pypi/simple/
-sudo python3 -m pip install pygame 
+#  sudo python3 -m pip uninstall pygame   -i  https://mirrors.aliyun.com/pypi/simple/
+pip3 install opencv-python
+apt install python3-pygame
 sudo python3 -m pip install python-periphery  
 sudo python3 -m pip install PyYAML  
 sudo python3 -m pip install Markdown  
@@ -115,6 +155,61 @@ mode "1024x768"
     rgba 8/16,8/8,8/0,0/0
 endmode
 
+
+cp ui_clock.service /etc/systemd/system/
+
+
+
+
+# https://blog.csdn.net/andylauren/article/details/81055527
+vim ~/.pip/pip.conf
+[global]
+index-url = https://mirrors.aliyun.com/pypi/simple/
+[install]
+trusted-host = https://mirrors.aliyun.com/pypi/simple/
+
+
+https://blog.csdn.net/andylauren/article/details/81055527
+sudo pip3 install homeassistant
+
+
+tzselect
+
+cp /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
+
+
+sudo python3 -m pip install sqlalchemy 
+sudo python3 -m pip install aiohttp_cors 
+
+hass
+
+
+
+
+
+root@radxa-zero:/etc/systemd/system# cat hass.service
+[Unit]
+Description=Home Assistant
+After=network-online.target
+Wants=network-online.target
+
+
+[Service]
+Type=simple
+User=rock
+ExecStart=/usr/local/bin/hass -c "/home/rock/.homeassistant"
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+# 关闭背光
+cd /sys/class/leds/radxa-zero\:green
+echo 0 > brightness
+echo 1 > /sys/class/leds/radxa-zero:green/brightness
+echo 0 > /sys/class/leds/radxa-zero:green/brightness
 
 ```
 

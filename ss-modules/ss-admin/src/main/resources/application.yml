@@ -11,8 +11,8 @@ spring:
       discovery:
         server-addr: 127.0.0.1:8848
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://hejinyo.com:9001
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: http://hejinyo.com:9001
