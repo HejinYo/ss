@@ -138,6 +138,11 @@ db.num=1
 db.url.0=jdbc:mysql://m.hejinyo.cn:3306/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
 db.user.0=nacos
 db.password.0=nacos
+
+
+docker run --name nacos  -e MODE=standalone  -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=m.hejinyo.cn  -e MYSQL_SERVICE_PORT=3306 -e MYSQL_SERVICE_USER=nacos  -e MYSQL_SERVICE_PASSWORD=nacos  -e MYSQL_SERVICE_DB_NAME=nacos  -p 8848:8848 -d  nacos/nacos-server
+
+
 ```
 
 ```shell
