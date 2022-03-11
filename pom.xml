@@ -91,6 +91,9 @@
         <!-- 微服务网关 -->
         <module>ss-gateway</module>
 
+        <!-- 业务木块 -->
+        <module>ss-modules</module>
+
     </modules>
 
     <!-- 使用aliyun镜像 -->

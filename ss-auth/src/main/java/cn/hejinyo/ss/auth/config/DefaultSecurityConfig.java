@@ -24,6 +24,8 @@ public class DefaultSecurityConfig {
             // 测试路径
             req.antMatchers("/test/**").permitAll();
             req.antMatchers("/ms/auth/**").permitAll();
+            // 新的登录逻辑测试
+            req.antMatchers("/v2/login/**").permitAll();
             // 其他的都需要认证访问
             req.anyRequest().authenticated();
         });
