@@ -1,5 +1,5 @@
-
 # git 提交大文件
+
 ```shell
 # 升级 brew
 brew update-reset
@@ -20,6 +20,7 @@ clone 时 使用'git clone' 或 git lfs clone均可
 ```
 
 # git 使用toke操作
+
 ```shell
 vim .git/config 
 [core]
@@ -40,7 +41,7 @@ vim .git/config
     merge = refs/heads/master
 [lfs]
     repositoryformatversion = 0
-~                                    
+~
 ```
 
 # Terminal 使用macos自己的梯子代理
@@ -98,6 +99,7 @@ function proxy_on() {
 ```
 
 # win 代理
+
 ```shell
 
 # 下载软件
@@ -116,6 +118,7 @@ function proxy_on() {
 ```
 
 # 启动 nacos
+
 ```shell
 cd doc/nacos/bin
 ./startup.sh -m standalone
@@ -123,8 +126,8 @@ http://localhost:8848/nacos/#/login
 userName: nacos
 password: nacos
 ```
-# nacos 配置持久化
 
+# nacos 配置持久化
 
 ```shell
 create user 'nacos'@'%' identified by 'nacos';
@@ -138,14 +141,16 @@ db.num=1
 db.url.0=jdbc:mysql://m.hejinyo.cn:3306/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
 db.user.0=nacos
 db.password.0=nacos
-
-
-docker run --name nacos  -e MODE=standalone  -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=m.hejinyo.cn  -e MYSQL_SERVICE_PORT=3306 -e MYSQL_SERVICE_USER=nacos  -e MYSQL_SERVICE_PASSWORD=nacos  -e MYSQL_SERVICE_DB_NAME=nacos  -p 8848:8848 -d  nacos/nacos-server
-
-
 ```
 
+# docker 启动中间件
+
 ```shell
+
+# redis
 docker run --name kris-redis -p 6388:6379 -d redis --requirepass "xxxxxx"
+
+# nacos
+docker run --name nacos  -e MODE=standalone  -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=m.hejinyo.cn  -e MYSQL_SERVICE_PORT=3306 -e MYSQL_SERVICE_USER=nacos  -e MYSQL_SERVICE_PASSWORD=nacos  -e MYSQL_SERVICE_DB_NAME=nacos  -p 8848:8848 -d  nacos/nacos-server
 
 ```
