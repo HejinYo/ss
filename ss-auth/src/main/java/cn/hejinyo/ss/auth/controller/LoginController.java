@@ -1,7 +1,8 @@
 package cn.hejinyo.ss.auth.controller;
 
 import cn.hejinyo.ss.auth.security.SsAuthUserDetailServiceImpl;
-import cn.hejinyo.ss.auth.vo.LoginReqVo;
+import cn.hejinyo.ss.auth.vo.SsAuthLoginReqVo;
+import cn.hejinyo.ss.auth.vo.SsAuthLoginTokenVo;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.AllArgsConstructor;
@@ -43,12 +44,12 @@ public class LoginController {
     private final JWKSource<SecurityContext> jwkSource;
 
     @PostMapping("/login")
-    public OAuth2AccessToken login(@RequestBody LoginReqVo loginReqVo) {
-        String username = loginReqVo.getUsername();
+    public SsAuthLoginTokenVo login(@RequestBody SsAuthLoginReqVo ssAuthLoginReqVo) {
+        String username = ssAuthLoginReqVo.getUsername();
         // 根据用户名查询用户
         UserDetails userDetails = userDetailService.loadUserByUsername(username);
         // 对比用户名密码是否正确
-        this.additionalAuthenticationChecks(userDetails, loginReqVo);
+        this.additionalAuthenticationChecks(userDetails, ssAuthLoginReqVo);
 
         // JWT 头部
         JoseHeader.Builder headersBuilder = JoseHeader.withAlgorithm(SignatureAlgorithm.RS256);
@@ -60,7 +61,7 @@ public class LoginController {
         JwtClaimsSet.Builder claimsBuilder = JwtClaimsSet.builder();
         claimsBuilder
                 // 签发者
-                .issuer("SS")
+                .issuer("http://m.hejinyo.cn")
                 // 主体
                 .subject(username)
                 // 接收者
@@ -78,17 +79,18 @@ public class LoginController {
         JwtClaimsSet claims = claimsBuilder.build();
         JwtEncoder jwtEncoder = new NimbusJwsEncoder(jwkSource);
         Jwt jwtAccessToken = jwtEncoder.encode(headers, claims);
-        return new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER,
-                jwtAccessToken.getTokenValue(),
-                jwtAccessToken.getIssuedAt(),
-                jwtAccessToken.getExpiresAt(),
-                scopes);
+
+        SsAuthLoginTokenVo tokenVo = new SsAuthLoginTokenVo();
+        tokenVo.setTokenValue(jwtAccessToken.getTokenValue());
+        tokenVo.setTokenType(OAuth2AccessToken.TokenType.BEARER.getValue());
+        tokenVo.setExpiresIn(jwtAccessToken.getExpiresAt());
+        return tokenVo;
     }
 
     /**
      * 验证用户密码
      */
-    private void additionalAuthenticationChecks(UserDetails userDetails, LoginReqVo authentication) throws AuthenticationException {
+    private void additionalAuthenticationChecks(UserDetails userDetails, SsAuthLoginReqVo authentication) throws AuthenticationException {
         if (authentication.getPassword() == null) {
             throw new BadCredentialsException("用户密码错误");
         }

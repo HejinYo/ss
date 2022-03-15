@@ -7,7 +7,7 @@ import lombok.Data;
  * @date : 2022/3/11
  */
 @Data
-public class LoginReqVo {
+public class SsAuthLoginReqVo {
     /**
      *用户名
      */
