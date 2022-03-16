@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 import java.security.Principal;
@@ -37,13 +38,15 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
             ServerHttpRequest request = exchange.getRequest();
             HttpHeaders httpHeaders = request.getHeaders();
             String accessToken = httpHeaders.getFirst("Authorization");
-
-            // 异步调用，否则会报错
-            CompletableFuture<String> f = CompletableFuture.supplyAsync(()-> authService.getMsToken(accessToken));
-            try {
-                String msToken = f.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+            String msToken = "";
+            if (StringUtils.hasText(accessToken)) {
+                // 异步调用，否则会报错
+                CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken));
+                try {
+                    msToken = f.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
 
             // 获取访问token, 请求 Ss-auth 服务获得微服务token
@@ -54,7 +57,7 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
             // If you want to build a "pre" filter you need to manipulate the
             // request before calling chain.filter
             ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
-            builder.header("Authorization", accessToken);
+            builder.header("Authorization", msToken);
             // use builder to manipulate the request
             return chain.filter(exchange.mutate().request(builder.build()).build());
         };

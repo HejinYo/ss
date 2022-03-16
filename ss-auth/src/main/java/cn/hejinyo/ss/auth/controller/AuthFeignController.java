@@ -23,7 +23,8 @@ public class AuthFeignController {
      */
     @PostMapping("/getMsToken")
     public String getMsToken(@RequestBody String accessToken) {
-        return "msToken";
+        // 解析token，签发微服务访问token TODO
+        return accessToken;
     }
 
 }
