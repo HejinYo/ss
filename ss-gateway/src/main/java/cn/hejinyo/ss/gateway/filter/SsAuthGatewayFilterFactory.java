@@ -54,7 +54,7 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
             // If you want to build a "pre" filter you need to manipulate the
             // request before calling chain.filter
             ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
-            builder.header("hejinyo", "testvalue");
+            builder.header("Authorization", accessToken);
             // use builder to manipulate the request
             return chain.filter(exchange.mutate().request(builder.build()).build());
         };
