@@ -5,13 +5,12 @@ import cn.hejinyo.ss.auth.vo.SsAuthLoginReqVo;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginTokenVo;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 登录逻辑
@@ -33,8 +29,8 @@ import java.util.Set;
  * @date : 2022/3/11
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/v2")
-@AllArgsConstructor
 public class LoginController {
 
     private final SsAuthUserDetailServiceImpl userDetailService;
@@ -73,8 +69,8 @@ public class LoginController {
                 // 之前无效
                 .notBefore(issuedAt);
         // 用户权限
-        Set<String> scopes = new HashSet<>(Arrays.asList("sys:user:create", "ROLE_admin"));
-        claimsBuilder.claim(OAuth2ParameterNames.SCOPE, scopes);
+//        Set<String> scopes = new HashSet<>(Arrays.asList("sys:user:create", "ROLE_admin"));
+//        claimsBuilder.claim(OAuth2ParameterNames.SCOPE, scopes);
         JoseHeader headers = headersBuilder.build();
         JwtClaimsSet claims = claimsBuilder.build();
         JwtEncoder jwtEncoder = new NimbusJwsEncoder(jwkSource);

@@ -8,9 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import reactor.core.publisher.Mono;
 
-import java.security.Principal;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -37,30 +35,32 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             HttpHeaders httpHeaders = request.getHeaders();
-            String accessToken = httpHeaders.getFirst("Authorization");
-            String msToken = "";
-            if (StringUtils.hasText(accessToken)) {
-                // 异步调用，否则会报错
-                CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken));
-                try {
-                    msToken = f.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // 获取访问token, 请求 Ss-auth 服务获得微服务token
-            Mono<Principal> mono = exchange.getPrincipal();
-
-            // 微服务token放入到request header中
-
-            // If you want to build a "pre" filter you need to manipulate the
-            // request before calling chain.filter
+            // If you want to build a "pre" filter you need to manipulate the request before calling chain.filter
             ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
-            builder.header("Authorization", msToken);
+            // 微服务token放入到request header中
+            builder.header("Authorization", this.getMsToken(httpHeaders.getFirst("Authorization")));
             // use builder to manipulate the request
             return chain.filter(exchange.mutate().request(builder.build()).build());
         };
+    }
+
+    /**
+     * 检测并获取msToken
+     *
+     * @param accessToken String
+     * @return String
+     */
+    private String getMsToken(String accessToken) {
+        if (StringUtils.hasText(accessToken)) {
+            // 异步调用，否则会报错
+            CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken));
+            try {
+                return "Bearer " + f.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
     }
 
     public static class Config {
