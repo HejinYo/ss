@@ -1,6 +1,8 @@
 package cn.hejinyo.ss.auth.controller;
 
 import cn.hejinyo.ss.auth.security.SsAuthUserDetailServiceImpl;
+import cn.hejinyo.ss.auth.util.RedisKeys;
+import cn.hejinyo.ss.auth.util.RedisUtils;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginReqVo;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginTokenVo;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -11,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * 登录逻辑
@@ -39,14 +42,15 @@ public class LoginController {
 
     private final JWKSource<SecurityContext> jwkSource;
 
+    private final RedisUtils redisUtils;
+
     @PostMapping("/login")
-    public SsAuthLoginTokenVo login(@RequestBody SsAuthLoginReqVo ssAuthLoginReqVo) {
+    public String login(@RequestBody SsAuthLoginReqVo ssAuthLoginReqVo) {
         String username = ssAuthLoginReqVo.getUsername();
         // 根据用户名查询用户
         UserDetails userDetails = userDetailService.loadUserByUsername(username);
         // 对比用户名密码是否正确
         this.additionalAuthenticationChecks(userDetails, ssAuthLoginReqVo);
-
         // JWT 头部
         JoseHeader.Builder headersBuilder = JoseHeader.withAlgorithm(SignatureAlgorithm.RS256);
         // 签发时间
@@ -69,8 +73,8 @@ public class LoginController {
                 // 之前无效
                 .notBefore(issuedAt);
         // 用户权限
-//        Set<String> scopes = new HashSet<>(Arrays.asList("sys:user:create", "ROLE_admin"));
-//        claimsBuilder.claim(OAuth2ParameterNames.SCOPE, scopes);
+        Set<String> scopes = new HashSet<>(Arrays.asList("sys:user:create", "ROLE_admin"));
+        claimsBuilder.claim(OAuth2ParameterNames.SCOPE, scopes);
         JoseHeader headers = headersBuilder.build();
         JwtClaimsSet claims = claimsBuilder.build();
         JwtEncoder jwtEncoder = new NimbusJwsEncoder(jwkSource);
@@ -80,7 +84,9 @@ public class LoginController {
         tokenVo.setTokenValue(jwtAccessToken.getTokenValue());
         tokenVo.setTokenType(OAuth2AccessToken.TokenType.BEARER.getValue());
         tokenVo.setExpiresIn(jwtAccessToken.getExpiresAt());
-        return tokenVo;
+        String uuid = UUID.randomUUID().toString();
+        redisUtils.setEx(RedisKeys.USER_TOKEN + uuid, jwtAccessToken.getTokenValue(), 60);
+        return uuid;
     }
 
     /**

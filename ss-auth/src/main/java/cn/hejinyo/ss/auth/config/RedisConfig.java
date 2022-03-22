@@ -37,4 +37,5 @@ public class RedisConfig extends CachingConfigurerSupport {
         template.setValueSerializer(serializer);
         return template;
     }
+
 }

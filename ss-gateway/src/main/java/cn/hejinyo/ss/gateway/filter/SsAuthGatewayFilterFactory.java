@@ -53,7 +53,7 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
     private String getMsToken(String accessToken) {
         if (StringUtils.hasText(accessToken)) {
             // 异步调用，否则会报错
-            CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken));
+            CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken.replace("Bearer ", "")));
             try {
                 return "Bearer " + f.get();
             } catch (InterruptedException | ExecutionException e) {
