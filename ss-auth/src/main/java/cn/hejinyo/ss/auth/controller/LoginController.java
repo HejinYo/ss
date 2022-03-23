@@ -95,7 +95,8 @@ public class LoginController {
         JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(headers, claims);
         Jwt jwtAccessToken = jwtEncoder.encode(jwtEncoderParameters);
         String tokenId = UUID.randomUUID().toString();
-        long expiresSeconds = Duration.between(new Date().toInstant(), expiresAt).getSeconds();
+        // redis 时间比实际token超时时间少5s
+        long expiresSeconds = Duration.between(new Date().toInstant(), expiresAt).getSeconds() - 5;
         redisUtils.setEx(RedisKeys.USER_TOKEN + tokenId, jwtAccessToken.getTokenValue(), expiresSeconds);
         SsAuthLoginTokenVo tokenVo = new SsAuthLoginTokenVo();
         tokenVo.setTokenValue(tokenId);
