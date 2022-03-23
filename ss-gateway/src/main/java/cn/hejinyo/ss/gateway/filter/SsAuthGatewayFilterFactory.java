@@ -23,6 +23,8 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
 
     private final AuthService authService;
 
+    private final static String SS = "ss ";
+
     @Lazy
     public SsAuthGatewayFilterFactory(AuthService authService) {
         super(Config.class);
@@ -51,16 +53,16 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
      * @return String
      */
     private String getMsToken(String accessToken) {
-        if (StringUtils.hasText(accessToken)) {
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith(SS)) {
             // 异步调用，否则会报错
-            CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken.replace("Bearer ", "")));
+            CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken.replace(SS, "")));
             try {
                 return "Bearer " + f.get();
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }
-        return "";
+        return accessToken;
     }
 
     public static class Config {

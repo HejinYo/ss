@@ -20,6 +20,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -45,7 +46,7 @@ public class ResourceServerConfig {
 
         private Object credentials;
 
-        public CustomerAuthenticationToken(Jwt jwt,Collection<? extends GrantedAuthority> authorities) {
+        public CustomerAuthenticationToken(Jwt jwt, Collection<? extends GrantedAuthority> authorities) {
             super(authorities);
             this.setAuthenticated(true);
             this.name = jwt.getSubject();
@@ -68,7 +69,7 @@ public class ResourceServerConfig {
 //            Set<String> authoritiesSet = new HashSet<>();
 //            authoritiesSet.add("ROLE_root");
 //            authoritiesSet.add("sys:user:create");
-            Collection<? extends GrantedAuthority> authorities  =  jwt.getClaim("scope");
+            Collection<? extends GrantedAuthority> authorities = jwt.getClaim("scope");
 //            Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(authoritiesSet.toArray(new String[0]));
             return new CustomerAuthenticationToken(jwt, authorities);
         }
@@ -101,6 +102,8 @@ public class ResourceServerConfig {
                 .and()
                 .oauth2ResourceServer(
                 ).jwt();
+        // 禁用 session, 很重要，否则网关过来的请求都可以直接访问了
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         return http.build();
     }
 
