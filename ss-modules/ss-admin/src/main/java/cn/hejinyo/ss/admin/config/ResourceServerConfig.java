@@ -15,7 +15,10 @@
  */
 package cn.hejinyo.ss.admin.config;
 
+import cn.hejinyo.ss.admin.feign.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,7 +27,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -36,7 +38,11 @@ import java.util.Collection;
  * @since 0.0.1
  */
 @EnableWebSecurity
+@RequiredArgsConstructor
+@Configuration
 public class ResourceServerConfig {
+
+    private final AuthService authService;
 
     public class CustomerAuthenticationToken extends AbstractAuthenticationToken {
 
@@ -88,8 +94,10 @@ public class ResourceServerConfig {
 
     @Bean
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri("http://127.0.0.1:9001/oauth2/jwks").build();
+        return new SsJwtDecoder(authService);
+//        return NimbusJwtDecoder.withJwkSetUri("http://127.0.0.1:9001/oauth2/jwks").build();
     }
+
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

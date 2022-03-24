@@ -47,6 +47,16 @@
 			<artifactId>spring-security-oauth2-jose</artifactId>
 			<version>5.6.0</version>
 		</dependency>
+		<!-- 加入openfeign -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+		<!-- 加入loadbalancer -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-loadbalancer</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
