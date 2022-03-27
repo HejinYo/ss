@@ -1,6 +1,6 @@
 package cn.hejinyo.ss.gateway.filter;
 
-import cn.hejinyo.ss.gateway.feign.AuthService;
+import cn.hejinyo.ss.gateway.feign.SsAuthMsService;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.context.annotation.Lazy;
@@ -21,12 +21,20 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsAuthGatewayFilterFactory.Config> {
 
-    private final AuthService authService;
+    private final SsAuthMsService authService;
 
-    private final static String SS = "ss ";
+    private static final String STRING_EMPTY = "";
+
+    private static final String STRING_BLANK = " ";
+
+    private static final String SS_WEB = "ss_web" + STRING_BLANK;
+
+    private static final String AUTH_TOKEN_PRE = "Bearer" + STRING_BLANK;
+
+    private static final String AUTH_HEADER = "Authorization";
 
     @Lazy
-    public SsAuthGatewayFilterFactory(AuthService authService) {
+    public SsAuthGatewayFilterFactory(SsAuthMsService authService) {
         super(Config.class);
         this.authService = authService;
     }
@@ -40,7 +48,7 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
             // If you want to build a "pre" filter you need to manipulate the request before calling chain.filter
             ServerHttpRequest.Builder builder = exchange.getRequest().mutate();
             // 微服务token放入到request header中
-            builder.header("Authorization", this.getMsToken(httpHeaders.getFirst("Authorization")));
+            builder.header(AUTH_HEADER, this.checkAndGetMsToken(httpHeaders.getFirst(AUTH_HEADER)));
             // use builder to manipulate the request
             return chain.filter(exchange.mutate().request(builder.build()).build());
         };
@@ -48,24 +56,25 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
 
     /**
      * 检测并获取msToken
-     *
-     * @param accessToken String
-     * @return String
      */
-    private String getMsToken(String accessToken) {
-        if (StringUtils.hasText(accessToken) && accessToken.startsWith(SS)) {
+    private String checkAndGetMsToken(String accessToken) {
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith(SS_WEB)) {
             // 异步调用，否则会报错
-            CompletableFuture<String> f = CompletableFuture.supplyAsync(() -> authService.getMsToken(accessToken.replace(SS, "")));
+            CompletableFuture<String> f = CompletableFuture.supplyAsync(
+                    () -> authService.checkAndGetMsToken(accessToken.replace(SS_WEB, STRING_EMPTY)));
             try {
-                return "Bearer " + f.get();
-            } catch (InterruptedException | ExecutionException e) {
+                return AUTH_TOKEN_PRE + f.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException e) {
                 e.printStackTrace();
             }
         }
-        return accessToken;
+        return STRING_EMPTY;
     }
 
     public static class Config {
         // Put the configuration properties for your filter here
+        String param;
     }
 }

@@ -1,12 +1,24 @@
-package cn.hejinyo.ss.auth.util;
+package cn.hejinyo.ss.common.redis.util;
 
 import cn.hejinyo.ss.common.core.util.JsonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.DataType;
+import org.springframework.data.redis.connection.RedisClusterConnection;
+import org.springframework.data.redis.connection.RedisClusterNode;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisClusterConnection;
+import org.springframework.data.redis.connection.jedis.JedisConnection;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  * @date : 2022/3/22 19:43
  */
 @Component
+@Slf4j
 public class RedisUtils {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -29,7 +42,7 @@ public class RedisUtils {
     /**
      * 不设置过期时长
      */
-    private final static long NOT_EXPIRE = -1;
+    private static final long NOT_EXPIRE = -1;
 
     /**
      * Object转成JSON数据
@@ -77,10 +90,50 @@ public class RedisUtils {
      * @param key String
      */
     public void cleanKey(String key) {
-        Set<String> keys = redisTemplate.keys(key);
-        if (keys != null && keys.size() > 0) {
+        Set<String> keys = this.scanMatch(key);
+        if (CollectionUtils.isEmpty(keys)) {
             redisTemplate.delete(keys);
         }
+    }
+
+    /**
+     * 使用scan遍历key
+     * 为什么不使用keys 因为Keys会引发Redis锁，并且增加Redis的CPU占用,特别是数据庞大的情况下。这个命令千万别在生产环境乱用。
+     * 支持redis单节点和集群调用
+     *
+     * @param matchKey String
+     * @return Set<String>
+     */
+    public Set<String> scanMatch(String matchKey) {
+        Set<String> keys = new HashSet<>();
+        RedisConnectionFactory connectionFactory = redisTemplate.getConnectionFactory();
+        Assert.notNull(connectionFactory, "使用scan遍历key：connectionFactory not null");
+        RedisConnection redisConnection = connectionFactory.getConnection();
+        Cursor<byte[]> scan;
+        if (redisConnection instanceof JedisClusterConnection) {
+            RedisClusterConnection clusterConnection = connectionFactory.getClusterConnection();
+            Iterable<RedisClusterNode> redisClusterNodes = clusterConnection.clusterGetNodes();
+            for (RedisClusterNode next : redisClusterNodes) {
+                scan = clusterConnection.scan(next, ScanOptions.scanOptions().match(matchKey).count(Integer.MAX_VALUE).build());
+                while (scan.hasNext()) {
+                    keys.add(new String(scan.next()));
+                }
+                scan.close();
+            }
+            return keys;
+        }
+        if (redisConnection instanceof JedisConnection) {
+            scan = redisConnection.scan(ScanOptions.scanOptions().match(matchKey).count(Integer.MAX_VALUE).build());
+            while (scan.hasNext()) {
+                //找到一次就添加一次
+                keys.add(new String(scan.next()));
+            }
+            scan.close();
+            return keys;
+        }
+
+        return keys;
+
     }
 
     /**
@@ -228,7 +281,7 @@ public class RedisUtils {
         if (expire != NOT_EXPIRE) {
             redisTemplate.expire(key, expire, TimeUnit.SECONDS);
         }
-        return value == null ? null : JsonUtils.toObject(value, clazz);
+        return value == null ? null : this.fromJson(value, clazz);
     }
 
     /**

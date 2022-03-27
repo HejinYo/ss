@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/20 20:34
  */
-@FeignClient(contextId = "authService", value = "ss-auth")
-public interface AuthService {
+@FeignClient(contextId = "ssAuthMsService", value = "ss-auth")
+public interface SsAuthMsService {
 
     /**
-     * jwks
+     * 获取 jwkSet
      *
      * @return String
      */
-    @GetMapping("/oauth2/jwks")
-    String jwks();
+    @GetMapping("/ms/auth/jwkSet")
+    String jwkSet();
 
 }

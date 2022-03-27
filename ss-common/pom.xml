@@ -16,6 +16,8 @@
 
         <module>ss-common-core</module>
 
+        <module>ss-common-redis</module>
+
     </modules>
 
     <dependencies>

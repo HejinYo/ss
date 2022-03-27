@@ -20,36 +20,55 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+
 /**
- * DefaultSecurityConfig
+ * AuthorizationServerConfig
  *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/11/3 22:27
  */
-@EnableWebSecurity
 @Slf4j
 @RefreshScope
+@EnableWebSecurity
 public class AuthorizationServerConfig {
 
-    @Value("${jwt.privateKey}")
-    private String privateKeyValue;
+    /**
+     * jwt 私钥
+     */
+    @Value("${login.token.pri}")
+    private String pri;
 
-    @Value("${jwt.publicKey}")
-    private String publicKeyValue;
+    /**
+     * jwt 公钥
+     */
+    @Value("${login.token.pub}")
+    private String pub;
 
-    @Value("${jwt.kid}")
-    private String kidValue;
+    /**
+     * jwt 密钥 ID 可用于匹配特定密钥
+     */
+    @Value("${login.token.kid}")
+    private String kid;
 
+    /**
+     * 授权服务器的过滤器链
+     *
+     * @param http HttpSecurity
+     * @return SecurityFilterChain
+     */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+
         http.authorizeRequests(req -> {
+            // 微服务验证msToken
+            req.antMatchers("/ms/auth/jwkSet").permitAll();
+            // 网关验证accessToken
+            req.antMatchers("/ms/auth/checkAndGetMsToken").permitAll();
+            // 登录逻辑
+            req.antMatchers("/api/auth/login").permitAll();
             // 测试路径
-            req.antMatchers("/test/**").permitAll();
-            req.antMatchers("/ms/auth/**").permitAll();
-            req.antMatchers("/oauth2/jwks").permitAll();
-            // 新的登录逻辑测试
-            req.antMatchers("/v2/login/**").permitAll();
+            req.antMatchers("/api/test/**").permitAll();
             // 其他的都需要认证访问
             req.anyRequest().authenticated();
         });
@@ -59,15 +78,25 @@ public class AuthorizationServerConfig {
         return http.build();
     }
 
+    /**
+     * JSON Web 密钥 (JWK) 源。 公开用于检索与指定选择器匹配的 JWK 的方法
+     *
+     * @return JWKSource<SecurityContext>
+     */
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
-        RSAPublicKey publicKey = (RSAPublicKey) Utils.getPublicKey(publicKeyValue);
-        RSAPrivateKey privateKey = (RSAPrivateKey) Utils.getPrivateKey(privateKeyValue);
-        RSAKey rsaKey = new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(kidValue).build();
+        RSAPublicKey publicKey = (RSAPublicKey) Utils.getPublicKey(pub);
+        RSAPrivateKey privateKey = (RSAPrivateKey) Utils.getPrivateKey(pri);
+        RSAKey rsaKey = new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(kid).build();
         JWKSet jwkSet = new JWKSet(rsaKey);
         return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
     }
 
+    /**
+     * 用于编码密码的服务，推荐使用BCryptPasswordEncoder
+     *
+     * @return PasswordEncoder
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();

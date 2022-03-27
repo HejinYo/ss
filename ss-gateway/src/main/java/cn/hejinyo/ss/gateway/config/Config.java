@@ -10,12 +10,20 @@ import org.springframework.http.converter.HttpMessageConverter;
 import java.util.stream.Collectors;
 
 /**
+ * 配置
+ *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/20 21:02
  */
 @Configuration
 public class Config {
 
+    /**
+     * 消息转换器
+     *
+     * @param converters ObjectProvider
+     * @return HttpMessageConverters
+     */
     @Bean
     @ConditionalOnMissingBean
     public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {

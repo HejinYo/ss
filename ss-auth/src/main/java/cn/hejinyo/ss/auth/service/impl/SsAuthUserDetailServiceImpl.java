@@ -1,5 +1,6 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.service.impl;
 
+import cn.hejinyo.ss.auth.vo.SsAuthUserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -35,6 +36,7 @@ public class SsAuthUserDetailServiceImpl implements UserDetailsService {
         authoritiesSet.add("sys:user:create");
         Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(authoritiesSet.toArray(new String[0]));
         boolean enabled = StringUtils.hasLength(userName);
-        return new SsAuthUser("HejinYo", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("123456"), enabled, enabled, enabled, enabled, authorities);
+        return new SsAuthUserVo("HejinYo", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("123456"),
+                enabled, enabled, enabled, enabled, authorities);
     }
 }

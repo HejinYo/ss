@@ -1,4 +1,4 @@
-package cn.hejinyo.ss.auth.security;
+package cn.hejinyo.ss.auth.vo;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -8,13 +8,14 @@ import org.springframework.security.core.userdetails.User;
 import java.util.Collection;
 
 /**
+ * 构建的登陆用户
  * 注解 JsonTypeInfo 多态类型处理 https://www.jianshu.com/p/a21f1633d79c
  *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/10/31 20:38
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
-public class SsAuthUser extends User {
+public class SsAuthUserVo extends User {
 
     /**
      * Construct the <code>User</code> with the details required by
@@ -31,8 +32,8 @@ public class SsAuthUser extends User {
      * @throws IllegalArgumentException if a <code>null</code> value was passed either as
      *                                  a parameter or as an element in the <code>GrantedAuthority</code> collection
      */
-    public SsAuthUser(String username, String password, boolean enabled, boolean accountNonExpired,
-                      boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public SsAuthUserVo(String username, String password, boolean enabled, boolean accountNonExpired,
+                        boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
     }
 }

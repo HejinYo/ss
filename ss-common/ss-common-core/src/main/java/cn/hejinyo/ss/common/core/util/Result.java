@@ -5,23 +5,23 @@ import cn.hejinyo.ss.common.core.constant.CommonStatusConstant;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 /**
  * 返回结果
  *
+ * @param <T> Serializable
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2017/8/5 18:25
  */
 @Getter
 @Setter
-public class Result<T> implements Serializable {
+public final class Result<T> {
+
     private static final int SUCCESS = CommonStatusConstant.SUCCESS.getCode();
     private static final int ERROR = CommonStatusConstant.FAILURE.getCode();
 
     private String msg;
     private Integer code;
-    private Object data;
+    private T data;
 
     private Result() {
         super();
@@ -33,7 +33,7 @@ public class Result<T> implements Serializable {
         return result;
     }
 
-    public static <T> Result<T> ok(Object data) {
+    public static <T> Result<T> ok(T data) {
         Result<T> result = ok();
         result.setData(data);
         return result;

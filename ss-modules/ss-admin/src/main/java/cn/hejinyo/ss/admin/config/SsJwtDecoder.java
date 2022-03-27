@@ -1,6 +1,6 @@
 package cn.hejinyo.ss.admin.config;
 
-import cn.hejinyo.ss.admin.feign.AuthService;
+import cn.hejinyo.ss.admin.feign.SsAuthMsService;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.RemoteKeySourceException;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -45,7 +45,8 @@ public class SsJwtDecoder implements JwtDecoder {
 
     private final JWTProcessor<SecurityContext> jwtProcessor;
 
-    private final Converter<Map<String, Object>, Map<String, Object>> claimSetConverter = MappedJwtClaimSetConverter.withDefaults(Collections.emptyMap());
+    private final Converter<Map<String, Object>, Map<String, Object>> claimSetConverter =
+            MappedJwtClaimSetConverter.withDefaults(Collections.emptyMap());
 
     private final OAuth2TokenValidator<Jwt> jwtValidator = JwtValidators.createDefault();
 
@@ -53,24 +54,26 @@ public class SsJwtDecoder implements JwtDecoder {
 
     private static final String DECODING_ERROR_MESSAGE_TEMPLATE = "An error occurred while attempting to decode the Jwt: %s";
 
-    public SsJwtDecoder(AuthService authService) {
-        JWKSource<SecurityContext> jwkSource = (jwkSelector, securityContext) -> jwkSelector.select(this.updateJWKSetFromURL(authService));
-        ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-        jwtProcessor.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, jwkSource));
-        jwtProcessor.setJWTClaimsSetVerifier((claims, context) -> {
+    public SsJwtDecoder(SsAuthMsService authService) {
+        JWKSource<SecurityContext> jwkSource = (jwkSelector, securityContext) -> jwkSelector.select(this.updateJwkSetFromUrl(authService));
+        ConfigurableJWTProcessor<SecurityContext> defaultJwtProcessor = new DefaultJWTProcessor<>();
+        defaultJwtProcessor.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, jwkSource));
+        defaultJwtProcessor.setJWTClaimsSetVerifier((claims, context) -> {
         });
-        this.jwtProcessor = jwtProcessor;
+        this.jwtProcessor = defaultJwtProcessor;
     }
 
-    private JWKSet updateJWKSetFromURL(AuthService authService) throws RemoteKeySourceException {
-        String content = authService.jwks();
+    private JWKSet updateJwkSetFromUrl(SsAuthMsService authService) throws RemoteKeySourceException {
+        String content = authService.jwkSet();
         JWKSet jwkSet;
         try {
             jwkSet = JWKSet.parse(content);
         } catch (java.text.ParseException e) {
             throw new RemoteKeySourceException("Couldn't parse remote JWK set: " + e.getMessage(), e);
         }
-        // jwkSetCache.put(jwkSet);
+        if (jwkSetCache != null) {
+            jwkSetCache.put(jwkSet);
+        }
         return jwkSet;
     }
 
@@ -110,8 +113,12 @@ public class SsJwtDecoder implements JwtDecoder {
             Map<String, Object> headers = new LinkedHashMap<>(parsedJwt.getHeader().toJSONObject());
             Map<String, Object> claims = this.claimSetConverter.convert(jwtClaimsSet.getClaims());
             return Jwt.withTokenValue(token)
-                    .headers((h) -> h.putAll(headers))
-                    .claims((c) -> c.putAll(claims))
+                    .headers(h -> h.putAll(headers))
+                    .claims(c -> {
+                        if (claims != null) {
+                            c.putAll(claims);
+                        }
+                    })
                     .build();
             // @formatter:on
         } catch (Exception ex) {

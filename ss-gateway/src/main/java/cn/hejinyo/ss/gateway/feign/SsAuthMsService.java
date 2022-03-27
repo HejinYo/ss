@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/20 20:34
  */
-@FeignClient(contextId = "authService", value = "ss-auth")
-public interface AuthService {
+@FeignClient(contextId = "ssAuthMsService", value = "ss-auth")
+public interface SsAuthMsService {
 
     /**
      * 通过访问token获取业务token
@@ -17,7 +17,7 @@ public interface AuthService {
      * @param accessToken 访问token
      * @return String
      */
-    @PostMapping("/ms/auth/getMsToken")
-    String getMsToken(@RequestBody String accessToken);
+    @PostMapping("/ms/auth/checkAndGetMsToken")
+    String checkAndGetMsToken(@RequestBody String accessToken);
 
 }

@@ -16,13 +16,17 @@
 package cn.hejinyo.ss.admin.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author Joe Grandja
- * @since 0.0.1
+ * MessagesController
+ *
+ * @author : HejinYo   hejinyo@gmail.com
+ * @date : 2022/3/24 19:05
  */
 @RestController
+@RequestMapping("/api/admin/")
 public class MessagesController {
 
     @GetMapping("/messages")

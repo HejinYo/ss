@@ -1,17 +1,16 @@
-package cn.hejinyo.ss.auth.controller;
+package cn.hejinyo.ss.auth.service.impl;
 
-import cn.hejinyo.ss.auth.security.SsAuthUserDetailServiceImpl;
+import cn.hejinyo.ss.auth.service.SsAuthLoginService;
 import cn.hejinyo.ss.auth.util.RedisKeys;
-import cn.hejinyo.ss.auth.util.RedisUtils;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginReqVo;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginTokenVo;
+import cn.hejinyo.ss.common.redis.util.RedisUtils;
 import com.nimbusds.jose.jwk.JWKMatcher;
 import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,11 +23,8 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -40,15 +36,14 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * 登录逻辑
+ * 用户登陆实现
  *
  * @author : HejinYo   hejinyo@gmail.com
- * @date : 2022/3/11
+ * @date : 2022/3/27 18:50
  */
-@RestController
+@Service
 @RequiredArgsConstructor
-@RequestMapping("/")
-public class LoginController {
+public class SsAuthLoginServiceImpl implements SsAuthLoginService {
 
     private final SsAuthUserDetailServiceImpl userDetailService;
 
@@ -58,8 +53,11 @@ public class LoginController {
 
     private final RedisUtils redisUtils;
 
-    @PostMapping("/v2/login")
-    public SsAuthLoginTokenVo login(@RequestBody SsAuthLoginReqVo ssAuthLoginReqVo) {
+    /**
+     * 用户登陆返回token
+     */
+    @Override
+    public SsAuthLoginTokenVo login(SsAuthLoginReqVo ssAuthLoginReqVo) {
         String username = ssAuthLoginReqVo.getUsername();
         // 根据用户名查询用户
         UserDetails userDetails = userDetailService.loadUserByUsername(username);
@@ -100,11 +98,15 @@ public class LoginController {
         redisUtils.setEx(RedisKeys.USER_TOKEN + tokenId, jwtAccessToken.getTokenValue(), expiresSeconds);
         SsAuthLoginTokenVo tokenVo = new SsAuthLoginTokenVo();
         tokenVo.setTokenValue(tokenId);
-        tokenVo.setTokenType("ss");
+        tokenVo.setTokenType("ss_web");
         tokenVo.setExpiresIn(jwtAccessToken.getExpiresAt());
         return tokenVo;
     }
 
+
+    /**
+     * 验证用户密码
+     */
     private void additionalAuthenticationChecks(UserDetails userDetails, SsAuthLoginReqVo authentication) throws AuthenticationException {
         if (authentication.getPassword() == null) {
             throw new BadCredentialsException("用户密码错误");
@@ -115,8 +117,11 @@ public class LoginController {
         }
     }
 
-    @GetMapping(value = "/oauth2/jwks", produces = MediaType.APPLICATION_JSON_VALUE)
-    public String jwks() {
+    /**
+     * 微服务获取 jwk
+     */
+    @Override
+    public String jwkSet() {
         try {
             JWKSelector selector = new JWKSelector(new JWKMatcher.Builder().build());
             return new JWKSet(this.jwkSource.get(selector, null)).toString();
@@ -125,4 +130,17 @@ public class LoginController {
         }
     }
 
+
+    /**
+     * 验证是否登陆并换取微服务 MsToken
+     */
+    @Override
+    public String checkAndGetMsToken(String accessToken) {
+        String token = redisUtils.get(RedisKeys.USER_TOKEN + accessToken);
+        if (StringUtils.hasText(token)) {
+            return token;
+        }
+        // token过期，需要重新登陆
+        return null;
+    }
 }
