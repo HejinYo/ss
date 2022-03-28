@@ -1,5 +1,6 @@
 package cn.hejinyo.ss.auth.service.impl;
 
+import cn.hejinyo.ss.auth.constant.TokenTypeEnum;
 import cn.hejinyo.ss.auth.service.SsAuthLoginService;
 import cn.hejinyo.ss.auth.util.RedisKeys;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginReqVo;
@@ -13,6 +14,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
@@ -28,12 +30,11 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * 用户登陆实现
@@ -52,6 +53,11 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
     private final JWKSource<SecurityContext> jwkSource;
 
     private final RedisUtils redisUtils;
+
+    /**
+     * TODO 放到 nacos 配置中
+     */
+    private static final String ISS_USER = "https://m.hejinyo.cn";
 
     /**
      * 用户登陆返回token
@@ -74,19 +80,19 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
         JwtClaimsSet.Builder claimsBuilder = JwtClaimsSet.builder();
         claimsBuilder
                 // 签发者
-                .issuer("http://m.hejinyo.cn")
+                .issuer(ISS_USER)
                 // 主体
                 .subject(username)
                 // 接收者
-                .audience(Collections.singletonList("SS-WEB"))
+                .audience(Collections.singletonList(TokenTypeEnum.SS_WEB.getDesc()))
                 // 签发时间
                 .issuedAt(issuedAt)
                 // 有效时间
                 .expiresAt(expiresAt)
                 // 之前无效
                 .notBefore(issuedAt);
-        // 用户权限
-        Set<String> scopes = new HashSet<>(Arrays.asList("sys:user:create", "ROLE_admin"));
+        // 用户权限，在这里不可能为null
+        Set<String> scopes = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
         claimsBuilder.claim(OAuth2ParameterNames.SCOPE, scopes);
         JwtClaimsSet claims = claimsBuilder.build();
         JwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource);
@@ -98,11 +104,10 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
         redisUtils.setEx(RedisKeys.USER_TOKEN + tokenId, jwtAccessToken.getTokenValue(), expiresSeconds);
         SsAuthLoginTokenVo tokenVo = new SsAuthLoginTokenVo();
         tokenVo.setTokenValue(tokenId);
-        tokenVo.setTokenType("ss_web");
+        tokenVo.setTokenType(TokenTypeEnum.SS_WEB);
         tokenVo.setExpiresIn(jwtAccessToken.getExpiresAt());
         return tokenVo;
     }
-
 
     /**
      * 验证用户密码

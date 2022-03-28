@@ -13,6 +13,6 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class RedisKeys {
 
-    public static final String USER_TOKEN = "auth:user:login:token";
+    public static final String USER_TOKEN = "auth:user:login:token:";
 
 }

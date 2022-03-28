@@ -32,7 +32,7 @@ public class SsAuthUserDetailServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("用户[" + userName + "]不存在");
         }
         Set<String> authoritiesSet = new HashSet<>();
-        authoritiesSet.add("ROLE_root");
+        authoritiesSet.add("ROLE_admin");
         authoritiesSet.add("sys:user:create");
         Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(authoritiesSet.toArray(new String[0]));
         boolean enabled = StringUtils.hasLength(userName);

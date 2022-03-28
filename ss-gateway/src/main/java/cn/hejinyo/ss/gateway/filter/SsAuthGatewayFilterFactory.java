@@ -27,7 +27,7 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
 
     private static final String STRING_BLANK = " ";
 
-    private static final String SS_WEB = "ss_web" + STRING_BLANK;
+    private static final String SS_TOKEN = "SS_TOKEN";
 
     private static final String AUTH_TOKEN_PRE = "Bearer" + STRING_BLANK;
 
@@ -58,10 +58,10 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
      * 检测并获取msToken
      */
     private String checkAndGetMsToken(String accessToken) {
-        if (StringUtils.hasText(accessToken) && accessToken.startsWith(SS_WEB)) {
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith(SS_TOKEN)) {
             // 异步调用，否则会报错
             CompletableFuture<String> f = CompletableFuture.supplyAsync(
-                    () -> authService.checkAndGetMsToken(accessToken.replace(SS_WEB, STRING_EMPTY)));
+                    () -> authService.checkAndGetMsToken(accessToken.replace(SS_TOKEN, STRING_EMPTY).trim()));
             try {
                 return AUTH_TOKEN_PRE + f.get();
             } catch (InterruptedException e) {
@@ -70,7 +70,7 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
                 e.printStackTrace();
             }
         }
-        return STRING_EMPTY;
+        return null;
     }
 
     public static class Config {

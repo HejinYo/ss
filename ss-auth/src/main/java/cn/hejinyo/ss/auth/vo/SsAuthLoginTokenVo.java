@@ -1,5 +1,6 @@
 package cn.hejinyo.ss.auth.vo;
 
+import cn.hejinyo.ss.auth.constant.TokenTypeEnum;
 import lombok.Data;
 
 import java.time.Instant;
@@ -21,7 +22,7 @@ public class SsAuthLoginTokenVo {
     /**
      * token类型
      */
-    private String tokenType;
+    private TokenTypeEnum tokenType;
 
     /**
      * 过期时间
