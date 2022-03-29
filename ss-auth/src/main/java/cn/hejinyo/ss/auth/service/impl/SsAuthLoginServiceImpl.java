@@ -1,10 +1,12 @@
 package cn.hejinyo.ss.auth.service.impl;
 
-import cn.hejinyo.ss.auth.constant.TokenTypeEnum;
+import cn.hejinyo.ss.auth.constant.TokenAudienceEnum;
+import cn.hejinyo.ss.auth.feign.SsAdminMsService;
 import cn.hejinyo.ss.auth.service.SsAuthLoginService;
 import cn.hejinyo.ss.auth.util.RedisKeys;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginReqVo;
 import cn.hejinyo.ss.auth.vo.SsAuthLoginTokenVo;
+import cn.hejinyo.ss.auth.vo.SsUserInfoVo;
 import cn.hejinyo.ss.common.redis.util.RedisUtils;
 import com.nimbusds.jose.jwk.JWKMatcher;
 import com.nimbusds.jose.jwk.JWKSelector;
@@ -15,7 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
@@ -30,11 +36,13 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * 用户登陆实现
@@ -46,7 +54,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SsAuthLoginServiceImpl implements SsAuthLoginService {
 
-    private final SsAuthUserDetailServiceImpl userDetailService;
+    private final SsAdminMsService ssAdminMsService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -59,6 +67,21 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
      */
     private static final String ISS_USER = "https://m.hejinyo.cn";
 
+
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        // TODO 查询RPC接口
+        if (!"HejinYo".equals(userName)) {
+            throw new UsernameNotFoundException("用户[" + userName + "]不存在");
+        }
+        Set<String> authoritiesSet = new HashSet<>();
+        authoritiesSet.add("ROLE_admin");
+        authoritiesSet.add("sys:user:create");
+        Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(authoritiesSet.toArray(new String[0]));
+        boolean enabled = StringUtils.hasLength(userName);
+        return new User("HejinYo", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("123456"),
+                enabled, enabled, enabled, enabled, authorities);
+    }
+
     /**
      * 用户登陆返回token
      */
@@ -66,7 +89,7 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
     public SsAuthLoginTokenVo login(SsAuthLoginReqVo ssAuthLoginReqVo) {
         String username = ssAuthLoginReqVo.getUsername();
         // 根据用户名查询用户
-        UserDetails userDetails = userDetailService.loadUserByUsername(username);
+        SsUserInfoVo userDetails = ssAdminMsService.loadUserByUsername(username);
         // 对比用户名密码是否正确
         this.additionalAuthenticationChecks(userDetails, ssAuthLoginReqVo);
         // JWT 头部
@@ -83,8 +106,8 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
                 .issuer(ISS_USER)
                 // 主体
                 .subject(username)
-                // 接收者
-                .audience(Collections.singletonList(TokenTypeEnum.SS_WEB.getDesc()))
+                // 受众
+                .audience(Collections.singletonList(TokenAudienceEnum.SS_WEB.getDesc()))
                 // 签发时间
                 .issuedAt(issuedAt)
                 // 有效时间
@@ -92,8 +115,7 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
                 // 之前无效
                 .notBefore(issuedAt);
         // 用户权限，在这里不可能为null
-        Set<String> scopes = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-        claimsBuilder.claim(OAuth2ParameterNames.SCOPE, scopes);
+        claimsBuilder.claim(OAuth2ParameterNames.SCOPE, Optional.ofNullable(userDetails.getAuthorities()).orElseGet(HashSet::new));
         JwtClaimsSet claims = claimsBuilder.build();
         JwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource);
         JwtEncoderParameters jwtEncoderParameters = JwtEncoderParameters.from(headers, claims);
@@ -101,10 +123,10 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
         String tokenId = UUID.randomUUID().toString();
         // redis 时间比实际token超时时间少5s
         long expiresSeconds = Duration.between(new Date().toInstant(), expiresAt).getSeconds() - 5;
-        redisUtils.setEx(RedisKeys.USER_TOKEN + tokenId, jwtAccessToken.getTokenValue(), expiresSeconds);
+        redisUtils.setEx(RedisKeys.userToken(tokenId), jwtAccessToken.getTokenValue(), expiresSeconds);
         SsAuthLoginTokenVo tokenVo = new SsAuthLoginTokenVo();
         tokenVo.setTokenValue(tokenId);
-        tokenVo.setTokenType(TokenTypeEnum.SS_WEB);
+        tokenVo.setTokenType("SS_TOKEN");
         tokenVo.setExpiresIn(jwtAccessToken.getExpiresAt());
         return tokenVo;
     }
@@ -112,7 +134,10 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
     /**
      * 验证用户密码
      */
-    private void additionalAuthenticationChecks(UserDetails userDetails, SsAuthLoginReqVo authentication) throws AuthenticationException {
+    private void additionalAuthenticationChecks(SsUserInfoVo userDetails, SsAuthLoginReqVo authentication) throws AuthenticationException {
+        if (userDetails == null || !"HejinYo".equals(userDetails.getUsername())) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
         if (authentication.getPassword() == null) {
             throw new BadCredentialsException("用户密码错误");
         }
@@ -135,13 +160,12 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
         }
     }
 
-
     /**
      * 验证是否登陆并换取微服务 MsToken
      */
     @Override
     public String checkAndGetMsToken(String accessToken) {
-        String token = redisUtils.get(RedisKeys.USER_TOKEN + accessToken);
+        String token = redisUtils.get(RedisKeys.userToken(accessToken));
         if (StringUtils.hasText(token)) {
             return token;
         }

@@ -13,6 +13,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class RedisKeys {
 
-    public static final String USER_TOKEN = "auth:user:login:token:";
-
+    /**
+     * 用户token存放
+     *
+     * @param id String
+     * @return String
+     */
+    public static String userToken(String id) {
+        return "auth:user:login:token:" + id;
+    }
 }

@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 签发的token用于登陆的类型
+ * 签发的token用于登陆的受众
  *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2022/3/28 20:32
  */
-@AllArgsConstructor
 @Getter
-public enum TokenTypeEnum {
+@AllArgsConstructor
+public enum TokenAudienceEnum {
 
     /**
      * 网页端
@@ -19,7 +19,7 @@ public enum TokenTypeEnum {
     SS_WEB("ss-web", "网页"),
 
     /**
-     * APP，不知道是否区分 android 和 ios
+     * APP
      */
     SS_MOBILE("ss-app", "APP"),
 

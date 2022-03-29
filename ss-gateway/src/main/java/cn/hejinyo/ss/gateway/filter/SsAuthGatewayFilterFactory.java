@@ -27,7 +27,7 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
 
     private static final String STRING_BLANK = " ";
 
-    private static final String SS_TOKEN = "SS_TOKEN";
+    public static final String SS_TOKEN_TYPE = "SS_TOKEN";
 
     private static final String AUTH_TOKEN_PRE = "Bearer" + STRING_BLANK;
 
@@ -58,10 +58,10 @@ public class SsAuthGatewayFilterFactory extends AbstractGatewayFilterFactory<SsA
      * 检测并获取msToken
      */
     private String checkAndGetMsToken(String accessToken) {
-        if (StringUtils.hasText(accessToken) && accessToken.startsWith(SS_TOKEN)) {
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith(SS_TOKEN_TYPE)) {
             // 异步调用，否则会报错
             CompletableFuture<String> f = CompletableFuture.supplyAsync(
-                    () -> authService.checkAndGetMsToken(accessToken.replace(SS_TOKEN, STRING_EMPTY).trim()));
+                    () -> authService.checkAndGetMsToken(accessToken.replace(SS_TOKEN_TYPE, STRING_EMPTY).trim()));
             try {
                 return AUTH_TOKEN_PRE + f.get();
             } catch (InterruptedException e) {

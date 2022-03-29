@@ -11,11 +11,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/10/18 23:46
  */
-@EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = {
         "cn.hejinyo.ss.auth",
         "cn.hejinyo.ss.common.redis"
 })
+@EnableFeignClients
+@EnableDiscoveryClient
 public class SsAuthApplication {
 
     public static void main(String[] args) {
