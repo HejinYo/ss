@@ -1,5 +1,6 @@
 package cn.hejinyo.ss.admin.service.impl;
 
+import cn.hejinyo.ss.admin.constant.UserStateEnum;
 import cn.hejinyo.ss.admin.entity.UserEntity;
 import cn.hejinyo.ss.admin.repository.UserRepository;
 import cn.hejinyo.ss.admin.service.UserService;
@@ -9,7 +10,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,6 +29,8 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 通过用户名查询用户信息
+     * <p>
+     * PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("123456")
      *
      * @param username 用户名
      * @return 用户信息
@@ -37,13 +39,15 @@ public class UserServiceImpl implements UserService {
     public UserDetails getByUsername(String username) {
         UserEntity userEntity = userRepository.findByUsername(username);
         if (userEntity != null) {
-            boolean enabled = StringUtils.hasLength(username);
+            // TODO 查询角色 权限
             Set<String> authoritiesSet = new HashSet<>();
             authoritiesSet.add("ROLE_admin");
             authoritiesSet.add("sys:user:create");
             Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(authoritiesSet.toArray(new String[0]));
-            // PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("123456")
-            return new User(username, userEntity.getPassword(), enabled, enabled, enabled, enabled, authorities);
+            UserStateEnum state = userEntity.getState();
+            boolean enabled = UserStateEnum.ENABLED.equals(state);
+            boolean accountNonLocked = !UserStateEnum.LOCK.equals(state);
+            return new User(username, userEntity.getPassword(), enabled, Boolean.TRUE, Boolean.TRUE, accountNonLocked, authorities);
         }
         return null;
     }

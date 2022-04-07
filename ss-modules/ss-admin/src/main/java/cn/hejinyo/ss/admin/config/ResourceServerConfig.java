@@ -60,6 +60,8 @@ public class ResourceServerConfig {
         http.authorizeRequests()
                 // 测试路径
                 .antMatchers("/api/admin/test/**").permitAll()
+                // 微服务
+                .antMatchers("/ms/**").permitAll()
                 .mvcMatchers("/api/admin/messages").access("hasRole('ROLE_admin')")
 //                .mvcMatchers("/messages/**").authenticated()
                 .and()
