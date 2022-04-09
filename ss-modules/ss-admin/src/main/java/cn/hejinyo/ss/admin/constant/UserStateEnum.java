@@ -1,5 +1,7 @@
 package cn.hejinyo.ss.admin.constant;
 
+import cn.hejinyo.ss.common.core.enums.BaseEnum;
+import cn.hejinyo.ss.common.core.enums.BaseEnumConverter;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum UserStateEnum {
+public enum UserStateEnum implements BaseEnum<Integer> {
 
     /**
      * 禁用
@@ -32,4 +34,10 @@ public enum UserStateEnum {
     @JsonValue
     private Integer value;
     private String desc;
+
+    @javax.persistence.Converter(autoApply = true)
+    public static class Converter extends BaseEnumConverter<UserStateEnum, Integer> {
+
+    }
+
 }

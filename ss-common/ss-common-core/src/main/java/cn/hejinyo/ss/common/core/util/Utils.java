@@ -9,11 +9,22 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
 /**
+ * 工具类
+ *
  * @author : HejinYo   hejinyo@gmail.com
  * @date : 2021/12/2 20:54
  */
-public class Utils {
+public final class Utils {
 
+    private Utils() {
+    }
+
+    /**
+     * 获取公钥(yuè)
+     *
+     * @param base64PublicKey String
+     * @return PublicKey
+     */
     public static PublicKey getPublicKey(String base64PublicKey) {
         PublicKey publicKey = null;
         try {
@@ -26,6 +37,12 @@ public class Utils {
         return publicKey;
     }
 
+    /**
+     * 获取密钥(yuè)
+     *
+     * @param base64PrivateKey String
+     * @return PrivateKey
+     */
     public static PrivateKey getPrivateKey(String base64PrivateKey) {
         PrivateKey privateKey = null;
         try {
@@ -37,6 +54,5 @@ public class Utils {
         }
         return privateKey;
     }
-
 
 }

@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
     public UserDetails getByUsername(String username) {
         UserEntity userEntity = userRepository.findByUsername(username);
         if (userEntity != null) {
-            // TODO 查询角色 权限
             Set<String> authoritiesSet = new HashSet<>();
             authoritiesSet.add("ROLE_admin");
             authoritiesSet.add("sys:user:create");

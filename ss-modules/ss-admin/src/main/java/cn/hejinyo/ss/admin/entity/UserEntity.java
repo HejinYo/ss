@@ -1,6 +1,7 @@
 package cn.hejinyo.ss.admin.entity;
 
 import cn.hejinyo.ss.admin.constant.UserStateEnum;
+import cn.hejinyo.ss.common.core.enums.DataStateEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,12 +49,6 @@ public class UserEntity {
     private String password;
 
     /**
-     * 用户加密盐 salt
-     **/
-    @Column(length = 100)
-    private String salt;
-
-    /**
      * 用户状态 0=禁用；1=正常 2=锁定； state
      **/
     private UserStateEnum state;
@@ -61,7 +56,7 @@ public class UserEntity {
     /**
      * 数据状态 0=删除 1=正常 data_state
      */
-    private Integer dataState;
+    private DataStateEnum dataState;
 
     /**
      * 创建时间 create_time
@@ -69,9 +64,9 @@ public class UserEntity {
     private Date createTime;
 
     /**
-     * 创建人员ID create_id
+     * 创建用户编号 create_id
      **/
-    private Integer createId;
+    private Long createId;
 
     /**
      * 修改时间 update_time
@@ -79,8 +74,8 @@ public class UserEntity {
     private Date updateTime;
 
     /**
-     * 修改人员ID update_id
+     * 修改用户编号 update_id
      **/
-    private Integer updateId;
+    private Long updateId;
 
 }

@@ -31,4 +31,5 @@ public class UserMsController {
     public UserDetails getByUsername(@PathVariable("userName") String username) {
         return userService.getByUsername(username);
     }
+    
 }

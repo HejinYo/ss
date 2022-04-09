@@ -16,12 +16,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
@@ -36,12 +31,10 @@ import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -66,21 +59,6 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
      * TODO 放到 nacos 配置中
      */
     private static final String ISS_USER = "https://m.hejinyo.cn";
-
-
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        // TODO 查询RPC接口
-        if (!"HejinYo".equals(userName)) {
-            throw new UsernameNotFoundException("用户[" + userName + "]不存在");
-        }
-        Set<String> authoritiesSet = new HashSet<>();
-        authoritiesSet.add("ROLE_admin");
-        authoritiesSet.add("sys:user:create");
-        Collection<? extends GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(authoritiesSet.toArray(new String[0]));
-        boolean enabled = StringUtils.hasLength(userName);
-        return new User("HejinYo", PasswordEncoderFactories.createDelegatingPasswordEncoder().encode("123456"),
-                enabled, enabled, enabled, enabled, authorities);
-    }
 
     /**
      * 用户登陆返回token
