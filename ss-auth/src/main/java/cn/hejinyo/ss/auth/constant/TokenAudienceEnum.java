@@ -1,5 +1,7 @@
 package cn.hejinyo.ss.auth.constant;
 
+import cn.hejinyo.ss.common.core.enums.BaseEnum;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -11,7 +13,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum TokenAudienceEnum {
+public enum TokenAudienceEnum implements BaseEnum<String> {
 
     /**
      * 网页端
@@ -33,6 +35,8 @@ public enum TokenAudienceEnum {
      */
     SS_WECHAT_MINIPROGRAM("ss-wechat-miniprogram", "微信小程序");
 
-    private String value;
-    private String desc;
+    @JsonValue
+    private final String value;
+    private final String desc;
+
 }
