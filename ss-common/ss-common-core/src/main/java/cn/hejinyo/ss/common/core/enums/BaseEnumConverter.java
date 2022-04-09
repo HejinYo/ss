@@ -17,12 +17,12 @@ import java.util.Map;
  * @date : 2022/4/9 17:42
  */
 @Converter
-public abstract class BaseEnumConverter<E extends BaseEnum<T>, T> implements AttributeConverter<BaseEnum<T>, T> {
+public abstract class BaseEnumConverter<E extends Enum<?> & BaseEnum<T>, T> implements AttributeConverter<BaseEnum<T>, T> {
 
     private final Map<T, E> cacheMap = new LinkedHashMap<>();
 
     /**
-     * 枚举构造方法，反射获取泛xing
+     * 枚举构造方法，反射获取泛型
      */
     @SuppressWarnings("unchecked")
     protected BaseEnumConverter() {
@@ -34,17 +34,6 @@ public abstract class BaseEnumConverter<E extends BaseEnum<T>, T> implements Att
             }
         } catch (Exception e) {
             throw new InfoException("枚举转换初始化失败：" + e.getMessage());
-        }
-    }
-
-    /**
-     * 枚举构造方法
-     *
-     * @param enumType 枚举类型
-     */
-    protected BaseEnumConverter(Class<E> enumType) {
-        for (E enumConstant : enumType.getEnumConstants()) {
-            cacheMap.put(enumConstant.getValue(), enumConstant);
         }
     }
 
