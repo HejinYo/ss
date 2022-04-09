@@ -113,14 +113,11 @@ public class SsAuthLoginServiceImpl implements SsAuthLoginService {
      * 验证用户密码
      */
     private void additionalAuthenticationChecks(SsUserInfoVo userDetails, SsAuthLoginReqVo authentication) throws AuthenticationException {
-        if (userDetails == null || !"HejinYo".equals(userDetails.getUsername())) {
+        if (userDetails == null) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        if (authentication.getPassword() == null) {
-            throw new BadCredentialsException("用户密码错误");
-        }
         String presentedPassword = authentication.getPassword();
-        if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
+        if (presentedPassword == null || !this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
             throw new BadCredentialsException("用户密码错误");
         }
     }
