@@ -211,5 +211,24 @@ echo 0 > brightness
 echo 1 > /sys/class/leds/radxa-zero:green/brightness
 echo 0 > /sys/class/leds/radxa-zero:green/brightness
 
+
+# 定时任务
+vim /etc/crontab
+
+# 每天07:00重启系统
+00 07 * * * root /sbin/reboot
+
+# 每天24:00关闭时钟 关闭电源灯光
+00 00 * * * root /usr/local/bin/mraa-gpio set 18 0
+10 00 * * * root echo 0 > /sys/class/leds/radxa-zero:green/brightness
+
+# 开机开启背光
+vim /etc/rc.local
+
+...
+/usr/local/bin/mraa-gpio set 18 1
+
+exit 0
+
 ```
 
