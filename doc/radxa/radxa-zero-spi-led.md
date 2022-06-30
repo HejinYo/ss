@@ -76,6 +76,7 @@ vim meson-g12a-spi-lcd-1.14.dts
     https://wiki.radxa.com/Zero/hardware/gpio
 
 # GPIOX_9 => 74
+
     https://github.com/radxa/kernel/blob/linux-5.10.y-radxa-zero/include/dt-bindings/gpio/meson-g12a-gpio.h
 
 # 编译成 meson-g12a-spi-lcd-1.14.dtbo
@@ -229,6 +230,18 @@ vim /etc/rc.local
 /usr/local/bin/mraa-gpio set 18 1
 
 exit 0
+
+
+# 解决网络经常断开的问题
+# 如果使用 NetworkManager，您可以通过执行以下操作关闭省电模式：
+
+sudo sed -i 's/wifi.powersave = 3/wifi.powersave = 2/g' /etc/NetworkManager/conf.d/default-wifi-powersave-on.conf
+# 如果使用 ifupdown，请将以下内容添加到/etc/network/interfaces文件中
+
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+	wireless-power off # <-- turn off power save mode
+	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 
 ```
 
