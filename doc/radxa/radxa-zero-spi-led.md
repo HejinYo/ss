@@ -14,6 +14,13 @@ nmcli dev wifi connect "wifi_name" password "wifi_password"
 
 boot-g12.py /Users/hejinyo/Downloads/rz-udisk-loader.bin
 
+执行命令完成后，可发现设备
+
+# 写入镜像 最新的镜像有问题，这个版本的可以启动
+https://github.com/radxa-build/radxa-zero/releases/tag/20220801-0213
+
+使用 balenaEtcher 写入 设备
+
 
 #Ubuntu连接蓝牙鼠标键盘
 代码:
