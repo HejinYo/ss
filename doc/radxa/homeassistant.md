@@ -33,3 +33,4 @@ sudo pip3 install frontend -i  https://mirrors.aliyun.com/pypi/simple/
 sudo pip3 install history -i  https://mirrors.aliyun.com/pypi/simple/
 
 websocket_api webhook analytics auth  person api  config  onboarding search frontend history -i  https://mirrors.aliyun.com/pypi/simple/
+

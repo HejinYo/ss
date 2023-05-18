@@ -238,6 +238,8 @@ vim /etc/rc.local
 
 exit 0
 
+# python gpio 可以使用 pwm
+/usr/local/share/mraa/examples/python
 
 # 解决网络经常断开的问题
 # 如果使用 NetworkManager，您可以通过执行以下操作关闭省电模式：
@@ -252,3 +254,26 @@ iface wlan0 inet dhcp
 
 ```
 
+
+```shell
+
+docker run -d \
+--name homeassistant \
+--privileged \
+--restart=unless-stopped \
+-e TZ=Asia/Chongqing \
+-v /home/rock/homeassistant:/config \
+--network=host \
+ghcr.io/home-assistant/home-assistant:stable
+
+
+
+
+function proxy_on() {
+export http_proxy="http://192.168.31.114:1082"
+export https_proxy=$http_proxy
+echo -e "已开启代理"
+}
+
+
+```

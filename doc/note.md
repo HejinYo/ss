@@ -132,7 +132,8 @@ password: nacos
 ```shell
 create user 'nacos'@'%' identified by 'nacos';
 update user set host='%' where user='nacos';
-grant all privileges on nacos.* to 'nacos’@‘%’;
+#grant all privileges on nacos.* to 'nacos’@‘%';
+GRANT ALL privileges ON nacos.* TO 'nacos'@'%'
 flush privileges;
 
 vim doc/nacos/conf/application.properties
@@ -152,5 +153,25 @@ docker run --name kris-redis -p 6388:6379 -d redis --requirepass "xxxxxx"
 
 # nacos
 docker run --name nacos  -e MODE=standalone  -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=m.hejinyo.cn  -e MYSQL_SERVICE_PORT=3306 -e MYSQL_SERVICE_USER=nacos  -e MYSQL_SERVICE_PASSWORD=nacos  -e MYSQL_SERVICE_DB_NAME=nacos  -p 8848:8848 -d  nacos/nacos-server
+
+```
+
+
+```shell
+
+# 获取容器IP
+docker inspect mysql | grep IPAddress
+
+# wsl 环境，会有权限的问题启动不了，需要指定 --privileged=true 获得物理主机root用户权限
+# mysql
+docker run --name mysql -p 3306:3306 --privileged=true -v /mnt/d/archive/workspace/tools/mysql/data:/var/lib/mysql -v /mnt/d/archive/workspace/tools/mysql/conf:/etc/mysql/conf.d:rw -e MYSQL_ROOT_PASSWORD=redhat -d mysql:8.0.33 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+# nacos 
+docker run --name nacos -e MODE=standalone -p 8848:8848 --privileged=true -v /mnt/d/archive/workspace/tools/nacos/conf/application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
+
+# win 环境
+# mysql
+docker run --name mysql -p 3306:3306 --privileged=true -v d:\archive\workspace\tools\mysql\data:/var/lib/mysql -v d:\archive\workspace\tools\mysql\conf:/etc/mysql/conf.d:rw -e MYSQL_ROOT_PASSWORD=redhat -d mysql:8.0.33 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+# nacos 
+docker run --name nacos -e MODE=standalone -p 8848:8848 --privileged=true -v d:\archive\workspace\tools\nacos\conf\application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
 
 ```
