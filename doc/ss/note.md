@@ -19,7 +19,7 @@ clone 时 使用'git clone' 或 git lfs clone均可
 
 ```
 
-# git 使用toke操作
+# git 使用token操作
 
 ```shell
 vim .git/config 
@@ -91,7 +91,7 @@ function proxy_off(){
 
 function proxy_on() {
     export no_proxy="localhost,127.0.0.1,localaddress,.localdomain.com"
-    export http_proxy="http://127.0.0.1:8118"
+    export http_proxy="http://192.168.31.114:1082"
     export https_proxy=$http_proxy
     echo -e "已开启代理"
 }
@@ -166,12 +166,12 @@ docker inspect mysql | grep IPAddress
 # mysql
 docker run --name mysql -p 3306:3306 --privileged=true -v /mnt/d/archive/workspace/tools/mysql/data:/var/lib/mysql -v /mnt/d/archive/workspace/tools/mysql/conf:/etc/mysql/conf.d:rw -e MYSQL_ROOT_PASSWORD=redhat -d mysql:8.0.33 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 # nacos 
-docker run --name nacos -e MODE=standalone -p 8848:8848 --privileged=true -v /mnt/d/archive/workspace/tools/nacos/conf/application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
+docker run --name nacos -p 8848:8848 -p 9848:9848 --privileged=true -e MODE=standalone -v /mnt/d/archive/workspace/tools/nacos/conf/application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
 
 # win 环境
 # mysql
 docker run --name mysql -p 3306:3306 --privileged=true -v d:\archive\workspace\tools\mysql\data:/var/lib/mysql -v d:\archive\workspace\tools\mysql\conf:/etc/mysql/conf.d:rw -e MYSQL_ROOT_PASSWORD=redhat -d mysql:8.0.33 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 # nacos 
-docker run --name nacos -e MODE=standalone -p 8848:8848 --privileged=true -v d:\archive\workspace\tools\nacos\conf\application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
+docker run --name nacos -p 8848:8848 -p 9848:9848 --privileged=true -e MODE=standalone -v d:\archive\workspace\tools\nacos\conf\application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
 
 ```
