@@ -117,56 +117,43 @@ function proxy_on() {
   https://tzrgaga.github.io/2017/04/12/forward-socks-by-privoxy/
 ```
 
-# 启动 nacos
-
-```shell
-cd doc/nacos/bin
-./startup.sh -m standalone
-http://localhost:8848/nacos/#/login
-userName: nacos
-password: nacos
-```
-
 # nacos 配置持久化
 
 ```shell
-create user 'nacos'@'%' identified by 'nacos';
-update user set host='%' where user='nacos';
-#grant all privileges on nacos.* to 'nacos’@‘%';
+USE mysql;
+CREATE user 'nacos'@'%' identified by 'nacos';
+UPDATE user SET host='%' WHERE user='nacos';
 GRANT ALL privileges ON nacos.* TO 'nacos'@'%'
-flush privileges;
+FLUSH privileges;
 
+#  mysql-schema.sql
+https://github.com/alibaba/nacos/blob/develop/distribution/conf/mysql-schema.sql
+
+# 配置
 vim doc/nacos/conf/application.properties
 spring.datasource.platform=mysql
 db.num=1
 db.url.0=jdbc:mysql://m.hejinyo.cn:3306/nacos?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true&useUnicode=true&useSSL=false&serverTimezone=UTC
 db.user.0=nacos
 db.password.0=nacos
+
 ```
 
 # docker 启动中间件
 
 ```shell
 
-# redis
-docker run --name kris-redis -p 6388:6379 -d redis --requirepass "xxxxxx"
-
-# nacos
-docker run --name nacos  -e MODE=standalone  -e SPRING_DATASOURCE_PLATFORM=mysql -e MYSQL_SERVICE_HOST=m.hejinyo.cn  -e MYSQL_SERVICE_PORT=3306 -e MYSQL_SERVICE_USER=nacos  -e MYSQL_SERVICE_PASSWORD=nacos  -e MYSQL_SERVICE_DB_NAME=nacos  -p 8848:8848 -d  nacos/nacos-server
-
-```
-
-
-```shell
-
 # 获取容器IP
 docker inspect mysql | grep IPAddress
+
+# redis
+docker run --name kris-redis -p 6388:6379 -d redis --requirepass "xxxxxx"
 
 # wsl 环境，会有权限的问题启动不了，需要指定 --privileged=true 获得物理主机root用户权限
 # mysql
 docker run --name mysql -p 3306:3306 --privileged=true -v /mnt/d/archive/workspace/tools/mysql/data:/var/lib/mysql -v /mnt/d/archive/workspace/tools/mysql/conf:/etc/mysql/conf.d:rw -e MYSQL_ROOT_PASSWORD=redhat -d mysql:8.0.33 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 # nacos 
-docker run --name nacos -p 8848:8848 -p 9848:9848 --privileged=true -e MODE=standalone -v /mnt/d/archive/workspace/tools/nacos/conf/application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
+docker run --name nacos -p 8848:8848 -p 9848:9848 --privileged=true -e MODE=standalone -v ~/java/marvel/ss/doc/ss/nacos/conf/application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
 
 # win 环境
 # mysql

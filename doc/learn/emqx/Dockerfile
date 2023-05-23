@@ -5,7 +5,7 @@ FROM emqx/emqx:4.3.10
 WORKDIR /workdir
 
 # 拷贝执行脚本
-ADD ./start.sh /workdir
+ADD start.sh /workdir
 
 USER root
 RUN chown emqx:emqx start.sh
