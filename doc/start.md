@@ -150,15 +150,15 @@ docker inspect mysql | grep IPAddress
 docker run --name kris-redis -p 6388:6379 -d redis --requirepass "xxxxxx"
 
 # wsl 环境，会有权限的问题启动不了，需要指定 --privileged=true 获得物理主机root用户权限
-# mysql
+# mysql 配置文件在项目中，按需修改
 docker run --name mysql -p 3306:3306 --privileged=true -v /mnt/d/archive/workspace/tools/mysql/data:/var/lib/mysql -v /mnt/d/archive/workspace/tools/mysql/conf:/etc/mysql/conf.d:rw -e MYSQL_ROOT_PASSWORD=redhat -d mysql:8.0.33 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-# nacos 
+# nacos 配置文件在项目中，按需修改
 docker run --name nacos -p 8848:8848 -p 9848:9848 --privileged=true -e MODE=standalone -v ~/java/marvel/ss/doc/ss/nacos/conf/application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
 
 # win 环境
-# mysql
+# mysql 配置文件在项目中，按需修改
 docker run --name mysql -p 3306:3306 --privileged=true -v d:\archive\workspace\tools\mysql\data:/var/lib/mysql -v d:\archive\workspace\tools\mysql\conf:/etc/mysql/conf.d:rw -e MYSQL_ROOT_PASSWORD=redhat -d mysql:8.0.33 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-# nacos 
-docker run --name nacos -p 8848:8848 -p 9848:9848 --privileged=true -e MODE=standalone -v d:\archive\workspace\tools\nacos\conf\application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
+# nacos 配置文件在项目中，按需修改
+docker run --name nacos -p 8848:8848 -p 9848:9848 --privileged=true -e MODE=standalone -v D:\archive\workspace\work\ss\doc\ss\nacos\conf\application.properties:/home/nacos/conf/application.properties -d nacos/nacos-server:v2.2.2
 
 ```
