@@ -262,11 +262,12 @@ docker run -d \
 --privileged \
 --restart=unless-stopped \
 -e TZ=Asia/Chongqing \
--v /home/rock/homeassistant:/config \
+-v /home/hejinyo/homeassistant:/config \
 --network=host \
 ghcr.io/home-assistant/home-assistant:stable
 
 
+docker run -d --name homeassistant --privileged --restart=unless-stopped -e TZ=Asia/Chongqing -v D:\archive\workspace\temp\homeassistant:/config -v /run/dbus:/run/dbus:ro -p 18123:8123 ghcr.io/home-assistant/home-assistant:stable
 
 
 function proxy_on() {
