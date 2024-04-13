@@ -86,6 +86,7 @@ User=root
 [Install]
 WantedBy=multi-user.target
 
+systemctl daemon-reload
 systemctl start frpc
 systemctl enable frpc
 ```
