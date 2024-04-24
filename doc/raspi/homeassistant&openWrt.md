@@ -1,11 +1,60 @@
 # 一、安装docker and homeassistant
 ```shell
 
-# 执行脚本
+# 更换源
+
+# 1、查询版本
+cat /etc/os-releasecat /etc/os-release
+
+# 2、去网页找到源地址 debian
+https://mirrors.tuna.tsinghua.edu.cn/help/debian/
+
+# 3、修改主文件
+sudo vim /etc/apt/sources.list
+# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm main contrib non-free non-free-firmware
+
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-updates main contrib non-free non-free-firmware
+
+deb https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware
+# deb-src https://mirrors.tuna.tsinghua.edu.cn/debian/ bookworm-backports main contrib non-free non-free-firmware
+
+deb https://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
+# deb-src https://security.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
+
+# 4、修改树莓派源
+sudo vim /etc/apt/sources.list.d/raspi.list
+deb https://mirrors.tuna.tsinghua.edu.cn/raspberrypi/ bookworm main
+
+# 5、刷新
+sudo apt-get update
+ # 升级
+sudo apt-get upgrade 
+
+# 花生壳内网穿透，非代理下执行
+sudo dpkg -i phddns_5.1.0_rapi_aarch64.deb
+
+
+# 执行安装脚本
 curl -sSL https://get.docker.com | sh
 
-# 给用户增加docker管理员组
+# 安装完成，给用户增加docker管理员组
 sudo usermod -aG docker hejinyo
+
+# docker pull 配置代理
+sudo vim /etc/docker/daemon.json
+{
+  "proxies": {
+    "http-proxy": "http://192.168.31.88:7893",
+    "https-proxy": "http://192.168.31.88:7893",
+    "no-proxy": "*.test.example.com,.example.org,127.0.0.0/8"
+  }
+}
+
+# 重启docker
+sudo systemctl restart docker
 
 # 启动 homeassistant,/home/hejinyo/homeassistant 可以直接复制以前的
 sudo docker run -d \
@@ -15,7 +64,7 @@ sudo docker run -d \
 -e TZ=Asia/Chongqing \
 -v /home/hejinyo/homeassistant:/config \
 --network=host \
-ghcr.io/home-assistant/home-assistant:2024.3
+ghcr.io/home-assistant/home-assistant:2024.4
 
 ```
 
@@ -184,6 +233,7 @@ opkg install luci-app-openclash_0.46.003-beta_all.ipk
 
 # 五、安装AdGuard Home
 ```shell
+wget https://github.com/rufengsuixing/luci-app-adguardhome/releases/download/1.8-11/luci-app-adguardhome_1.8-11_all.ipk
 # 1、openwrt->系统->软件包->[更新列表]->[筛选器]->luci-app-adguardhome
 # 2、openwrt->服务->AdGuardHome->基本设置
 执行文件路径 /usr/bin/adh/AdGuardHome
