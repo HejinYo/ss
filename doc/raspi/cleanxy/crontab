@@ -1,0 +1,7 @@
+# 每小时执行一次 custom_script.sh
+# 0 * * * * /usr/local/bin/custom_script.sh >> /var/log/cron.log 2>&1
+
+# 每5分钟执行一次 custom_script.sh
+*/5 * * * * /usr/local/bin/custom_script.sh >> /var/log/cron.log 2>&1
+
+
