@@ -91,7 +91,7 @@
     <modules>
 
 <!--        &lt;!&ndash; 微服务认证模块 &ndash;&gt;-->
-<!--        <module>ss-auth</module>-->
+        <module>ss-auth</module>
 
         <!-- common -->
         <module>ss-common</module>
@@ -100,7 +100,7 @@
         <module>ss-gateway</module>
 
 <!--        &lt;!&ndash; 业务木块 &ndash;&gt;-->
-<!--        <module>ss-modules</module>-->
+        <module>ss-modules</module>
 
     </modules>
 
