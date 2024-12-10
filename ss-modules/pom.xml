@@ -15,6 +15,7 @@
     <modules>
 
         <module>ss-admin</module>
+        <module>ss-order</module>
 
     </modules>
 

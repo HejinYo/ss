@@ -13,17 +13,157 @@ cp -r /usr/share/easy-rsa/* /etc/openvpn/easy-rsa/
 cd /etc/openvpn/easy-rsa
 # 初始化 PKI：
 ./easyrsa init-pki
+```text
+./easyrsa: /etc/openvpn/easy-rsa/vars: line 1: iexport: not found
+./easyrsa: /etc/openvpn/easy-rsa/vars: line 1: iexport: not found
+
+WARNING!!!
+
+You are about to remove the EASYRSA_PKI at:
+* /etc/openvpn/easy-rsa/pki
+
+and initialize a fresh PKI here.
+
+Type the word 'yes' to continue, or any other input to abort.
+  Confirm removal: yes
+
+
+Notice
+------
+'init-pki' complete; you may now create a CA or requests.
+
+Your newly created PKI dir is:
+* /etc/openvpn/easy-rsa/pki
+
+Using Easy-RSA configuration:
+* /etc/openvpn/easy-rsa/vars
+```
 # 生成 CA（证书授权）证书：
 ./easyrsa build-ca
+```text
+Using Easy-RSA 'vars' configuration:
+* /etc/openvpn/easy-rsa/vars
+./easyrsa: /etc/openvpn/easy-rsa/vars: line 1: iexport: not found
+./easyrsa: /etc/openvpn/easy-rsa/vars: line 1: iexport: not found
+
+Using SSL:
+* openssl OpenSSL 3.3.1 4 Jun 2024 (Library: OpenSSL 3.3.1 4 Jun 2024)
+
+Enter New CA Key Passphrase: h*3
+
+Confirm New CA Key Passphrase: h*3
+..........+...+.+......+.........+............+++++++++++++++++++++++++++++++++++++++*........+..+..........+..+...+..................+.......+............+...+...+......+++++++++++++++++++++++++++++++++++++++*......+............+...+......+.+........+.+.....+.......+.........+.....+.+............+..+..................+.+..+.......+...+........+....+...........+......+....+..+.......+...+.........+...+...+...+..+...+....+.....+..........+..................+..+............+....+.....+.+.........+..+...+......+......+...+....+...++++++
+......................+...+...............+..+..........+........+...+++++++++++++++++++++++++++++++++++++++*.+....+..................+...+...+..+...+....+.....+.+.........+.....+.+..+....+.........+.........+...+.........+.....+....+.........+...+.....+...+............+...+.......+.....+....+.....+....+..+....+......+...+++++++++++++++++++++++++++++++++++++++*.+...+............+.....+...+.........+...+.+.....+..........+..+....+...............+......+..+..........+..+......+....+...........+...+....+...+............+...............+......+...............+.....+.......+..+...+.........+.........+.+......+...+.....+......+...+...+.......+..+...+...+....+.........+.....+.......+..+......+...............+...................+...........+....+..+.+.....+.......+......+.....+.......+...+.....+.+...+..+..........+.....+.+.....+....+...+........+...............+............+.+......+........+...+...+.+...+...+...+.....+...............+.++++++
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Common Name (eg: your user, host, or server name) [Easy-RSA CA]:hejinyo-openvpn
+
+Notice
+------
+CA creation complete. Your new CA certificate is at:
+* /etc/openvpn/easy-rsa/pki/ca.crt
+
+b036daf664fe:/etc/openvpn/easy-rsa#
+```
 # 生成服务器证书和密钥：
 ./easyrsa build-server-full server nopass
+```text
+Private-Key and Public-Certificate-Request files created.
+Your files are:
+* req: /etc/openvpn/easy-rsa/pki/reqs/server.req
+* key: /etc/openvpn/easy-rsa/pki/private/server.key
+
+You are about to sign the following certificate:
+Request subject, to be signed as a server certificate
+for '825' days:
+
+subject=
+    commonName                = server
+
+Type the word 'yes' to continue, or any other input to abort.
+  Confirm request details: yes
+
+Using configuration from /etc/openvpn/easy-rsa/pki/openssl-easyrsa.cnf
+Enter pass phrase for /etc/openvpn/easy-rsa/pki/private/ca.key:
+Check that the request matches the signature
+Signature ok
+The Subject's Distinguished Name is as follows
+commonName            :ASN.1 12:'server'
+Certificate is to be certified until Feb 18 00:59:37 2027 GMT (825 days)
+
+Write out database with 1 new entries
+Database updated
+
+Notice
+------
+Certificate created at:
+* /etc/openvpn/easy-rsa/pki/issued/server.crt
+
+Notice
+------
+Inline file created:
+* /etc/openvpn/easy-rsa/pki/inline/server.inline
+
+```
 # 生成客户端证书和密钥（例如客户端名为 client）：
 ./easyrsa build-client-full client nopass
+```text
+Private-Key and Public-Certificate-Request files created.
+Your files are:
+* req: /etc/openvpn/easy-rsa/pki/reqs/hejinyo-macbook.req
+* key: /etc/openvpn/easy-rsa/pki/private/hejinyo-macbook.key
+
+You are about to sign the following certificate:
+Request subject, to be signed as a client certificate
+for '825' days:
+
+subject=
+    commonName                = hejinyo-macbook
+
+Type the word 'yes' to continue, or any other input to abort.
+  Confirm request details: yes
+
+Using configuration from /etc/openvpn/easy-rsa/pki/openssl-easyrsa.cnf
+Enter pass phrase for /etc/openvpn/easy-rsa/pki/private/ca.key:
+Check that the request matches the signature
+Signature ok
+The Subject's Distinguished Name is as follows
+commonName            :ASN.1 12:'hejinyo-macbook'
+Certificate is to be certified until Feb 18 01:00:23 2027 GMT (825 days)
+
+Write out database with 1 new entries
+Database updated
+
+Notice
+------
+Certificate created at:
+* /etc/openvpn/easy-rsa/pki/issued/hejinyo-macbook.crt
+
+Notice
+------
+Inline file created:
+* /etc/openvpn/easy-rsa/pki/inline/hejinyo-macbook.inline
+```
 # 生成 Diffie-Hellman 参数：
 ./easyrsa gen-dh
+DH parameters appear to be ok.
+
+Notice
+------
+
+DH parameters of size 2048 created at:
+* /etc/openvpn/easy-rsa/pki/dh.pem
 # 生成 HMAC 密钥：
 openvpn --genkey secret /etc/openvpn/easy-rsa/pki/ta.key
+```text
 
+```
 #
 vim /etc/openvpn/server/server.conf
 ```lombok.config
