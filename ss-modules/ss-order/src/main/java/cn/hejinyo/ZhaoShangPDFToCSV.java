@@ -29,7 +29,7 @@ public class ZhaoShangPDFToCSV {
     private static final SimpleDateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
 
     public static void main(String[] args) {
-        for (String month : Arrays.asList("1", "2", "3")) {
+        for (String month : Arrays.asList("1")) {
             doProcess(month);
         }
     }
@@ -75,13 +75,23 @@ public class ZhaoShangPDFToCSV {
             String bankName = "招商银行储蓄卡9557";
             if (line.matches("^\\d{4}-\\d{2}-\\d{2}.*")) {
                 String[] parts = line.split("\\s+");
-                // 打印调试信息
-                log.info("Line: [" + line + "],length=" + parts.length);
-                if (parts.length == 6) {
-                    data[rowCount][0] = parts[0];  // 交易日
-                    data[rowCount][1] = parts[4] + parts[5];  // 摘要（商户名）
-                    data[rowCount][2] = parts[2].replace(",", "").trim();  // 金额
+                if (parts.length <= 4) {
+                    continue;
                 }
+                // 打印调试信息
+                log.info("Line: [" + line + "]");
+                // 交易日
+                String sold = parts[0];
+                // 金额
+                String amount = parts[2];
+                // 摘要
+                StringBuilder description = new StringBuilder();
+                for (int i = 4; i < parts.length; i++) {
+                    description.append(parts[i]);
+                }
+                data[rowCount][0] = sold;
+                data[rowCount][1] = description.toString();
+                data[rowCount][2] = amount.replace(",", "").trim();
                 data[rowCount][3] = bankName;
                 rowCount++;
             }
@@ -110,7 +120,7 @@ public class ZhaoShangPDFToCSV {
             // 写入表头
             csvWriter.append("Date, Amount, Source Currency, Target Currency, Exchange Rate, Budget Book, Account, Folder, Category, Payee, Tags, Notes\n");
             // 写入数据
-            Map<String, String> flodMap = getFoldMap();
+            Map<String, String> flodMap = PDFToCSV.getFoldMap();
             for (String[] row : data) {
                 if (row[0] != null) {
                     // 格式化交易日期
@@ -253,27 +263,26 @@ public class ZhaoShangPDFToCSV {
         map.put("送礼", "送礼");
 
         map.put("欧尚", "其他");
-        map.put("其他", "其他");
 
-        map.put("电子", "电子");
-        map.put("电脑", "电子");
-        map.put("手机", "电子");
-        map.put("保护膜", "电子");
-        map.put("钢化膜", "电子");
-        map.put("电池", "电子");
-        map.put("耳机", "电子");
-        map.put("显示器", "电子");
-        map.put("键盘", "电子");
-        map.put("鼠标", "电子");
-        map.put("拼多多", "电子");
-        map.put("京东", "电子");
-        map.put("Nintendo", "电子");
-        map.put("爱回收", "电子");
-        map.put("switch", "电子");
-        map.put("游戏", "电子");
-        map.put("嘉立创", "电子");
-        map.put("小米", "电子");
-        map.put("iphone", "电子");
+        map.put("电子", "电商");
+        map.put("电脑", "电商");
+        map.put("手机", "电商");
+        map.put("保护膜", "电商");
+        map.put("钢化膜", "电商");
+        map.put("电池", "电商");
+        map.put("耳机", "电商");
+        map.put("显示器", "电商");
+        map.put("键盘", "电商");
+        map.put("鼠标", "电商");
+        map.put("拼多多", "电商");
+        map.put("京东", "电商");
+        map.put("Nintendo", "电商");
+        map.put("爱回收", "电商");
+        map.put("switch", "电商");
+        map.put("游戏", "电商");
+        map.put("嘉立创", "电商");
+        map.put("小米", "电商");
+        map.put("iphone", "电商");
 
         map.put("还款", "还款");
 
@@ -284,10 +293,12 @@ public class ZhaoShangPDFToCSV {
         map.put("退款", "转入");
         map.put("收款", "转入");
         map.put("转入", "转入");
+        map.put("汇入汇款", "转入");
+        map.put("银联代付", "转入");
 
         map.put("支付利息", "利息");
         map.put("结息", "利息");
-        map.put("自助消费", "电子");
+        map.put("自助消费", "电商");
         map.put("借钱", "转出");
         map.put("手续费", "其他");
         map.put("长服计划分红", "工资");
@@ -301,55 +312,8 @@ public class ZhaoShangPDFToCSV {
         map.put("财付通", "其他");
         map.put("支付宝", "其他");
 
-        map.put("有限公司", "电子");
-        return map;
-    }
-
-    public static Map<String, String> getFoldMap() {
-        Map<String, String> map = new HashMap<>();
-        map.put("公交", "出行");
-        map.put("地铁", "出行");
-        map.put("打车", "出行");
-        map.put("吃饭", "生活");
-        map.put("衣服", "生活");
-        map.put("理发", "生活");
-        map.put("住宿", "生活");
-        map.put("社保", "生活");
-
-        map.put("房贷", "房屋");
-        map.put("房租", "房屋");
-
-        map.put("挂号", "医疗");
-        map.put("药品", "医疗");
-        map.put("治疗", "医疗");
-
-        map.put("保险", "汽车");
-        map.put("加油", "汽车");
-        map.put("维保", "汽车");
-        map.put("停车", "汽车");
-        map.put("成都启阳", "汽车");
-
-        map.put("红包", "转账");
-        map.put("生日", "转账");
-        map.put("转出", "转账");
-
-        map.put("话费", "消费");
-        map.put("电子", "消费");
-        map.put("娱乐", "消费");
-        map.put("约饭", "消费");
-        map.put("零食", "消费");
-        map.put("送礼", "消费");
-        map.put("其他", "消费");
-        map.put("还款", "消费");
-
-        map.put("利息", "收入");
-        map.put("提现", "收入");
-        map.put("工资", "收入");
-        map.put("转入", "收入");
-        map.put("灵活宝", "理财");
-        map.put("朝朝宝", "理财");
-
-
+        map.put("有限公司", "电商");
+        map.put("其他", "其他");
         return map;
     }
 }

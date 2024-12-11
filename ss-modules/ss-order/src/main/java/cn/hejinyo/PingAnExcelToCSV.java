@@ -30,7 +30,7 @@ public class PingAnExcelToCSV {
     private static final SimpleDateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
 
     public static void main(String[] args) {
-        for (String month : Arrays.asList("1", "2", "3")) {
+        for (String month : Arrays.asList("1")) {
             doProcess(month);
         }
     }
@@ -173,7 +173,7 @@ public class PingAnExcelToCSV {
         Map<String, String> map = new LinkedHashMap<>();
         map.put("支付利息", "利息");
         map.put("结息", "利息");
-        map.put("自助消费", "电子");
+        map.put("自助消费", "电商");
         map.put("招商银行信用卡还款", "房贷");
         map.put("招行手机银行一网通", "转出");
         map.put("借钱", "转出");
@@ -181,13 +181,16 @@ public class PingAnExcelToCSV {
         map.put("手续费", "其他");
         map.put("长服计划分红", "工资");
         map.put("代发工资", "工资");
+        map.put("灵活宝", "灵活宝");
+        map.put("灵活宝自动赎回", "灵活宝");
+        map.put("灵活宝[LHB001]扣款", "灵活宝");
         map.put("余额宝提现", "提现");
         map.put("网银转款本金", "提现");
         map.put("银联渠道他代本借记卡无卡交易", "提现");
         map.put("快捷支付", "提现");
         map.put("转账", "转入");
+        map.put("红包提现代付", "转入");
         map.put("跨行转出", "提现");
-        map.put("灵活宝[LHB001]扣款", "灵活宝");
         map.put("财付通", "其他");
         map.put("支付宝", "其他");
 

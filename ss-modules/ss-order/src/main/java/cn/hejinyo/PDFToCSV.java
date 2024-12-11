@@ -15,11 +15,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class PDFToCSV {
@@ -28,7 +24,7 @@ public class PDFToCSV {
     private static final SimpleDateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
 
     public static void main(String[] args) {
-        for (String month : Arrays.asList("00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11")) {
+        for (String month : Arrays.asList("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11")) {
             doProcess(month);
         }
     }
@@ -36,7 +32,7 @@ public class PDFToCSV {
     private static void doProcess(String month) {
         String dateName = "2024年" + month + "月信用卡账单";
         String pdfFilePath = "/Users/hejinyo/Downloads/招商信用卡/" + dateName + ".pdf"; // PDF 文件路径
-        String csvFilePath = "/Users/hejinyo/Downloads/招商信用卡/" + dateName + new Date().getTime() + ".csv"; // 输出 Excel 文件路径
+        String csvFilePath = "/Users/hejinyo/Downloads/招商信用卡/" + dateName + /*new Date().getTime() +*/ ".csv"; // 输出 Excel 文件路径
 
         try {
             // 1. 解析 PDF 文件
@@ -74,26 +70,23 @@ public class PDFToCSV {
             String bankName = "招商银行信用卡6879";
             if (line.matches("^\\d{2}/\\d{2}.*")) {
                 String[] parts = line.split("\\s+");
+                // 交易日
+                String sold = parts[0];
+                // 记账日
+                String posted = parts[1];
+                // 金额
+                String amount = parts[parts.length - 3];
+                // 摘要
+                StringBuilder description = new StringBuilder();
+                int descIndex = !posted.matches("^\\d{2}/\\d{2}.*") ? 1 : 2;
+                for (int i = descIndex; i < parts.length - 3; i++) {
+                    description.append(parts[i]);
+                }
                 // 打印调试信息
-                log.info("Line: [" + line + "],length=" + parts.length);
-                if (parts.length == 5) {
-                    data[rowCount][0] = parts[0];  // 交易日
-                    data[rowCount][1] = parts[1];  // 摘要（商户名）
-                    data[rowCount][2] = parts[2].replace(",", "").trim();  // 金额
-//                    data[rowCount][3] = bankName + parts[3].trim();  // 卡号末四位
-                }
-                if (parts.length == 6) {
-                    data[rowCount][0] = parts[0];  // 交易日
-                    data[rowCount][1] = parts[2];  // 摘要（商户名）
-                    data[rowCount][2] = parts[3].replace(",", "").trim();  // 金额
-//                    data[rowCount][3] = bankName + parts[4].trim();  // 卡号末四位
-                }
-                if (parts.length == 9) {
-                    data[rowCount][0] = parts[0];  // 交易日
-                    data[rowCount][1] = parts[2] + parts[3];  // 摘要（商户名）
-                    data[rowCount][2] = parts[6].replace(",", "").trim();  // 金额
-//                    data[rowCount][3] = bankName + parts[7].trim();  // 卡号末四位
-                }
+                log.info("Line: [" + line + "]");
+                data[rowCount][0] = sold;
+                data[rowCount][1] = description.toString();
+                data[rowCount][2] = amount.replace(",", "").trim();
                 data[rowCount][3] = bankName;
                 rowCount++;
             }
@@ -269,28 +262,28 @@ public class PDFToCSV {
         map.put("欧尚", "其他");
         map.put("其他", "其他");
 
-        map.put("电子", "电子");
-        map.put("电脑", "电子");
-        map.put("手机", "电子");
-        map.put("保护膜", "电子");
-        map.put("钢化膜", "电子");
-        map.put("电池", "电子");
-        map.put("耳机", "电子");
-        map.put("显示器", "电子");
-        map.put("键盘", "电子");
-        map.put("鼠标", "电子");
-        map.put("拼多多", "电子");
-        map.put("京东", "电子");
-        map.put("Nintendo", "电子");
-        map.put("爱回收", "电子");
-        map.put("switch", "电子");
-        map.put("游戏", "电子");
-        map.put("嘉立创", "电子");
-        map.put("小米", "电子");
-        map.put("iphone", "电子");
+        map.put("电子", "电商");
+        map.put("电脑", "电商");
+        map.put("手机", "电商");
+        map.put("保护膜", "电商");
+        map.put("钢化膜", "电商");
+        map.put("电池", "电商");
+        map.put("耳机", "电商");
+        map.put("显示器", "电商");
+        map.put("键盘", "电商");
+        map.put("鼠标", "电商");
+        map.put("拼多多", "电商");
+        map.put("京东", "电商");
+        map.put("Nintendo", "电商");
+        map.put("爱回收", "电商");
+        map.put("switch", "电商");
+        map.put("游戏", "电商");
+        map.put("嘉立创", "电商");
+        map.put("小米", "电商");
+        map.put("iphone", "电商");
 
 
-        map.put("有限公司", "电子");
+        map.put("有限公司", "电商");
         map.put("还款", "还款");
         return map;
     }
@@ -325,7 +318,7 @@ public class PDFToCSV {
         map.put("转出", "转账");
 
         map.put("话费", "消费");
-        map.put("电子", "消费");
+        map.put("电商", "消费");
         map.put("娱乐", "消费");
         map.put("约饭", "消费");
         map.put("零食", "消费");
@@ -338,6 +331,7 @@ public class PDFToCSV {
         map.put("工资", "收入");
         map.put("转入", "收入");
         map.put("灵活宝", "理财");
+        map.put("朝朝宝", "理财");
 
 
         return map;
