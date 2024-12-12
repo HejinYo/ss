@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -29,7 +29,7 @@ public class ZhaoShangPDFToCSV {
     private static final SimpleDateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
 
     public static void main(String[] args) {
-        for (String month : Arrays.asList("1")) {
+        for (String month : Arrays.asList("")) {
             doProcess(month);
         }
     }
@@ -65,15 +65,20 @@ public class ZhaoShangPDFToCSV {
 
     // 解析账单明细
     private static String[][] parseBillDetails(String pdfContent) {
-        String[] lines = pdfContent.split("\n");
+//        String[] lines = pdfContent.split("\n");
+        List<String> reList = Arrays.asList("记账日期", "货币", "交易金额", "联机余额", "交易摘要", "对手信息", "客户摘要", "Date", "Currency", "Transaction", "Amount", "Balance", "Transaction", "Type", "Counter", "Party", "Customer", "Type");
+        for (String s : reList) {
+            pdfContent = pdfContent.replace(s, "");
+        }
+        String[] lines = pdfContent.split("2024-");
         int rowCount = 0;
         String[][] data = new String[lines.length][4]; // 假设账单有4列：交易日、摘要、金额、卡号末四位
         for (String line : lines) {
             // 替换所有 [NBSP] 空格为普通空格
-            line = line.replace("\u00A0", " ").trim().replaceAll("\\s+", " ");
+            line = line.replace("\u00A0", " ").trim().replaceAll("\\s+", " ").replace("/n", "");
             // 匹配以日期开头的交易明细
             String bankName = "招商银行储蓄卡9557";
-            if (line.matches("^\\d{4}-\\d{2}-\\d{2}.*")) {
+            if (line.contains("CNY") && line.matches("^\\d{2}-\\d{2} CNY.*")) {
                 String[] parts = line.split("\\s+");
                 if (parts.length <= 4) {
                     continue;
@@ -81,7 +86,7 @@ public class ZhaoShangPDFToCSV {
                 // 打印调试信息
                 log.info("Line: [" + line + "]");
                 // 交易日
-                String sold = parts[0];
+                String sold = "2024-" + parts[0];
                 // 金额
                 String amount = parts[2];
                 // 摘要
@@ -156,7 +161,23 @@ public class ZhaoShangPDFToCSV {
                             // Tags
                             .append("").append(", ")
                             // Notes
-                            .append(row[1]).append("\n");
+                            .append(row[1]
+                                    .replace("快捷支付扫二维码付款", "")
+                                    .replace("银联无卡自助消费贺双双银联在线支付，", "")
+                                    .replace("银联代付贺双双银联代付，（特约）", "")
+                                    .replace("银联渠道转入", "")
+                                    .replace("-支付宝-理财-浙江网商银行股份有限公司", "")
+                                    .replace("-网银在线（北京）科技有限公司", "")
+                                    .replace("（中国）网络技术有限公司支付宝（中国）网络技术有限公司", "")
+                                    .replace("-浙江网商银行股份有限公司", "")
+                                    .replace("其他费用", "")
+                                    .replace("-代销理财快赎投资朝朝宝", "")
+                                    .replace("-支付宝-消费-深圳市永秀电子有限公司", "")
+                                    .replace("-肯特瑞小金库网银平台合并统计合并收入(+)合并支出(-)币种CNY207", "")
+                                    .replace("招银理财有限责任公司", "")
+                                    .replace("快捷支付", "")
+                                    .replace("银联财付通-", "")
+                            ).append("\n");
                 }
             }
         }

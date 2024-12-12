@@ -15,24 +15,29 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
-public class PDFToCSV {
+public class MinShengPDFToCSV {
 
     // 定义日期格式化规则
-    private static final SimpleDateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
+    private static final SimpleDateFormat INPUT_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+    private static final SimpleDateFormat OUTPUT_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
     public static void main(String[] args) {
-        for (String month : Arrays.asList("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11")) {
+        for (String month : Arrays.asList("")) {
             doProcess(month);
         }
     }
 
     private static void doProcess(String month) {
-        String dateName = "2024年" + month + "月信用卡账单";
-        String pdfFilePath = "/Users/hejinyo/Downloads/招商信用卡/" + dateName + ".pdf"; // PDF 文件路径
-        String csvFilePath = "/Users/hejinyo/Downloads/招商信用卡/" + dateName + /*new Date().getTime() +*/ ".csv"; // 输出 Excel 文件路径
+        String dateName = "民生银行";
+        String pdfFilePath = "/Users/hejinyo/Downloads/民生银行/" + dateName + month + ".pdf"; // PDF 文件路径
+        String csvFilePath = "/Users/hejinyo/Downloads/民生银行/" + dateName + month + ".csv"; // 输出 Excel 文件路径
 
         try {
             // 1. 解析 PDF 文件
@@ -42,7 +47,7 @@ public class PDFToCSV {
             String[][] parsedData = parseBillDetails(pdfContent);
 
             // 3. 输出为 CSV 格式
-            writeToCSV(month, parsedData, csvFilePath);
+            writeToCSV(parsedData, csvFilePath);
 
             log.info("账单明细已成功导出为 CSV 文件：" + csvFilePath);
         } catch (IOException e) {
@@ -60,30 +65,36 @@ public class PDFToCSV {
 
     // 解析账单明细
     private static String[][] parseBillDetails(String pdfContent) {
-        String[] lines = pdfContent.split("\n");
+//        String[] lines = pdfContent.split("\n");
+        List<String> reList = Arrays.asList("记账日期", "货币", "交易金额", "联机余额", "交易摘要", "对手信息", "客户摘要", "Date", "Currency", "Transaction", "Amount", "Balance", "Transaction", "Type", "Counter", "Party", "Customer", "Type");
+        for (String s : reList) {
+            pdfContent = pdfContent.replace(s, "");
+        }
+        pdfContent = pdfContent.substring(pdfContent.indexOf("地址Address"), pdfContent.indexOf("合计笔数"));
+        String[] lines = pdfContent.split("2024/");
         int rowCount = 0;
         String[][] data = new String[lines.length][4]; // 假设账单有4列：交易日、摘要、金额、卡号末四位
         for (String line : lines) {
             // 替换所有 [NBSP] 空格为普通空格
-            line = line.replace("\u00A0", " ").trim().replaceAll("\\s+", " ");
+            line = line.replace("\u00A0", " ").trim().replaceAll("\\s+", " ").replace("/n", "");
             // 匹配以日期开头的交易明细
-            String bankName = "招商银行信用卡6879";
-            if (line.matches("^\\d{2}/\\d{2}.*")) {
+            String bankName = "民生银行储蓄卡2722";
+            if (line.matches("^\\d{2}/\\d{2} \\d{2}:\\d{2}:\\d{2}.*")) {
                 String[] parts = line.split("\\s+");
-                // 交易日
-                String sold = parts[0];
-                // 记账日
-                String posted = parts[1];
-                // 金额
-                String amount = parts[parts.length - 3];
-                // 摘要
-                StringBuilder description = new StringBuilder();
-                int descIndex = !posted.matches("^\\d{2}/\\d{2}.*") ? 1 : 2;
-                for (int i = descIndex; i < parts.length - 3; i++) {
-                    description.append(parts[i]);
+                if (parts.length <= 4) {
+                    continue;
                 }
                 // 打印调试信息
                 log.info("Line: [" + line + "]");
+                // 交易日
+                String sold = "2024/" + parts[0] + " " + parts[1];
+                // 金额
+                String amount = parts[parts.length - 4];
+                // 摘要
+                StringBuilder description = new StringBuilder();
+                for (int i = 2; i < parts.length - 4; i++) {
+                    description.append(parts[i]);
+                }
                 data[rowCount][0] = sold;
                 data[rowCount][1] = description.toString();
                 data[rowCount][2] = amount.replace(",", "").trim();
@@ -95,34 +106,31 @@ public class PDFToCSV {
     }
 
     // 将日期转换为完整的日期格式,时间部分为 12:00:00
-    public static String convertToFullDate(String month, String inputDate) {
-        // 获取当前年份
-        String currentYear = "00".equals(month) ? "2023" : "2024";
+    public static String convertToFullDate(String inputDate) {
         try {
             // 生成新的日期字符串,格式为：MM/dd/yyyy
-            String fullDateString = inputDate + "/" + currentYear;
             // 解析为完整的日期对象
-            Date fullDate = OUTPUT_DATE_FORMAT.parse(fullDateString);
+            Date fullDate = INPUT_DATE_FORMAT.parse(inputDate);
             // 格式化输出完整日期,时间默认设置为 12:00:00
             return OUTPUT_DATE_FORMAT.format(fullDate);
         } catch (Exception e) {
             e.printStackTrace();
         }
         // 如果解析失败,返回默认格式
-        return inputDate + "/" + currentYear;
+        return inputDate;
     }
 
     // 将数据写入 CSV 文件
-    private static void writeToCSV(String month, String[][] data, String csvFilePath) throws IOException {
+    private static void writeToCSV(String[][] data, String csvFilePath) throws IOException {
         try (FileWriter csvWriter = new FileWriter(csvFilePath)) {
             // 写入表头
             csvWriter.append("Date, Amount, Source Currency, Target Currency, Exchange Rate, Budget Book, Account, Folder, Category, Payee, Tags, Notes\n");
             // 写入数据
-            Map<String, String> flodMap = getFoldMap();
+            Map<String, String> flodMap = PDFToCSV.getFoldMap();
             for (String[] row : data) {
                 if (row[0] != null) {
                     // 格式化交易日期
-                    String formattedDate = convertToFullDate(month, row[0]);
+                    String formattedDate = convertToFullDate(row[0]);
                     String category = buildFolderCategory(row[1]);
                     String flod = flodMap.get(category);
                     BigDecimal amount = new BigDecimal(row[2]);
@@ -134,7 +142,7 @@ public class PDFToCSV {
                             // Date
                             .append(formattedDate).append(", ")
                             // Amount,取负数
-                            .append(BigDecimal.ZERO.subtract(amount).toPlainString()).append(", ")
+                            .append(amount.toPlainString()).append(", ")
                             // Source Currency
                             .append("CNY").append(", ")
                             // Target Currency
@@ -154,7 +162,23 @@ public class PDFToCSV {
                             // Tags
                             .append("").append(", ")
                             // Notes
-                            .append(row[1]).append("\n");
+                            .append(row[1]
+                                    .replace("快捷支付扫二维码付款", "")
+                                    .replace("银联无卡自助消费贺双双银联在线支付，", "")
+                                    .replace("银联代付贺双双银联代付，（特约）", "")
+                                    .replace("银联渠道转入", "")
+                                    .replace("-支付宝-理财-浙江网商银行股份有限公司", "")
+                                    .replace("-网银在线（北京）科技有限公司", "")
+                                    .replace("（中国）网络技术有限公司支付宝（中国）网络技术有限公司", "")
+                                    .replace("-浙江网商银行股份有限公司", "")
+                                    .replace("其他费用", "")
+                                    .replace("-代销理财快赎投资朝朝宝", "")
+                                    .replace("-支付宝-消费-深圳市永秀电子有限公司", "")
+                                    .replace("-肯特瑞小金库网银平台合并统计合并收入(+)合并支出(-)币种CNY207", "")
+                                    .replace("招银理财有限责任公司", "")
+                                    .replace("快捷支付", "")
+                                    .replace("银联财付通-", "")
+                            ).append("\n");
                 }
             }
         }
@@ -213,6 +237,7 @@ public class PDFToCSV {
         map.put("地铁", "地铁");
         map.put("天府通", "地铁");
         map.put("中铁网络", "高铁");
+        map.put("中国铁路网络", "高铁");
         map.put("衣服", "衣服");
         map.put("服饰", "衣服");
         map.put("携程", "住宿");
@@ -260,7 +285,6 @@ public class PDFToCSV {
         map.put("送礼", "送礼");
 
         map.put("欧尚", "其他");
-        map.put("其他", "其他");
 
         map.put("电子", "电商");
         map.put("电脑", "电商");
@@ -282,60 +306,38 @@ public class PDFToCSV {
         map.put("小米", "电商");
         map.put("iphone", "电商");
 
+        map.put("还款", "还款");
+
+        map.put("朝朝宝", "朝朝宝");
+        map.put("个贷交易招商银行股份有限公司", "房贷");
+        map.put("成都住房公积金管理中心", "房贷");
+        map.put("转账汇款", "转出");
+        map.put("退款", "转入");
+        map.put("收款", "转入");
+        map.put("汇入汇款", "转入");
+        map.put("银联代付", "转入");
+        map.put("网上支付跨行清算系统汇款", "转入");
+
+        map.put("支付利息", "利息");
+        map.put("结息", "利息");
+        map.put("自助消费", "电商");
+        map.put("借钱", "转出");
+        map.put("手续费", "其他");
+        map.put("长服计划分红", "工资");
+        map.put("代发工资", "工资");
+        map.put("余额宝提现", "提现");
+        map.put("网银转款本金", "提现");
+        map.put("银联渠道他代本借记卡无卡交易", "提现");
+        map.put("快捷支付", "其他");
+        map.put("转账", "转入");
+        map.put("跨行转出", "提现");
+        map.put("财付通", "其他");
+        map.put("支付宝", "其他");
+        map.put("天天利-智能转入", "天天利");
+        map.put("天天利-智能快速转出", "天天利");
 
         map.put("有限公司", "电商");
-        map.put("还款", "还款");
-        return map;
-    }
-
-    public static Map<String, String> getFoldMap() {
-        Map<String, String> map = new HashMap<>();
-        map.put("公交", "出行");
-        map.put("地铁", "出行");
-        map.put("打车", "出行");
-        map.put("ETC", "出行");
-        map.put("高铁", "出行");
-        map.put("吃饭", "生活");
-        map.put("衣服", "生活");
-        map.put("理发", "生活");
-        map.put("住宿", "生活");
-        map.put("社保", "生活");
-
-        map.put("房贷", "房屋");
-        map.put("房租", "房屋");
-
-        map.put("挂号", "医疗");
-        map.put("药品", "医疗");
-        map.put("治疗", "医疗");
-
-        map.put("保险", "汽车");
-        map.put("加油", "汽车");
-        map.put("维保", "汽车");
-        map.put("停车", "汽车");
-        map.put("成都启阳", "汽车");
-
-        map.put("红包", "转账");
-        map.put("生日", "转账");
-        map.put("转出", "转账");
-
-        map.put("话费", "消费");
-        map.put("电商", "消费");
-        map.put("娱乐", "消费");
-        map.put("约饭", "消费");
-        map.put("零食", "消费");
-        map.put("送礼", "消费");
-        map.put("其他", "消费");
-        map.put("还款", "消费");
-
-        map.put("利息", "收入");
-        map.put("提现", "收入");
-        map.put("工资", "收入");
-        map.put("转入", "收入");
-        map.put("灵活宝", "理财");
-        map.put("朝朝宝", "理财");
-        map.put("天天利", "理财");
-
-
+        map.put("其他", "其他");
         return map;
     }
 }
